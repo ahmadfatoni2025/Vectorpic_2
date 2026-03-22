@@ -1,231 +1,455 @@
 "use client";
 
-import React from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
 import { useLanguage } from '../context/LanguageContext';
+
+// --- Types ---
+export interface StatsItem {
+    type: 'testimonial' | 'testimonial-short' | 'metric' | 'large-metric' | 'feature';
+    content?: string;
+    author?: string;
+    role?: string;
+    avatar?: string;
+    value?: string;
+    label?: string;
+    desc?: string;
+    gradient?: string;
+    gridSpan: string;
+    video?: string;
+    image?: string;
+    title?: string;
+    bgColor?: string;
+    textColor?: string;
+}
+
+// --- Constants ---
+const DEFAULT_PARTICLE_COUNT = 8;
+const DEFAULT_SPOTLIGHT_RADIUS = 350;
+const DEFAULT_GLOW_COLOR = '0, 112, 243'; // Blue glow for light mode
+const MOBILE_BREAKPOINT = 768;
+
+// --- Helper Functions ---
+const createParticleElement = (x: number, y: number, color: string = DEFAULT_GLOW_COLOR): HTMLDivElement => {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.style.cssText = `
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(${color}, 0.6);
+    box-shadow: 0 0 4px rgba(${color}, 0.3);
+    pointer-events: none;
+    z-index: 100;
+    left: ${x}px;
+    top: ${y}px;
+  `;
+    return el;
+};
+
+const calculateSpotlightValues = (radius: number) => ({
+    proximity: radius * 0.4,
+    fadeDistance: radius * 0.6
+});
+
+const updateCardGlowProperties = (card: HTMLElement, mouseX: number, mouseY: number, glow: number, radius: number) => {
+    const rect = card.getBoundingClientRect();
+    const relativeX = ((mouseX - rect.left) / rect.width) * 100;
+    const relativeY = ((mouseY - rect.top) / rect.height) * 100;
+
+    card.style.setProperty('--glow-x', `${relativeX}%`);
+    card.style.setProperty('--glow-y', `${relativeY}%`);
+    card.style.setProperty('--glow-intensity', (glow * 0.15).toString()); // Subtle intensity for light mode
+    card.style.setProperty('--glow-radius', `${radius}px`);
+};
+
+// --- Sub-components ---
+
+const ParticleCard: React.FC<{
+    children: React.ReactNode;
+    className?: string;
+    disableAnimations?: boolean;
+    style?: React.CSSProperties;
+    particleCount?: number;
+    glowColor?: string;
+    enableTilt?: boolean;
+    clickEffect?: boolean;
+    enableMagnetism?: boolean;
+}> = ({
+    children,
+    className = '',
+    disableAnimations = false,
+    style,
+    particleCount = DEFAULT_PARTICLE_COUNT,
+    glowColor = DEFAULT_GLOW_COLOR,
+    enableTilt = true,
+    clickEffect = true,
+    enableMagnetism = true
+}) => {
+        const cardRef = useRef<HTMLDivElement>(null);
+        const particlesRef = useRef<HTMLDivElement[]>([]);
+        const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+        const isHoveredRef = useRef(false);
+        const memoizedParticles = useRef<HTMLDivElement[]>([]);
+        const particlesInitialized = useRef(false);
+        const magnetismAnimationRef = useRef<gsap.core.Tween | null>(null);
+
+        const initializeParticles = useCallback(() => {
+            if (particlesInitialized.current || !cardRef.current) return;
+            const { width, height } = cardRef.current.getBoundingClientRect();
+            memoizedParticles.current = Array.from({ length: particleCount }, () =>
+                createParticleElement(Math.random() * width, Math.random() * height, glowColor)
+            );
+            particlesInitialized.current = true;
+        }, [particleCount, glowColor]);
+
+        const clearAllParticles = useCallback(() => {
+            timeoutsRef.current.forEach(clearTimeout);
+            timeoutsRef.current = [];
+            magnetismAnimationRef.current?.kill();
+            particlesRef.current.forEach(particle => {
+                gsap.to(particle, { scale: 0, opacity: 0, duration: 0.3, onComplete: () => { particle.parentNode?.removeChild(particle); } });
+            });
+            particlesRef.current = [];
+        }, []);
+
+        const animateParticles = useCallback(() => {
+            if (!cardRef.current || !isHoveredRef.current) return;
+            if (!particlesInitialized.current) initializeParticles();
+            memoizedParticles.current.forEach((particle, index) => {
+                const timeoutId = setTimeout(() => {
+                    if (!isHoveredRef.current || !cardRef.current) return;
+                    const clone = particle.cloneNode(true) as HTMLDivElement;
+                    cardRef.current.appendChild(clone);
+                    particlesRef.current.push(clone);
+                    gsap.fromTo(clone, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3 });
+                    gsap.to(clone, {
+                        x: (Math.random() - 0.5) * 60,
+                        y: (Math.random() - 0.5) * 60,
+                        duration: 3 + Math.random() * 2,
+                        ease: 'power1.inOut',
+                        repeat: -1,
+                        yoyo: true
+                    });
+                }, index * 150);
+                timeoutsRef.current.push(timeoutId);
+            });
+        }, [initializeParticles]);
+
+        useEffect(() => {
+            if (disableAnimations || !cardRef.current) return;
+            const element = cardRef.current;
+            const handleMouseEnter = () => { isHoveredRef.current = true; animateParticles(); };
+            const handleMouseLeave = () => {
+                isHoveredRef.current = false;
+                clearAllParticles();
+                gsap.to(element, { rotateX: 0, rotateY: 0, x: 0, y: 0, duration: 0.4 });
+            };
+            const handleMouseMove = (e: MouseEvent) => {
+                const rect = element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                if (enableTilt) {
+                    const rotateX = ((y - rect.height / 2) / rect.height) * -8;
+                    const rotateY = ((x - rect.width / 2) / rect.width) * 8;
+                    gsap.to(element, { rotateX, rotateY, duration: 0.2, transformPerspective: 1000 });
+                }
+                if (enableMagnetism) {
+                    const magnetX = (x - rect.width / 2) * 0.03;
+                    const magnetY = (y - rect.height / 2) * 0.03;
+                    magnetismAnimationRef.current = gsap.to(element, { x: magnetX, y: magnetY, duration: 0.3 });
+                }
+            };
+            element.addEventListener('mouseenter', handleMouseEnter);
+            element.addEventListener('mouseleave', handleMouseLeave);
+            element.addEventListener('mousemove', handleMouseMove);
+            return () => {
+                element.removeEventListener('mouseenter', handleMouseEnter);
+                element.removeEventListener('mouseleave', handleMouseLeave);
+                element.removeEventListener('mousemove', handleMouseMove);
+                clearAllParticles();
+            };
+        }, [animateParticles, clearAllParticles, disableAnimations, enableTilt, enableMagnetism]);
+
+        return (
+            <div ref={cardRef} className={`${className} relative overflow-hidden`} style={style}>{children}</div>
+        );
+    };
+
+const GlobalSpotlight: React.FC<{
+    gridRef: React.RefObject<HTMLDivElement | null>;
+    disableAnimations?: boolean;
+}> = ({ gridRef, disableAnimations = false }) => {
+    const spotlightRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        if (disableAnimations || !gridRef?.current) return;
+        const spotlight = document.createElement('div');
+        spotlight.style.cssText = `position: fixed; width: 600px; height: 600px; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, rgba(${DEFAULT_GLOW_COLOR}, 0.08) 0%, transparent 70%); z-index: 200; opacity: 0; transform: translate(-50%, -50%); mix-blend-mode: multiply;`;
+        document.body.appendChild(spotlight);
+        spotlightRef.current = spotlight;
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!spotlightRef.current || !gridRef.current) return;
+            const section = gridRef.current.closest('.bento-section');
+            const rect = section?.getBoundingClientRect();
+            if (!rect || e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+                gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3 });
+                gridRef.current.querySelectorAll('.magic-card').forEach(c => (c as HTMLElement).style.setProperty('--glow-intensity', '0'));
+                return;
+            }
+            const cards = gridRef.current.querySelectorAll('.magic-card');
+            cards.forEach(card => {
+                const cardRect = (card as HTMLElement).getBoundingClientRect();
+                const d = Math.hypot(e.clientX - (cardRect.left + cardRect.width / 2), e.clientY - (cardRect.top + cardRect.height / 2)) - Math.max(cardRect.width, cardRect.height) / 2;
+                const glow = d < 150 ? 1 : d < 250 ? (250 - d) / 100 : 0;
+                updateCardGlowProperties(card as HTMLElement, e.clientX, e.clientY, glow, DEFAULT_SPOTLIGHT_RADIUS);
+            });
+            gsap.to(spotlightRef.current, { left: e.clientX, top: e.clientY, opacity: 1, duration: 0.2 });
+        };
+        document.addEventListener('mousemove', handleMouseMove);
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            if (spotlightRef.current) spotlightRef.current.remove();
+        };
+    }, [gridRef, disableAnimations]);
+    return null;
+};
+
+// --- Main Components ---
 
 export default function Statistik() {
     const { t } = useLanguage();
+    const gridRef = useRef<HTMLDivElement>(null);
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= MOBILE_BREAKPOINT;
 
-    const stats = [
+    // Mapping items to the image layout:
+    // Left: [Large Top] [Small Bottom L] [Small Bottom R]
+    // Right: [Tall Item]
+    const stats: StatsItem[] = [
         {
             type: 'testimonial',
             content: t(
-                "Vectorpic has completely transformed how we handle our brand assets. The quality of their SVG generation is unparalleled in the industry.",
-                "Vectorpic telah sepenuhnya mengubah cara kami mengelola aset brand kami. Kualitas pembuatan SVG mereka tak tertandingi di industri ini."
+                "FOR EVERYONE BUT NOT ANYONE",
+                "UNTUK SEMUA TAPI BUKAN SIAPA SAJA"
             ),
-            author: "Sarah Jenkins",
-            role: "Design Director @ CreativeFlow",
-            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-            gridSpan: "col-span-12 md:col-span-5",
-            video: "https://framerusercontent.com/assets/Kny5Ty8J6mn9PsM1TGpXsWNtNh4.mp4" // Subtle design video
+            desc: t(
+                "We establish personal relationships with our boutiques, to make sure each is vetted for a stress-free shopping experience",
+                "Kami menjalin hubungan pribadi dengan butik kami, untuk memastikan masing-masing diperiksa untuk pengalaman berbelanja tanpa stres"
+            ),
+            gridSpan: "col-span-12 md:col-span-7 row-span-1",
+            bgColor: "#dbdbd6",
+            textColor: "#000"
         },
+        {
+            type: 'large-metric',
+            title: "#RIP STOP",
+            image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
+            gridSpan: "col-span-12 md:col-span-3.5", // Half of 7
+            bgColor: "#9ea49d"
+        },
+        {
+            type: 'large-metric',
+            title: "#INSULATED",
+            image: "https://images.unsplash.com/photo-1558655146-d09347e92766",
+            gridSpan: "col-span-12 md:col-span-3.5", // Half of 7
+            bgColor: "#5b6b61"
+        },
+        {
+            type: 'feature',
+            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
+            gridSpan: "col-span-12 md:col-span-5 row-span-2",
+            bgColor: "#e2e2dd"
+        }
+    ];
+
+    // More items can be added below or modified to fit the grid
+    const remainingStats = [
         {
             type: 'metric',
             value: "98%",
             label: t("Customer Satisfaction", "Kepuasan Pelanggan"),
-            desc: t("Based on 5,000+ reviews", "Berdasarkan 5.000+ ulasan"),
-            gradient: "from-blue-500 to-indigo-600",
             gridSpan: "col-span-12 md:col-span-3",
-            video: "" // Static for metrics is usually better, but possible
+            bgColor: "#fff"
         },
         {
-            type: 'testimonial-short',
-            content: t(
-                "The fast turnaround and attention to detail are what keep us coming back. Best design partner ever!",
-                "Waktu pengerjaan yang cepat dan perhatian pada detail adalah alasan kami terus kembali. Partner desain terbaik!"
-            ),
-            author: "Marcus Chen",
-            role: "Founder of TechSphere",
-            avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-            gridSpan: "col-span-12 md:col-span-4",
-            video: "https://framerusercontent.com/assets/fX3f95u90W39R09S2W4m5m7s8E.mp4" // Abstract motion
-        },
-        {
-            type: 'large-metric',
+            type: 'metric',
             value: "50,000+",
             label: t("Assets Delivered", "Aset Terkirim"),
-            desc: t("Scaling brands with high-performance vector graphics globally.", "Mengembangkan brand dengan grafis vektor berperforma tinggi secara global."),
-            gradient: "from-emerald-400 via-teal-500 to-blue-500",
-            gridSpan: "col-span-12 md:col-span-4",
-            video: ""
-        },
-        {
-            type: 'testimonial',
-            content: t(
-                "Managing complex design systems became a breeze once we integrated Vectorpic's automated delivery flow.",
-                "Mengelola sistem desain yang kompleks menjadi sangat mudah setelah kami mengintegrasikan alur pengiriman otomatis Vectorpic."
-            ),
-            author: "Elena Rodriguez",
-            role: "Product Manager @ GlobalUX",
-            avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956",
-            gridSpan: "col-span-12 md:col-span-4",
-            video: "https://framerusercontent.com/assets/S8i6Y8s90R3Y09S2W4m5m7s8E.mp4" // Smooth color flow
-        },
-        {
-            type: 'feature',
-            title: t("Enterprise-Grade Speed", "Kecepatan Skala Enterprise"),
-            desc: t(
-                "We handle high-volume artistic requests with the precision of a small studio and the speed of a global engine.",
-                "Kami menangani permintaan artistik bervolume tinggi dengan presisi studio kecil dan kecepatan mesin global."
-            ),
-            image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
-            gridSpan: "col-span-12 md:col-span-4",
-            video: "https://framerusercontent.com/assets/L5k6Y8s90R3Y09S2W4m5m7s8E.mp4" // Tech/Speed video
+            gridSpan: "col-span-12 md:col-span-3",
+            bgColor: "#f0f0f0"
         }
     ];
 
     return (
-        <section className=" py-16 sm:py-24 md:py-32 px-4 sm:px-6">
-            <div className="max-w-7xl mx-auto">
+        <section className="bg-white py-10 sm:py-16 px-4">
+            <style>
+                {`
+                .bento-section {
+                    --glow-x: 50%;
+                    --glow-y: 50%;
+                    --glow-intensity: 0;
+                    --glow-radius: 400px;
+                }
+                .floating-pill {
+                    animation: float 4s ease-in-out infinite;
+                }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0) rotate(var(--tw-rotate, 0deg)); }
+                    50% { transform: translateY(-10px) rotate(var(--tw-rotate, 0deg)); }
+                }
+                `}
+            </style>
 
-                {/* Header */}
-                <div className="text-center mb-16 md:mb-20">
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-black tracking-tight mb-4">
-                        {t("Creators and Brands Love Us!", "Kreator dan Brand Mencintai Kami!")}
-                    </h2>
-                    <p className="text-gray-500 text-sm sm:text-base font-medium max-w-xl mx-auto">
-                        {t(
-                            "With over 50,000 assets served to thousands of businesses worldwide. Here's what they have to say.",
-                            "Dengan lebih dari 50.000 aset yang dikirimkan ke ribuan bisnis di seluruh dunia. Inilah kata mereka."
-                        )}
-                    </p>
-                </div>
+            <div className="max-w-6xl mx-auto bento-section">
+                <GlobalSpotlight gridRef={gridRef} disableAnimations={isMobile} />
 
-                {/* Bento Grid */}
-                <div className="grid grid-cols-12 gap-4 sm:gap-6">
-                    {stats.map((item, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: idx * 0.1 }}
-                            className={`${item.gridSpan} bg-white rounded-[2rem] p-6 sm:p-8 flex flex-col relative overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group min-h-[220px] sm:min-h-[280px]`}
-                        >
-                            {/* Background Video/GIF Support */}
-                            {item.video && (
-                                <div className="absolute inset-0 z-0 pointer-events-none">
-                                    <video
-                                        autoPlay
-                                        loop
-                                        muted
-                                        playsInline
-                                        className="w-full h-full object-cover opacity-10 group-hover:opacity-30 transition-opacity duration-700"
-                                    >
-                                        <source src={item.video} type="video/mp4" />
-                                    </video>
-                                    <div className="absolute inset-0 bg-linear-to-b from-white/90 via-white/40 to-white/90"></div>
-                                </div>
-                            )}
+                <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-14 gap-4 h-auto">
 
-                            <div className="relative z-10 flex flex-col h-full uppercase-none">
-                            {item.type === 'testimonial' && (
-                                <>
-                                    <div className="text-[#4F46E5] mb-6">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C20.1216 16 21.017 16.8954 21.017 18V21C21.017 22.1046 20.1216 23 19.017 23H16.017C14.9124 23 14.017 22.1046 14.017 21ZM14.017 21C12.9124 21 12.017 20.1046 12.017 19V18C12.017 15.2386 14.2556 13 17.017 13V13C17.017 10.2386 14.7784 8 12.017 8H12.017C10.9124 8 10.017 7.10457 10.017 6V4L10.017 1V1" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-gray-800 text-sm sm:text-base font-medium leading-relaxed mb-8 flex-1">
-                                        &ldquo;{item.content}&rdquo;
-                                    </p>
-                                    <div className="flex items-center gap-3">
-                                        <div className="relative w-10 h-10 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
-                                            <Image src={item.avatar!} alt={item.author!} fill className="object-cover" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-black">{item.author}</span>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{item.role}</span>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
+                    {/* Top Left - Character & Info Card */}
+                    <ParticleCard
+                        className="magic-card md:col-span-8 md:row-span-1 rounded-4xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 bg-linear-to-br from-blue-700 to-blue-500 overflow-visible relative group"
+                    >
+                        {/* Floating Labels */}
+                        <div className="absolute top-1/4 left-8 bg-black/80 backdrop-blur-sm text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest floating-pill z-30 shadow-2xl" style={{ "--tw-rotate": "-12deg" } as React.CSSProperties}>
+                            {t("Receive", "Terima")}
+                        </div>
+                        <div className="absolute top-1/3 right-10 bg-white text-black px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest floating-pill z-30 shadow-2xl" style={{ "--tw-rotate": "8deg" } as React.CSSProperties}>
+                            {t("Send", "Kirim")}
+                        </div>
+                        <div className="absolute bottom-1/4 right-8 bg-[#111] text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest floating-pill z-30 shadow-2xl" style={{ "--tw-rotate": "-5deg" } as React.CSSProperties}>
+                            {t("Save", "Simpan")}
+                        </div>
 
-                            {item.type === 'testimonial-short' && (
-                                <>
-                                    <div className="text-[#4F46E5] mb-4 opacity-40">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C20.1216 16 21.017 16.8954 21.017 18V21C21.017 22.1046 20.1216 23 19.017 23H16.017C14.9124 23 14.017 22.1046 14.017 21ZM14.017 21C12.9124 21 12.017 20.1046 12.017 19V18C12.017 15.2386 14.2556 13 17.017 13V13C17.017 10.2386 14.7784 8 12.017 8H12.017C10.9124 8 10.017 7.10457 10.017 6V4L10.017 1V1" />
-                                        </svg>
-                                    </div>
-                                    <p className="text-gray-800 text-sm font-medium leading-relaxed mb-6 flex-1">
-                                        &ldquo;{item.content}&rdquo;
-                                    </p>
-                                    <div className="flex items-center gap-3 mt-auto">
-                                        <div className="relative w-8 h-8 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
-                                            <Image src={item.avatar!} alt={item.author!} fill className="object-cover" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-[12px] font-bold text-black">{item.author}</span>
-                                            <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider leading-none mt-0.5">{item.role}</span>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
+                        {/* Character Video */}
+                        <div className="w-full md:w-1/2 relative aspect-square md:aspect-auto md:h-full z-20 overflow-hidden rounded-3xl">
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                whileInView={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.8 }}
+                                className="relative w-full h-full flex items-center justify-center"
+                            >
+                                <video
+                                    src="/stats/sketboard.mp4"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="w-full h-full object-cover rounded-3xl shadow-2xl"
+                                />
+                            </motion.div>
+                        </div>
 
-                            {item.type === 'metric' && (
-                                <>
-                                    <div className={`absolute top-0 right-0 w-32 h-32 bg-linear-to-br ${item.gradient} opacity-10 blur-3xl -mr-10 -mt-10 group-hover:opacity-20 transition-opacity whitespace-normal`}></div>
-                                    <div className="mt-2">
-                                        <span className={`text-5xl sm:text-6xl font-black bg-linear-to-br ${item.gradient} bg-clip-text text-transparent`}>
-                                            {item.value}
-                                        </span>
-                                    </div>
-                                    <div className="mt-2 flex-1">
-                                        <h4 className="text-base sm:text-lg font-black text-black leading-tight">{item.label}</h4>
-                                        <p className="text-xs sm:text-sm text-gray-400 font-medium mt-1">{item.desc}</p>
-                                    </div>
-                                    <div className="w-12 h-1 bg-linear-to-r from-blue-500 to-transparent rounded-full mt-4"></div>
-                                </>
-                            )}
-
-                            {item.type === 'large-metric' && (
-                                <>
-                                    <div className={`absolute inset-0 bg-linear-to-br ${item.gradient} opacity-[0.03] group-hover:opacity-[0.08] transition-opacity`}></div>
-                                    <div className="relative z-10 h-full flex flex-col">
-                                        <span className="text-5xl sm:text-6xl md:text-7xl font-black text-black tracking-tighter mb-4">
-                                            {item.value}
-                                        </span>
-                                        <div className="mt-auto">
-                                            <h4 className="text-xl font-black text-black mb-2">{item.label}</h4>
-                                            <p className="text-sm text-gray-500 font-medium leading-relaxed">
-                                                {item.desc}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-
-                            {item.type === 'feature' && (
-                                <div className="absolute inset-0 group">
-                                    <Image
-                                        src={item.image!}
-                                        alt={item.title!}
-                                        fill
-                                        className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-20 group-hover:opacity-40"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-white via-white/80 to-transparent"></div>
-                                    <div className="relative z-10 h-full flex flex-col p-6 sm:p-8">
-                                        <div className="mt-auto">
-                                            <h4 className="text-xl font-black text-black mb-2">{item.title}</h4>
-                                            <p className="text-sm text-gray-500 font-medium leading-relaxed mb-6">
-                                                {item.desc}
-                                            </p>
-                                            <button className="relative z-20 w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-black hover:text-white transition-all group-hover:scale-110">
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                        {/* Text Content */}
+                        <div className="w-full md:w-1/2 flex flex-col justify-end text-white relative z-20">
+                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[0.95] mb-8 tracking-tighter">
+                                {t("Design", "Desain")} <span className="font-thin block opacity-80 leading-[0.8] italic">{t("doesn't", "tidak")}</span>
+                                {t("have to", "harus")} <br />
+                                <span className="text-[#111]">{t("be boring.", "membosankan.")}</span>
+                            </h2>
+                            <div className="flex flex-col gap-4 border-l-2 border-white/20 pl-6">
+                                <p className="text-xs md:text-sm font-black opacity-90 leading-relaxed uppercase tracking-widest">
+                                    {t("Do everything through the app,", "Lakukan segalanya melalui aplikasi,")} <br /> {t("with a few clicks.", "dengan beberapa klik.")}
+                                </p>
+                                <span className="text-[10px] opacity-60 font-medium uppercase tracking-widest">{t("Refining the Digital Experience", "Menyempurnakan Pengalaman Digital")}</span>
                             </div>
-                        </motion.div>
-                    ))}
+                        </div>
+                    </ParticleCard>
+
+                    {/* Right Column - Secondary Info */}
+                    <ParticleCard
+                        className="magic-card md:col-span-6 md:row-span-2 rounded-4xl relative group flex flex-col p-10 justify-between items-start border border-gray-200"
+                    >
+                        <div className="w-full">
+
+                            <h3 className="text-5xl md:text-6xl font-black tracking-tighter leading-none mb-6 text-black">
+                                {t("Speed &", "Kecepatan &")} <br />
+                                <span className="text-blue-600">{t("Security", "Keamanan")}</span> <br />
+                                <span className="text-xs font-black uppercase tracking-widest text-gray-300 mt-2 block">{t("you can Trust", "yang Anda Percayai")}</span>
+                            </h3>
+
+                            <p className="text-sm font-medium text-gray-400 max-w-[220px] leading-relaxed">
+                                {t("Manage everything right from your dashboard and keep assets where they belong.", "Kelola segalanya langsung dari dasbor Anda dan jaga aset tetap berada di tempatnya.")}
+                            </p>
+                        </div>
+
+                        <div className="mt-auto w-full flex justify-center py-2 overflow-hidden">
+                            {/* Video Showcase Card */}
+                            <motion.div
+                                initial={{ y: 20, opacity: 0 }}
+                                whileInView={{ y: 0, opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="relative w-full max-w-[420px] aspect-video border-b-2 border-gray-200 overflow-hidden"
+                            >
+                                <video
+                                    src="/stats/basket.mp4"
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    className="w-full h-full object-cover rounded-2xl"
+                                />
+                                <div className="absolute top-4 right-4 bg-white/40 backdrop-blur-md px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest text-black">
+                                    Live Preview
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        <div className="w-full flex flex-wrap gap-3 mt-10">
+                            <button className="bg-[#111] hover:bg-black text-white rounded-2xl px-5 py-3 flex items-center gap-3 transition-all hover:scale-105 group border border-white/5">
+                                <div className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.63-.33 2.47-.33.83 0 1.68.11 2.47.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" /></svg>
+                                </div>
+                                <div className="text-left">
+                                    <div className="text-[10px] font-medium opacity-50 leading-none">Github</div>
+                                    <div className="text-xs font-black tracking-tight">{t("Open Project", "Proyek Terbuka")}</div>
+                                </div>
+                            </button>
+                            <button className="bg-white hover:bg-gray-50 text-black border border-gray-200 rounded-2xl px-5 py-3 flex items-center gap-3 transition-all hover:scale-105 shadow-sm">
+                                <div className="text-left">
+                                    <div className="text-[10px] font-medium opacity-50 leading-none">{t("Join our", "Bergabunglah")}</div>
+                                    <div className="text-xs font-black tracking-tight">Discord</div>
+                                </div>
+                                <div className="w-5 h-5 text-indigo-600">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.312 11.233c-.767 0-1.38.74-1.38 1.623s.631 1.623 1.38 1.623a1.51 1.51 0 0 0 1.38-1.623c-.001-.884-.613-1.623-1.38-1.623zM8.688 11.233c-.767 0-1.38.74-1.38 1.623s.631 1.623 1.38 1.623a1.51 1.51 0 0 0 1.38-1.623c-.001-.884-.613-1.623-1.38-1.623zM22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z" /></svg>
+                                </div>
+                            </button>
+                        </div>
+                    </ParticleCard>
+
+                    {/* Bottom Left Pieces */}
+                    <ParticleCard
+                        className="magic-card md:col-span-4 md:row-span-1 rounded-4xl bg-gray-50 flex flex-col p-8 justify-between h-[250px] md:h-auto border border-gray-100/50"
+                    >
+                        <h4 className="text-2xl font-black tracking-tighter leading-none mb-4 text-[#111]">
+                            Global <br /> <span className="text-blue-600">Reach.</span>
+                        </h4>
+                        <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-relaxed italic">
+                            {t("Total control in the app,", "Kontrol penuh dalam aplikasi,")} <br /> {t("with zero complexity.", "dengan nol kerumitan.")}
+                        </p>
+                        <div className="mt-auto flex -space-x-3 items-center">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-gray-200">
+                                    <Image src={`https://i.pravatar.cc/100?u=${i + 10}`} alt="User" width={40} height={40} />
+                                </div>
+                            ))}
+                            <div className="ml-5 text-[10px] font-black text-blue-600 uppercase tracking-widest">+50K USERS</div>
+                        </div>
+                    </ParticleCard>
+
+                    <ParticleCard
+                        className="magic-card md:col-span-4 md:row-span-1 rounded-4xl bg-[#111] flex flex-col p-8 justify-end h-[250px] md:h-auto overflow-hidden relative group"
+                    >
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl group-hover:bg-blue-600/30 transition-colors"></div>
+                        <h4 className="text-3xl font-black tracking-tighter leading-[0.85] mb-4 text-white">
+                            {t("Your style,", "Gayamu,")} <br />
+                            <span className="text-blue-500">{t("your way.", "caramu.")}</span>
+                        </h4>
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">{t("Unlimited possibilities.", "Kemungkinan tanpa batas.")}</p>
+                        <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full transform group-hover:scale-125 transition-transform duration-700"></div>
+                    </ParticleCard>
+
                 </div>
             </div>
         </section>

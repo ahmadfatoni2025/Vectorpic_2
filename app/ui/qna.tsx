@@ -1,45 +1,33 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
+import { ChevronDown, Plus, Minus, Search, Filter } from 'lucide-react';
 
 interface FAQItem {
+  id: number;
+  category: string;
   question: string;
   answer: string;
 }
 
-interface FAQGroup {
-  title: string;
-  description: string;
-  items: FAQItem[];
-}
-
-const AccordionItem = ({ question, answer, isOpen, onClick }: { 
-  question: string, 
-  answer: string, 
-  isOpen: boolean, 
+const AccordionItem = ({ item, isOpen, onClick }: { 
+  item: FAQItem;
+  isOpen: boolean;
   onClick: () => void 
 }) => {
   return (
-    <div 
-      className={`group border-b border-gray-100 last:border-0 transition-all duration-300 ${isOpen ? 'bg-blue-50/30 rounded-2xl px-4 sm:px-6 -mx-4 sm:-mx-6 mb-4' : 'hover:bg-gray-50/50 rounded-2xl px-4 sm:px-6 -mx-4 sm:-mx-6'}`}
-    >
+    <div className={`mb-4 transition-all duration-500 rounded-3xl border ${isOpen ? 'bg-white border-blue-100 shadow-2xl shadow-blue-500/10 ring-1 ring-blue-50/50' : 'bg-gray-50/50 border-transparent hover:bg-gray-50'} overflow-hidden`}>
       <button
         onClick={onClick}
-        className="w-full flex items-center justify-between py-4 sm:py-6 text-left gap-3"
+        className="w-full flex items-center justify-between p-7 md:p-8 text-left group"
       >
-        <span className={`text-sm sm:text-base md:text-lg font-bold tracking-tight transition-colors duration-300 ${isOpen ? 'text-[#0070f3]' : 'text-zinc-800'}`}>
-          {question}
+        <span className={`text-[16px] sm:text-[18px] font-bold tracking-tight transition-colors duration-300 ${isOpen ? 'text-blue-600' : 'text-gray-800'}`}>
+          {item.question}
         </span>
-        <div className={`shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-[#0070f3] border-[#0070f3] rotate-45' : 'bg-white border-gray-200 group-hover:border-[#0070f3]'}`}>
-           <svg 
-            width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            className={`sm:w-5 sm:h-5 ${isOpen ? 'text-white' : 'text-gray-400 group-hover:text-[#0070f3]'}`}
-           >
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-           </svg>
+        <div className={`shrink-0 ml-4 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500 ${isOpen ? 'bg-blue-50 rotate-180' : 'bg-white shadow-sm'}`}>
+          <ChevronDown className={`w-5 h-5 ${isOpen ? 'text-blue-500' : 'text-gray-400'}`} />
         </div>
       </button>
 
@@ -49,11 +37,14 @@ const AccordionItem = ({ question, answer, isOpen, onClick }: {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
             className="overflow-hidden"
           >
-            <div className="pb-4 sm:pb-6 text-gray-500 leading-relaxed text-xs sm:text-sm">
-              {answer}
+            <div className="px-7 md:px-8 pb-8 pt-0">
+              <div className="h-px w-full bg-gray-100 mb-6" />
+              <p className="text-gray-500 leading-relaxed text-sm md:text-base max-w-4xl">
+                {item.answer}
+              </p>
             </div>
           </motion.div>
         )}
@@ -64,165 +55,200 @@ const AccordionItem = ({ question, answer, isOpen, onClick }: {
 
 export default function Qna() {
   const { t } = useLanguage();
-  
-  const [openStates, setOpenStates] = useState<Record<string, number | null>>({
-    "general": 0,
-    "service": null,
-    "support": null,
-  });
+  const [openId, setOpenId] = useState<number | null>(1);
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const faqData: FAQGroup[] = [
-    {
-      title: t("General Information", "Informasi Umum"),
-      description: t(
-        "General information about our services and how we help you create scalable visual assets.",
-        "Informasi umum tentang layanan kami dan bagaimana kami membantu Anda menciptakan aset visual yang skalabel."
-      ),
-      items: [
-        {
-          question: t("What is the difference between SVG and PNG at Vectorpic?", "Apa perbedaan antara SVG dan PNG di Vectorpic?"),
-          answer: t(
-            "SVG is a vector format that scales without quality loss, while PNG is a pixel-based raster format. Our core service focuses on pure vector assets that are print-ready and high-performance.",
-            "SVG adalah format vektor yang bisa diskalakan tanpa kehilangan kualitas, sementara PNG adalah format raster berbasis pixel. Layanan utama kami berfokus pada aset vektor murni yang siap cetak dan performa tinggi."
-          )
-        },
-        {
-          question: t("How does the queue system work at Vectorpic?", "Bagaimana cara kerja sistem antrian di Vectorpic?"),
-          answer: t(
-            "Each order is processed based on a priority queue. You can monitor the progress status in real-time through your account dashboard.",
-            "Setiap pesanan diproses berdasarkan antrian prioritas. Anda dapat memantau status pengerjaan secara real-time melalui dashboard akun Anda."
-          )
-        },
-        {
-          question: t("Do I get access to source files?", "Apakah saya mendapatkan akses ke file sumber (source code)?"),
-          answer: t(
-            "Yes, every premium package purchase includes raw Adobe Illustrator (.ai), EPS, and cleanly compiled SVG files.",
-            "Ya, setiap pembelian paket premium mencakup file mentah Adobe Illustrator (.ai), EPS, serta SVG yang dikompilasi secara bersih."
-          )
-        }
-      ]
-    },
-    {
-      title: t("Our Service", "Layanan Kami"),
-      description: t(
-        "Learn more about how we run your design project from start to finish.",
-        "Pelajari lebih lanjut tentang bagaimana kami menjalankan proyek desain Anda dari awal hingga akhir pengerjaan."
-      ),
-      items: [
-        {
-          question: t("How can I provide feedback on the design I received?", "Bagaimana cara memberikan masukan pada desain yang saya terima?"),
-          answer: t(
-            "You can provide feedback directly through our platform using the built-in annotation tool on every draft we send.",
-            "Anda dapat memberikan feedback langsung melalui platform kami menggunakan tool anotasi bawaan pada setiap draf yang kami kirimkan."
-          )
-        },
-        {
-          question: t("Are there additional fees for revisions?", "Apakah ada biaya tambahan untuk revisi?"),
-          answer: t(
-            "Each package includes a certain number of free revisions. If exceeded, additional fees apply based on the complexity of the changes.",
-            "Setiap paket memiliki jumlah revisi gratis tertentu. Jika melebihi kuota, akan ada biaya tambahan berdasarkan tingkat kompleksitas perubahan."
-          )
-        },
-        {
-          question: t("How can I schedule a consultation?", "Bagaimana cara memesan jadwal konsultasi?"),
-          answer: t(
-            "You can click the 'Start Project' button on the homepage or contact our team directly via live chat for a 1-on-1 session.",
-            "Anda bisa memilih tombol 'Mulai Proyek' di beranda atau langsung menghubungi tim kami melalui live chat untuk jadwal 1-on-1."
-          )
-        }
-      ]
-    },
-    {
-      title: t("Support", "Dukungan"),
-      description: t(
-        "Need technical help or having payment issues? Our support team is here to ensure a smooth process.",
-        "Butuh bantuan teknis atau ada kendala pembayaran? Tim bantuan kami ada di sini untuk memastikan proses Anda lancar."
-      ),
-      items: [
-        {
-          question: t("How can I contact customer support?", "Bagaimana saya menghubungi dukungan pelanggan?"),
-          answer: t(
-            "We are available via email at support@vectorpic.com or 24/7 live chat for Gold membership accounts.",
-            "Kami tersedia melalui email support@vectorpic.com atau obrolan langsung 24/7 untuk akun membership Gold."
-          )
-        },
-        {
-          question: t("What are your support operating hours?", "Kapan jam operasional dukungan Anda?"),
-          answer: t(
-            "Our design team works on weekdays (09:00 - 18:00 WIB), but emergency support is available 24 hours every day.",
-            "Tim desain kami bekerja di hari kerja (09:00 - 18:00 WIB), namun dukungan darurat tersedia 24 jam setiap hari."
-          )
-        },
-        {
-          question: t("Can I cancel my order?", "Bisakah saya membatalkan pesanan saya?"),
-          answer: t(
-            "Cancellation can be made as long as the project status is still in the 'Ideation' stage. Once in the production stage, a partial refund policy applies.",
-            "Pembatalan dapat dilakukan selama status proyek masih dalam tahap 'Ideasi'. Jika sudah masuk tahap pengerjaan, kebijakan pengembalian dana sebagian akan berlaku."
-          )
-        }
-      ]
-    }
+  const categories = [
+    { id: 'all', label: t("All Categories", "Semua Kategori") },
+    { id: 'service', label: t("Design Service", "Layanan Desain") },
+    { id: 'process', label: t("Work Process", "Proses Kerja") },
+    { id: 'ownership', label: t("Ownership & Data", "Kepemilikan & Data") },
   ];
 
-  const groupKeys = ["general", "service", "support"];
+  const faqData: FAQItem[] = useMemo(() => [
+    {
+      id: 1,
+      category: 'service',
+      question: t("Layanan desain apa yang menjadi spesialisasi Vectorpic?", "What design services does Vectorpic specialize in?"),
+      answer: t(
+        "Vectorpic fokus pada aset vektor berkualitas tinggi, ilustrasi kustom, desain logo, dan identitas visual yang siap digunakan untuk berbagai platform digital maupun cetak.",
+        "Vectorpic focuses on high-quality vector assets, custom illustrations, logo design, and visual identities ready for use across digital and print platforms."
+      )
+    },
+    {
+      id: 2,
+      category: 'service',
+      question: t("Bagaimana cara memesan desain kustom?", "How do I request a custom design?"),
+      answer: t(
+        "Anda dapat menghubungi tim desain kami melalui formulir pertanyaan atau mengirim email ke design@vectorpic.com dengan ringkasan proyek Anda. Kami akan menanggapi dalam waktu 24 jam.",
+        "You can contact our design team through the inquiry form or email us at design@vectorpic.com with your project brief. We will respond within 24 hours."
+      )
+    },
+    {
+      id: 3,
+      category: 'service',
+      question: t("Apakah desain Vectorpic bisa disesuaikan dengan brand saya?", "Can Vectorpic designs be customized to my brand?"),
+      answer: t(
+        "Tentu, tim kami bekerja secara kolaboratif untuk memastikan setiap elemen desain, mulai dari warna hingga gaya visual, selaras dengan identitas brand Anda. Kami menyesuaikan estetika kami dengan visi Anda.",
+        "Sure, our team works collaboratively to ensure every design element, from colors to visual style, aligns with your brand identity. We adapt our aesthetics to your vision."
+      )
+    },
+    {
+      id: 4,
+      category: 'process',
+      question: t("Format file desain apa yang akan saya dapatkan?", "What design file formats will I receive?"),
+      answer: t(
+        "Anda akan menerima file master dalam format AI (Adobe Illustrator), EPS, dan SVG, serta format siap pakai seperti PNG transparan dan JPG resolusi tinggi.",
+        "You will receive master files in AI (Adobe Illustrator), EPS, and SVG formats, as well as ready-to-use formats like transparent PNG and high-resolution JPG."
+      )
+    },
+    {
+      id: 5,
+      category: 'process',
+      question: t("Berapa kali saya bisa meminta revisi desain?", "How many design revisions can I request?"),
+      answer: t(
+        "Kami menyediakan hingga 3 kali revisi untuk setiap proyek untuk memastikan hasil akhir benar-benar memenuhi ekspektasi dan kebutuhan bisnis Anda tanpa biaya tambahan.",
+        "We provide up to 3 revisions for each project to ensure the final result truly meets your expectations and business needs at no additional cost."
+      )
+    },
+    {
+      id: 6,
+      category: 'process',
+      question: t("Berapa lama waktu pengerjaan untuk satu proyek desain?", "How long does one design project take?"),
+      answer: t(
+        "Waktu pengerjaan bervariasi antara 3 hingga 5 hari kerja tergantung pada tingkat kerumitan dan detail teknis dari desain yang diminta.",
+        "The turnaround time varies between 3 to 5 business days depending on the complexity level and technical details of the requested design."
+      )
+    },
+    {
+      id: 7,
+      category: 'ownership',
+      question: t("Apakah saya mendapatkan hak milik penuh atas desain?", "Do I get full ownership of the design?"),
+      answer: t(
+        "Setelah pembayaran selesai, Anda akan memiliki hak eksklusif dan kepemilikan penuh atas desain final yang telah kami buat untuk Anda. Anda bebas menggunakannya untuk tujuan komersial.",
+        "Once payment is complete, you will have exclusive rights and full ownership of the final design we have created for you. You are free to use it for commercial purposes."
+      )
+    },
+    {
+      id: 8,
+      category: 'ownership',
+      question: t("Apakah data proyek saya aman bersama Vectorpic?", "Is my project data safe with Vectorpic?"),
+      answer: t(
+        "Kami memprioritaskan kerahasiaan dan menggunakan penyimpanan aman untuk semua aset klien serta komunikasi selama proses pengerjaan. Data Anda tidak akan dibagikan kepada pihak ketiga.",
+        "We prioritize confidentiality and use secure storage for all client assets and communication throughout the production process. Your data will not be shared with third parties."
+      )
+    }
+  ], [t]);
 
-  const toggleItem = (groupKey: string, index: number) => {
-    setOpenStates(prev => ({
-      ...prev,
-      [groupKey]: prev[groupKey] === index ? null : index
-    }));
-  };
+  const filteredData = faqData.filter(item => 
+    activeCategory === 'all' || item.category === activeCategory
+  );
 
   return (
-    <section className="bg-white py-16 sm:py-24 md:py-32 px-4 sm:px-6">
+    <section className="bg-white py-20 sm:py-32 px-4 sm:px-10">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}
-        <div className="flex flex-col items-center text-center mb-14 sm:mb-20 md:mb-24">
-          <span className="text-[#0070f3] font-mono font-bold tracking-[0.2em] text-[10px] uppercase mb-4 px-4 py-1.5 border border-blue-100 rounded-full bg-blue-50/50">
-            FAQ
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-black tracking-tighter leading-tight mb-4 sm:mb-6 px-2">
-            {t("Frequently asked questions", "Pertanyaan yang sering diajukan")}
-          </h2>
-          <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-xl font-medium leading-relaxed px-4">
-            {t(
-              "Trusted by hundreds of brands and designers for scalable visual solutions.",
-              "Dipercayai oleh lebih dari ratusan brand dan desainer untuk solusi visual skalabel."
-            )}
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+          <div className="space-y-4">
+            <div className="inline-block px-3 py-1 bg-blue-50 border border-blue-100 rounded-full">
+              <span className="text-[10px] font-bold text-blue-500 tracking-widest uppercase">/ FAQS</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-black tracking-tight">
+              {t("Frequently asked question", "Pertanyaan yang sering diajukan")}
+            </h2>
+            <p className="text-gray-400 text-sm md:text-base max-w-2xl leading-relaxed">
+              {t(
+                "Find answers to common questions about our design services, workflow, and how we help your brand grow through high-quality vector assets.",
+                "Temukan jawaban untuk pertanyaan umum tentang layanan desain kami, alur kerja, dan bagaimana kami membantu brand Anda tumbuh melalui aset vektor berkualitas tinggi."
+              )}
+            </p>
+          </div>
+          
+          {/* Category Dropdown Filter */}
+          <div className="relative">
+            <button 
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="flex items-center gap-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 px-6 py-3.5 rounded-2xl transition-all group min-w-[220px] justify-between"
+            >
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                <span className="text-sm font-bold text-gray-700">
+                  {categories.find(c => c.id === activeCategory)?.label}
+                </span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${showDropdown ? 'rotate-180' : ''}`} />
+            </button>
+            
+            <AnimatePresence>
+              {showDropdown && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-3 w-64 bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden p-2"
+                >
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setActiveCategory(cat.id);
+                        setShowDropdown(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                        activeCategory === cat.id 
+                        ? 'bg-blue-50 text-blue-600' 
+                        : 'text-gray-500 hover:bg-gray-50 hover:text-black'
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* Content Section */}
-        <div className="space-y-14 sm:space-y-20 md:space-y-24">
-          {faqData.map((group, groupIdx) => (
-            <div key={group.title} className="grid grid-cols-1 lg:grid-cols-[1.5fr_2fr] gap-8 sm:gap-12 lg:gap-24">
-              
-              {/* Left Column: Label */}
-              <div className="space-y-3 sm:space-y-4">
-                <h3 className="text-xl sm:text-2xl font-black text-black tracking-tight uppercase border-l-4 border-[#0070f3] pl-4 sm:pl-6">
-                  {group.title}
-                </h3>
-                <p className="text-gray-500 text-xs sm:text-sm leading-relaxed max-w-xs pl-5 sm:pl-7">
-                  {group.description}
-                </p>
-              </div>
+        {/* FAQ List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8">
+          <div className="flex flex-col">
+            {filteredData.slice(0, Math.ceil(filteredData.length / 2)).map((item) => (
+              <AccordionItem
+                key={item.id}
+                item={item}
+                isOpen={openId === item.id}
+                onClick={() => setOpenId(openId === item.id ? null : item.id)}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col">
+            {filteredData.slice(Math.ceil(filteredData.length / 2)).map((item) => (
+              <AccordionItem
+                key={item.id}
+                item={item}
+                isOpen={openId === item.id}
+                onClick={() => setOpenId(openId === item.id ? null : item.id)}
+              />
+            ))}
+          </div>
+        </div>
 
-              {/* Right Column: Accordions */}
-              <div className="space-y-1 sm:space-y-2">
-                {group.items.map((item, idx) => (
-                  <AccordionItem
-                    key={idx}
-                    question={item.question}
-                    answer={item.answer}
-                    isOpen={openStates[groupKeys[groupIdx]] === idx}
-                    onClick={() => toggleItem(groupKeys[groupIdx], idx)}
-                  />
-                ))}
-              </div>
-
-            </div>
-          ))}
+        {/* Support CTA */}
+        <div className="mt-20 p-8 md:p-12 bg-gray-900 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden relative group">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 blur-[100px] rounded-full -mr-32 -mt-32 group-hover:bg-blue-600/30 transition-all duration-700" />
+           <div className="relative z-10 space-y-2 text-center md:text-left">
+              <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                {t("Still have questions?", "Masih punya pertanyaan?")}
+              </h3>
+              <p className="text-gray-400 max-w-md">
+                {t("Can't find what you're looking for? Our design specialist is here to help you directly.", "Tidak menemukan apa yang Anda cari? Spesialis desain kami siap membantu Anda secara langsung.")}
+              </p>
+           </div>
+           <button className="relative z-10 bg-white hover:bg-blue-50 text-black px-10 py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-xl">
+              {t("Contact Us", "Hubungi Kami")}
+           </button>
         </div>
 
       </div>

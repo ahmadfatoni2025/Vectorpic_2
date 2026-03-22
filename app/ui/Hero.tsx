@@ -1,19 +1,44 @@
 "use client";
 
+import React, { useState } from "react";
 import { ImageStack } from "./ImageStack";
-import GetStarted from "./getstarted";
 import { useLanguage } from "../context/LanguageContext";
+import { motion } from "framer-motion";
+import RotatingText from "./RotatingText";
 
 export function Hero() {
   const { t } = useLanguage();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const bgColors = ["bg-blue-600", "bg-emerald-600", "bg-indigo-600", "bg-teal-600", "bg-purple-600"];
 
   return (
     <section className="relative flex flex-col items-center justify-center text-center pt-6 sm:pt-8 md:pt-10 pb-10 w-full overflow-hidden px-4 sm:px-6">
 
       <div className="relative z-10 max-w-5xl mx-auto">
         <h1 className="text-6xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-black tracking-tighter leading-[1.05] mb-6 sm:mb-8">
-          {t("Where", "Dimana")} <span className="text-[#4F46E5]">{t("Sophisticated", "Keanggunan")}</span> <br className="hidden sm:block" />
-          {t("Meet", "Bertemu")} <span className="text-[#10B981]">{t("Performance.", "Performa.")}</span>
+          {t("Where", "Dimana")}{" "}
+          <RotatingText
+            texts={[
+              t("Sophisticated", "Keanggunan"),
+              t("Beautiful", "Keindahan"),
+              t("Clean", "Kebersihan"),
+              t("Modern", "Modernitas"),
+              t("Minimalist", "Minimalisme")
+            ]}
+            mainClassName={`px-4 sm:px-5 text-white overflow-hidden py-0.5 sm:py-1 justify-center rounded-2xl md:rounded-3xl shadow-2xl inline-flex transition-colors duration-700 items-center leading-none ${bgColors[currentIndex]}`}
+            staggerFrom={"first"}
+            initial={{ y: "-100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            staggerDuration={0.04}
+            splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+            transition={{ type: "spring", damping: 25, stiffness: 150 }}
+            rotationInterval={4000}
+            onNext={(index) => setCurrentIndex(index)}
+            animatePresenceMode="popLayout"
+          />{" "}
+          <br className="hidden sm:block" />
+          {t("Meet", "Bertemu")} <span>{t("Performance.", "Performa.")}</span>
         </h1>
 
         <p className="max-w-xl mx-auto text-gray-400 text-xs sm:text-sm md:text-base font-medium leading-relaxed mb-8 sm:mb-10 px-2">
@@ -22,14 +47,35 @@ export function Hero() {
             "Bangun ilustrasi menakjubkan, identitas merek, dan aset digital dengan mudah. Dari konsep ke mahakarya dalam hitungan menit, bukan bulan."
           )}
         </p>
+        <div className="flex justify-center gap-4 sm:gap-6">
+          {/* Watch Demo Button */}
+          <div className="flex justify-center mb-12 sm:mb-16">
+            <button className="group bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full flex items-center gap-3 transition-all duration-300 shadow-lg hover:-translate-y-0.5">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-800 transition-colors">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white" className="ml-0.5">
+                  <path d="M5 3l14 9-14 9V3z" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold tracking-wide">
+                {t("Watch Demo", "Tonton Demo")}
+                <span className="text-gray-400 ml-2 font-normal text-xs">3 mins</span>
+              </span>
+            </button>
+          </div>
 
-        <div className="flex justify-center mb-12 sm:mb-16">
-          <button className="group bg-[#111] hover:bg-black text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-full flex items-center gap-2 sm:gap-3 transition-all transform hover:scale-105 shadow-2xl">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-white/10 rounded-full flex items-center justify-center">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="white" className="ml-0.5"><path d="M5 3l14 9-14 9V3z" /></svg>
-            </div>
-            <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest">{t("Watch Demo", "Tonton Demo")} <span className="text-white/40 ml-1">3mins</span></span>
-          </button>
+          {/* Get Started Button */}
+          <div className="flex justify-center mb-12 sm:mb-16">
+            <button className="group bg-gradient-to-r from-[#04cce7] to-[#04b8d0] hover:from-[#04b8d0] hover:to-[#04a4bc] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-full flex items-center gap-3 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5">
+              <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white" className="ml-0.5">
+                  <path d="M5 3l14 9-14 9V3z" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold tracking-wide">
+                {t("Get Started", "Mulai Sekarang")}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 

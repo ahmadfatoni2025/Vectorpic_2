@@ -10,7 +10,7 @@ export function Footer() {
     return (
         <footer className="relative w-full bg-white pt-16 sm:pt-20 overflow-hidden">
             {/* Background Large Text Watermark */}
-            <div className="absolute -bottom-10 left-0 w-full select-none pointer-events-none opacity-[0.03] overflow-hidden">
+            <div className="absolute -bottom-10 left-0 w-full select-none pointer-events-none opacity-[25%] overflow-hidden">
                 <h2 className="text-[20vw] sm:text-[28vw] font-black text-black leading-none translate-y-1/4">VECTORPIC</h2>
             </div>
 
@@ -56,14 +56,6 @@ export function Footer() {
 
                     {/* Right Panel: Light Content */}
                     <div className="flex-1 bg-gray-50/50 p-8 sm:p-12 md:p-20 flex flex-col justify-between relative overflow-hidden">
-
-                        {/* Floating icon deco - hidden on small screens */}
-                        <div className="absolute -top-12 -right-12 w-64 h-64 pointer-events-none group select-none hidden md:block">
-                            <div className="absolute top-24 right   -24 bg-linear-to-br from-blue-400 to-blue-600 w-24 h-24 sm:w-32 sm:h-32 rounded-4xl sm:rounded-[2.5rem] flex items-center justify-center shadow-2xl rotate-12 transition-all duration-700 hover:rotate-0 hover:scale-110 border border-white/20">
-                                <span className="text-white font-black text-4xl sm:text-6xl">X</span>
-                                <div className="absolute -bottom-8 right-0 text-[11px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity font-black italic rotate-6 bg-white px-2 py-1 rounded shadow-sm">Feeling lucky?</div>
-                            </div>
-                        </div>
 
                         <div className="grid grid-cols-2 gap-8 sm:gap-12 md:gap-20 lg:gap-32">
                             <div className="flex flex-col gap-6 sm:gap-8">
