@@ -8,7 +8,7 @@ export function Footer() {
     const { t } = useLanguage();
 
     return (
-        <footer className="relative w-full bg-white pt-16 sm:pt-20 overflow-hidden">
+        <footer className="relative w-full bg-white pt-10 sm:pt-10 overflow-hidden">
             {/* Background Large Text Watermark */}
             <div className="absolute -bottom-10 left-0 w-full select-none pointer-events-none opacity-[25%] overflow-hidden">
                 <h2 className="text-[20vw] sm:text-[28vw] font-black text-black leading-none translate-y-1/4">VECTORPIC</h2>
@@ -34,7 +34,7 @@ export function Footer() {
                         </div>
 
                         <div className="mt-12 sm:mt-20">
-                            <span className="text-[10px] sm:text-xs font-medium text-white/60 mb-4 sm:mb-6 block italic uppercase tracking-widest">
+                            <span className="text-[10px] sm:text-xs font-medium text-white/60 mb-4 sm:mb-6mb block italic uppercase tracking-widest">
                                 {t("Connect with Us", "Terhubung dengan Kami")}
                             </span>
                             <div className="flex items-center gap-3 sm:gap-4">

@@ -18,7 +18,7 @@ export default function Announcement() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="relative w-full overflow-hidden bg-linear-to-r from-indigo-900 via-blue-700 to-indigo-900 text-white z-[110]"
+                    className="relative w-full overflow-hidden bg-linear-to-r from-gray-900 via-gray-700 to-gray-900 text-white z-[110]"
                 >
                     <div className="max-w-7xl mx-auto px-4 py-1.5 sm:px-6 flex items-center justify-center gap-4 text-center">
                         <div className="flex items-center gap-2 text-xs sm:text-sm font-bold tracking-wide">

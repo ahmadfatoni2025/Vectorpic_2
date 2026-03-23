@@ -81,13 +81,13 @@ const ParticleCard: React.FC<{
 }> = ({
     children,
     className = '',
-    disableAnimations = false,
+    disableAnimations = true,
     style,
     particleCount = DEFAULT_PARTICLE_COUNT,
     glowColor = DEFAULT_GLOW_COLOR,
-    enableTilt = true,
-    clickEffect = true,
-    enableMagnetism = true
+    enableTilt = false,
+    clickEffect = false,
+    enableMagnetism = false
 }) => {
         const cardRef = useRef<HTMLDivElement>(null);
         const particlesRef = useRef<HTMLDivElement[]>([]);
@@ -303,7 +303,7 @@ export default function Statistik() {
             </style>
 
             <div className="max-w-6xl mx-auto bento-section">
-                <GlobalSpotlight gridRef={gridRef} disableAnimations={isMobile} />
+                <GlobalSpotlight gridRef={gridRef} disableAnimations={true} />
 
                 <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-14 gap-4 h-auto">
 
@@ -346,7 +346,7 @@ export default function Statistik() {
                             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[0.95] mb-8 tracking-tighter">
                                 {t("Design", "Desain")} <span className="font-thin block opacity-80 leading-[0.8] italic">{t("doesn't", "tidak")}</span>
                                 {t("have to", "harus")} <br />
-                                <span className="text-[#111]">{t("be boring.", "membosankan.")}</span>
+                                <span className="text-[#111]">{t("Lazy.", "bosan.")}</span>
                             </h2>
                             <div className="flex flex-col gap-4 border-l-2 border-white/20 pl-6">
                                 <p className="text-xs md:text-sm font-black opacity-90 leading-relaxed uppercase tracking-widest">
@@ -354,7 +354,7 @@ export default function Statistik() {
                                 </p>
                                 <span className="text-[10px] opacity-60 font-medium uppercase tracking-widest">{t("Refining the Digital Experience", "Menyempurnakan Pengalaman Digital")}</span>
                             </div>
-                        </div>
+                        </div>h
                     </ParticleCard>
 
                     {/* Right Column - Secondary Info */}
@@ -397,8 +397,8 @@ export default function Statistik() {
                         </div>
 
                         <div className="w-full flex flex-wrap gap-3 mt-10">
-                            <button className="bg-[#111] hover:bg-black text-white rounded-2xl px-5 py-3 flex items-center gap-3 transition-all hover:scale-105 group border border-white/5">
-                                <div className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <button className="bg-[#111] hover:bg-black text-white rounded-2xl px-5 py-3 flex items-center gap-3 transition-all group border border-white/5">
+                                <div className="w-5 h-5 opacity-60 transition-opacity">
                                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.63-.33 2.47-.33.83 0 1.68.11 2.47.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" /></svg>
                                 </div>
                                 <div className="text-left">
@@ -406,7 +406,7 @@ export default function Statistik() {
                                     <div className="text-xs font-black tracking-tight">{t("Open Project", "Proyek Terbuka")}</div>
                                 </div>
                             </button>
-                            <button className="bg-white hover:bg-gray-50 text-black border border-gray-200 rounded-2xl px-5 py-3 flex items-center gap-3 transition-all hover:scale-105 shadow-sm">
+                            <button className="bg-white hover:bg-gray-50 text-black border border-gray-200 rounded-2xl px-5 py-3 flex items-center gap-3 transition-all shadow-sm">
                                 <div className="text-left">
                                     <div className="text-[10px] font-medium opacity-50 leading-none">{t("Join our", "Bergabunglah")}</div>
                                     <div className="text-xs font-black tracking-tight">Discord</div>
@@ -420,14 +420,12 @@ export default function Statistik() {
 
                     {/* Bottom Left Pieces */}
                     <ParticleCard
-                        className="magic-card md:col-span-4 md:row-span-1 rounded-4xl bg-gray-50 flex flex-col p-8 justify-between h-[250px] md:h-auto border border-gray-100/50"
+                        className="magic-card md:col-span-4 md:row-span-1 rounded-4xl bg-gray-50 flex flex-col p-8 justify-between h-[250px] md:h-auto border border-gray-200"
                     >
                         <h4 className="text-2xl font-black tracking-tighter leading-none mb-4 text-[#111]">
                             Global <br /> <span className="text-blue-600">Reach.</span>
                         </h4>
-                        <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-relaxed italic">
-                            {t("Total control in the app,", "Kontrol penuh dalam aplikasi,")} <br /> {t("with zero complexity.", "dengan nol kerumitan.")}
-                        </p>
+
                         <div className="mt-auto flex -space-x-3 items-center">
                             {[1, 2, 3, 4].map(i => (
                                 <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-gray-200">
@@ -439,15 +437,14 @@ export default function Statistik() {
                     </ParticleCard>
 
                     <ParticleCard
-                        className="magic-card md:col-span-4 md:row-span-1 rounded-4xl bg-[#111] flex flex-col p-8 justify-end h-[250px] md:h-auto overflow-hidden relative group"
+                        className="magic-card md:col-span-4 md:row-span-1 rounded-4xl bg-gray-100 text-black flex flex-col p-8 justify-end h-[250px] md:h-auto overflow-hidden relative group"
                     >
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl group-hover:bg-blue-600/30 transition-colors"></div>
-                        <h4 className="text-3xl font-black tracking-tighter leading-[0.85] mb-4 text-white">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 brounded-full blur-3xl transition-colors"></div>
+                        <h4 className="text-3xl font-black tracking-tighter leading-[0.85]">
                             {t("Your style,", "Gayamu,")} <br />
                             <span className="text-blue-500">{t("your way.", "caramu.")}</span>
                         </h4>
-                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest">{t("Unlimited possibilities.", "Kemungkinan tanpa batas.")}</p>
-                        <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full transform group-hover:scale-125 transition-transform duration-700"></div>
+                        <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full transform transition-transform duration-700"></div>
                     </ParticleCard>
 
                 </div>

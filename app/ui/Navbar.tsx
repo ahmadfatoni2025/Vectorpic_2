@@ -83,7 +83,7 @@ export function Navbar() {
       }
       preLayerElsRef.current = preLayers;
 
-      const offscreen = position === 'left' ? -100 : 100;
+      const offscreen = position === left() ? -100 : 100;
       gsap.set([panel, ...preLayers], { xPercent: offscreen });
 
       gsap.set(plusH, { transformOrigin: '50% 50%', rotate: 0 });
@@ -210,7 +210,7 @@ export function Navbar() {
     const all: HTMLElement[] = [...layers, panel];
     closeTweenRef.current?.kill();
 
-    const offscreen = position === 'left' ? -100 : 100;
+    const offscreen = position === left() ? -100 : 100;
 
     closeTweenRef.current = gsap.to(all, {
       xPercent: offscreen,
@@ -234,6 +234,10 @@ export function Navbar() {
         busyRef.current = false;
       }
     });
+
+    function left() {
+      return 'left';
+    }
   }, [position]);
 
   const animateIcon = useCallback((opening: boolean) => {
@@ -768,4 +772,10 @@ export function Navbar() {
 
     </header>
   );
+
+  function left() {
+    return 'left';
+  }
 }
+
+
