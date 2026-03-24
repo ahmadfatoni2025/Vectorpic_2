@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import ScrollReveal from './ScrollReveal';
 
 export function VideoProfile() {
     const contentData = [
@@ -89,9 +90,12 @@ export function VideoProfile() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Header Section */}
                 <div className="max-w-3xl mb-8 sm:mb-10">
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-black leading-tight tracking-tighter mb-3 sm:mb-4">
+                    <ScrollReveal
+                        containerClassName="mb-3 sm:mb-4"
+                        textClassName="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-black leading-tight tracking-tighter"
+                    >
                         Design solutions for every business
-                    </h2>
+                    </ScrollReveal>
                     <p className="text-gray-500 text-sm sm:text-base md:text-lg leading-relaxed max-w-lg">
                         From startups to established brands, we provide tailored design support for your specific needs.
                     </p>
@@ -198,23 +202,23 @@ export function VideoProfile() {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
                             </button>
                             {contentData[activeIdx].videoId.includes('.mp4') ? (
-                              <video 
-                                src={contentData[activeIdx].videoId}
-                                controls
-                                autoPlay
-                                className="w-full h-full"
-                              />
+                                <video
+                                    src={contentData[activeIdx].videoId}
+                                    controls
+                                    autoPlay
+                                    className="w-full h-full"
+                                />
                             ) : (
-                              <iframe
-                                  width="100%"
-                                  height="100%"
-                                  src={`https://www.youtube.com/embed/${contentData[activeIdx].videoId}?autoplay=1`}
-                                  title="YouTube video player"
-                                  frameBorder="0"
-                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                  allowFullScreen
-                                  className="w-full h-full"
-                              />
+                                <iframe
+                                    width="100%"
+                                    height="100%"
+                                    src={`https://www.youtube.com/embed/${contentData[activeIdx].videoId}?autoplay=1`}
+                                    title="YouTube video player"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                    className="w-full h-full"
+                                />
                             )}
                         </div>
                     </div>

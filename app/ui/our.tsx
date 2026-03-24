@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import ScrollReveal from './ScrollReveal';
 
 export function OurDesign() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -132,14 +133,25 @@ export function OurDesign() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Top Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start gap-6 sm:gap-8 mb-8 sm:mb-10">
+
                     <div className="max-w-2xl">
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#111] mb-4 sm:mb-6 leading-tight tracking-tight">
+                        {/* Judul dengan animasi reveal */}
+                        <ScrollReveal
+                            containerClassName="mb-1"
+                            textClassName="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#111] leading-tight tracking-tight"
+                        >
                             Why professional creators choose Vectorpic Excellence
-                        </h2>
-                        <p className="text-gray-500 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg">
+                        </ScrollReveal>
+
+                        {/* Paragraf dengan animasi reveal terpisah */}
+                        <ScrollReveal
+                            containerClassName="mb-4 sm:mb-6"
+                            textClassName="text-gray-500 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg"
+                        >
                             Vectorpic streamlines branding workflows by offering tools for visual parallelization, strategic customization, and efficient asset management.
-                        </p>
+                        </ScrollReveal>
                     </div>
+
                     <Link
                         href="/showcase"
                         className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border border-gray-200 text-xs sm:text-sm font-medium text-black hover:bg-gray-50 transition-all active:scale-95 whitespace-nowrap"

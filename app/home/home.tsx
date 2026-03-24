@@ -12,6 +12,7 @@ import Statistik from "../ui/statistik";
 import Services from "../ui/servics";
 import Qna from "../ui/qna";
 import Rateing from "../ui/rateing";
+import ScrollReveal from "../ui/ScrollReveal";
 
 export default function HomeContent() {
   return (

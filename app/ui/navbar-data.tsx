@@ -26,6 +26,6 @@ export const leadershipItems = [
 
 export const leadershipDiscover = [
   { name: "Meet the Team", href: "/management" },
-  { name: "Join Us", href: "/careers" },
+  { name: "Join Us", href: "/company/careers" },
   { name: "Strategic Partners", href: "/about" },
 ];

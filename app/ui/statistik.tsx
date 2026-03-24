@@ -223,25 +223,9 @@ export default function Statistik() {
 
     return (
         <section className="bg-white py-10 sm:py-16 px-4">
-            <style>
-                {`
-                .bento-section {
-                    --glow-x: 50%;
-                    --glow-y: 50%;
-                    --glow-intensity: 0;
-                    --glow-radius: 400px;
-                }
-                .floating-pill {
-                    animation: float 4s ease-in-out infinite;
-                }
-                @keyframes float {
-                    0%, 100% { transform: translateY(0) rotate(var(--tw-rotate, 0deg)); }
-                    50% { transform: translateY(-10px) rotate(var(--tw-rotate, 0deg)); }
-                }
-                `}
-            </style>
 
-            <div className="max-w-6xl mx-auto bento-section">
+
+            <div className="max-w-7xl mx-auto bento-section">
                 <GlobalSpotlight gridRef={gridRef} disableAnimations={true} />
 
                 <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-14 gap-4 h-auto">
