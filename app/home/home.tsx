@@ -11,12 +11,11 @@ import Track from "../ui/track";
 import Statistik from "../ui/statistik";
 import Services from "../ui/servics";
 import Qna from "../ui/qna";
+import Rateing from "../ui/rateing";
 
 export default function HomeContent() {
   return (
     <main className="min-h-screen bg-white flex flex-col relative overflow-x-hidden">
-      {/* Navbar is fixed, so we don't need to wrap it specifically in the 'grow' container for its position, 
-          but the 'grow' container will handle the padding for its content. */}
       <Navbar />
 
       <div className="grow pt-28 sm:pt-32 flex flex-col items-center">
@@ -27,6 +26,7 @@ export default function HomeContent() {
         <Track />
         <Statistik />
         <Services />
+        <Rateing />
         <Qna />
       </div>
 

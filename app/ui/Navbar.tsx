@@ -131,8 +131,15 @@ export function Navbar() {
           <div className="w-[320px] bg-gray-50/50 p-8">
             <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">WHAT'S NEW</h3>
             <div className="relative aspect-video rounded-xl overflow-hidden bg-white shadow-sm border border-gray-100 mb-6 flex items-center justify-center">
-              <div className="absolute inset-0 bg-linear-to-br from-indigo-50 to-emerald-50 opacity-40" />
-              <Zap className="w-10 h-10 text-indigo-500 animate-pulse relative z-10" />
+              <div className="absolute inset-0" />
+              <img
+                src={type === 'showcase'
+                  ? "https://i.pinimg.com/originals/00/05/e1/0005e1c3aab875cb48ef130c55533cbb.gif"
+                  : "https://i.pinimg.com/originals/22/09/5d/22095d8fd02905f537e78a507c7536e0.gif"}
+                alt={type === 'showcase' ? "Img showcase" : "Img leadership"}
+                className='w-full h-full object-cover'
+              />
+              {/* <Zap className="w-10 h-10 text-indigo-500 animate-pulse relative z-10" /> */}
             </div>
             <h4 className="font-bold text-gray-900 mb-2">{type === 'showcase' ? 'Visual Flow Builder' : 'New Strategic Pillar'}</h4>
             <p className="text-xs text-gray-500 leading-relaxed mb-6">

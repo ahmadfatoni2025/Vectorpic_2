@@ -54,7 +54,7 @@ export default function ShowcaseContent() {
   const filteredProjects = projects.filter(p => activeCategory === "All Work" || p.category === activeCategory);
 
   return (
-    <main className="min-h-screen bg-stone-50/50 font-sans text-gray-900 pb-20 overflow-x-hidden">
+    <main className="min-h-screen bg-stone-50/50 font-sans text-gray-900 pb-20 overflow-x-hidden pt-40">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 text-center">
