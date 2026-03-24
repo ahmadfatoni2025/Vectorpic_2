@@ -15,7 +15,7 @@ export function Hero() {
     <section className="relative flex flex-col items-center justify-center text-center pt-6 sm:pt-8 md:pt-10 pb-10 w-full overflow-hidden px-4 sm:px-6">
 
       <div className="relative z-10 max-w-5xl mx-auto">
-        <h1 className="text-6xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-black tracking-tighter leading-[1.05] mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-black tracking-tighter leading-[1.05] mb-6 sm:mb-8">
           {t("Where", "Dimana")}{" "}
           <RotatingText
             texts={[
@@ -47,10 +47,10 @@ export function Hero() {
             "Bangun ilustrasi menakjubkan, identitas merek, dan aset digital dengan mudah. Dari konsep ke mahakarya dalam hitungan menit, bukan bulan."
           )}
         </p>
-        <div className="flex justify-center gap-4 sm:gap-6">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-12 sm:mb-16">
           {/* Watch Demo Button */}
-          <div className="flex justify-center mb-12 sm:mb-16">
-            <button className="group bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full flex items-center gap-3 transition-all duration-300 shadow-lg hover:-translate-y-0.5">
+          <div className="flex justify-center">
+            <button className="group w-full sm:w-auto bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full flex items-center justify-center gap-3 transition-all duration-300 shadow-lg hover:-translate-y-0.5">
               <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-800 transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="white" className="ml-0.5">
                   <path d="M5 3l14 9-14 9V3z" />
@@ -64,8 +64,8 @@ export function Hero() {
           </div>
 
           {/* Get Started Button */}
-          <div className="flex justify-center mb-12 sm:mb-16">
-            <button className="group bg-gradient-to-r from-[#04cce7] to-[#04b8d0] hover:from-[#04b8d0] hover:to-[#04a4bc] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-full flex items-center gap-3 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5">
+          <div className="flex justify-center">
+            <button className="group w-full sm:w-auto bg-gradient-to-r from-[#04cce7] to-[#04b8d0] hover:from-[#04b8d0] hover:to-[#04a4bc] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-full flex items-center justify-center gap-3 transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-0.5">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="white" className="ml-0.5">
                   <path d="M5 3l14 9-14 9V3z" />

@@ -331,7 +331,7 @@ export default function Statistik() {
                                 className="relative w-full h-full flex items-center justify-center"
                             >
                                 <video
-                                    src="/stats/sketboard.mp4"
+                                    src="/images/stats/sketboard.mp4"
                                     autoPlay
                                     loop
                                     muted
@@ -354,7 +354,7 @@ export default function Statistik() {
                                 </p>
                                 <span className="text-[10px] opacity-60 font-medium uppercase tracking-widest">{t("Refining the Digital Experience", "Menyempurnakan Pengalaman Digital")}</span>
                             </div>
-                        </div>h
+                        </div>
                     </ParticleCard>
 
                     {/* Right Column - Secondary Info */}
@@ -383,7 +383,7 @@ export default function Statistik() {
                                 className="relative w-full max-w-[420px] aspect-video border-b-2 border-gray-200 overflow-hidden"
                             >
                                 <video
-                                    src="/stats/basket.mp4"
+                                    src="/images/stats/basket.mp4"
                                     autoPlay
                                     loop
                                     muted

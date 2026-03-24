@@ -3,219 +3,208 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useLanguage } from "../../context/LanguageContext";
 import { Navbar } from '../Navbar';
 import { Footer } from '../footer';
 
 export default function UIUX() {
-  const { t } = useLanguage();
+    const paperTexture = "https://images.unsplash.com/photo-1603484477859-abe6a73f9366?w=1200&q=60";
+    const darkPaperTexture = "https://images.unsplash.com/photo-1603484477859-abe6a73f9366?w=1200&q=60";
 
-  const colors = [
-    { name: t("Interactivity Blue", "Biru Interaktif"), hex: "#0070f3", desc: t("Drives focus, action, and trust deep within the digital environment.", "Mendorong fokus, tindakan, dan kepercayaan di dalam lingkungan digital.") },
-    { name: t("Slate Contrast", "Kontras Slate"), hex: "#111827", desc: t("Provides strong visual hierarchy and modern aesthetics.", "Memberikan hierarki visual yang kuat dan estetika modern.") },
-  ];
+    const masonryImages = [
+        "https://images.unsplash.com/photo-1508344928928-76bc0633b49e?w=400&q=60",
+        "https://images.unsplash.com/photo-1574629810360-7efbb1925846?w=400&q=60",
+        "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=400&q=60",
+        "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=400&q=60",
+        "https://images.unsplash.com/photo-1512719994953-eabf50895df7?w=400&q=60",
+        "https://images.unsplash.com/photo-1518091043644-c1d44570a2c1?w=400&q=60",
+        "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=400&q=60",
+        "https://images.unsplash.com/photo-1461896836934-ffe607fa8211?w=400&q=60",
+        "https://images.unsplash.com/photo-1434608519344-49d77a699e1d?w=400&q=60",
+        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=60",
+    ];
 
-  return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
+    return (
+        <div className="font-sans overflow-x-hidden min-h-screen bg-white">
+            <Navbar />
 
-      {/* 1. HERO BANNER SECTION */}
-      <section className="relative w-full bg-[#111827] overflow-hidden pt-32 pb-40 md:py-48 px-6">
-        {/* Abstract Geometric Shapes */}
-        <div className="absolute right-0 top-0 h-full w-1/2 overflow-hidden pointer-events-none opacity-80">
-          <div className="absolute top-10 right-20 w-40 h-40 bg-[#0070f3] rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl opacity-50"></div>
-          <div className="absolute top-1/2 right-0 w-64 h-32 bg-[#0070f3] rounded-t-full translate-x-1/4 opacity-70"></div>
-          <div className="absolute bottom-0 right-40 w-48 h-24 bg-white/10 rounded-t-full backdrop-blur-md"></div>
-          <div className="absolute top-1/3 right-1/4 w-32 h-32 bg-white/5 rounded-2xl border border-white/10 rotate-45 backdrop-blur-lg"></div>
-        </div>
+            {/* 1. HERO SECTION */}
+            <div className="relative w-full h-auto min-h-[60vh] md:min-h-[80vh] flex flex-col items-center justify-center overflow-hidden pt-20 pb-10">
+                {/* Paper Texture Overlay */}
+                <div
+                    className="absolute inset-0 opacity-40 mix-blend-multiply pointer-events-none z-0"
+                    style={{ backgroundImage: `url(${paperTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                ></div>
 
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col justify-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-6 mb-8"
-          >
-            <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center p-3 shadow-2xl">
-              <Image src="/logo/logo-brand.jpg" alt="Logo" width={60} height={60} className="object-contain" />
-            </div>
-            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">UI/UX Design</h1>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-xl"
-          >
-            <p className="text-white/80 text-lg md:text-xl font-medium leading-relaxed mb-12">
-              {t(
-                "We craft intuitive, engaging, and highly functional user interfaces. Our UX research ensures that every interaction is meaningful and seamless.",
-                "Kami merancang antarmuka pengguna yang intuitif, menarik, dan sangat fungsional. Riset UX kami memastikan setiap interaksi bermakna dan mulus."
-              )}
-            </p>
-            <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-lg text-white/50 text-xs font-black tracking-widest uppercase border border-white/5">
-              {t("Digital Experience Hub", "Pusat Pengalaman Digital")}
-            </span>
-          </motion.div>
-        </div>
-      </section>
-
-      <div className="max-w-6xl mx-auto px-6 py-24 flex flex-col gap-32">
-
-        {/* 2. DESIGN PROCESS SECTION */}
-        <section>
-          <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-8">
-            <div className="max-w-2xl">
-              <h2 className="text-4xl font-black text-black mb-6 uppercase tracking-tight">{t("Wireframing", "Pembuatan Rangka")}</h2>
-              <p className="text-gray-500 font-medium leading-relaxed">
-                {t(
-                  "Our process balances complex user flows with minimal cognitive load, prioritizing usability without sacrificing aesthetic quality.",
-                  "Proses kami menyeimbangkan alur pengguna yang kompleks dengan beban kognitif minimal, mengutamakan kegunaan tanpa mengorbankan kualitas estetika."
-                )}
-              </p>
-            </div>
-            {/* Checklist badge */}
-            <div className="bg-white border border-gray-100 shadow-xl rounded-2xl p-6 w-52 shrink-0">
-              <ul className="flex flex-col gap-3">
-                {["Research", "Wireframe", "Prototype", "Testing", "Execution"].map((tag) => (
-                  <li key={tag} className="flex items-center gap-3 text-[11px] font-black uppercase text-[#0070f3] tracking-wider">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#0070f3]"></div>
-                    {tag}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div className="flex flex-col items-center gap-6 text-center">
-              <div className="w-full aspect-square bg-gray-50 border border-dashed border-gray-300 rounded-3xl flex items-center justify-center p-12 overflow-hidden relative">
-                 <div className="absolute inset-x-8 top-12 bottom-12 border-2 border-gray-200 rounded-xl"></div>
-                 <div className="absolute top-16 left-12 right-12 h-8 bg-gray-200 rounded"></div>
-                 <div className="absolute top-28 left-12 w-16 h-16 bg-gray-200 rounded-full"></div>
-              </div>
-              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">{t("Low Fidelity", "Fidelitas Rendah")}</span>
-            </div>
-
-            <div className="flex flex-col items-center gap-6 text-center">
-              <div className="w-full aspect-square bg-white border border-gray-100 shadow-lg rounded-3xl flex flex-col items-center justify-center p-8 overflow-hidden relative">
-                <div className="w-full h-full bg-blue-50/50 rounded-2xl border border-blue-100 p-4 flex flex-col gap-4">
-                   <div className="w-8 h-8 rounded-full bg-blue-200"></div>
-                   <div className="flex-1 w-full bg-white rounded-lg shadow-sm"></div>
+                {/* Chain and airplane doodles */}
+                <div className="absolute top-10 left-10 opacity-60 w-32 h-32 z-10 hidden md:block select-none pointer-events-none drop-shadow-sm">
+                    {/* Simple chain SVG */}
+                    <svg viewBox="0 0 100 100" className="w-full h-full text-black" fill="transparent" stroke="currentColor" strokeWidth="4">
+                        <rect x="25" y="25" width="20" height="40" rx="10" transform="rotate(-45 50 50) translate(-30,-30)" />
+                        <rect x="25" y="25" width="20" height="40" rx="10" transform="rotate(-45 50 50) translate(0,-30)" />
+                        <rect x="25" y="25" width="20" height="40" rx="10" transform="rotate(-45 50 50) translate(30,-30)" />
+                    </svg>
                 </div>
-              </div>
-              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">{t("Interactive Prototyping", "Prototipe Interaktif")}</span>
-            </div>
-
-            <div className="flex flex-col items-center gap-6 text-center">
-              <div className="w-full aspect-square bg-white shadow-2xl rounded-3xl flex items-center justify-center p-4 relative overflow-hidden">
-                <div className="absolute inset-0 bg-linear-to-br from-[#0070f3]/10 to-transparent"></div>
-                <div className="w-full h-full bg-[#111827] rounded-2xl relative overflow-hidden z-10 p-4 flex flex-col">
-                   <div className="w-full h-6 flex justify-between items-center mb-4">
-                      <div className="flex gap-1"><div className="w-2 h-2 rounded-full bg-red-400"></div><div className="w-2 h-2 rounded-full bg-yellow-400"></div><div className="w-2 h-2 rounded-full bg-green-400"></div></div>
-                   </div>
-                   <div className="flex-1 bg-gray-800 rounded-xl mb-3"></div>
-                   <div className="h-12 bg-gray-800 rounded-xl"></div>
+                <div className="absolute top-10 right-10 opacity-80 w-32 h-32 z-10 hidden md:block select-none pointer-events-none drop-shadow-sm">
+                    {/* Paper Airplane SVG with dashed trail */}
+                    <svg viewBox="0 0 100 100" stroke="black" fill="none" strokeWidth="2" strokeDasharray="4,4">
+                        <path d="M 0 100 Q 30 70 60 50" />
+                    </svg>
+                    <svg viewBox="0 0 100 100" stroke="black" fill="none" strokeWidth="3" className="absolute top-0 right-0 w-16 h-16 transform translate-x-[20%] -translate-y-[20%]">
+                        <path d="M 10 90 L 90 10 L 40 10 Z" fill="white" />
+                        <path d="M 90 10 L 40 40 L 10 90 Z" fill="white" />
+                        <path d="M 40 10 L 40 40" />
+                    </svg>
                 </div>
-              </div>
-              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">{t("High Fidelity", "Fidelitas Tinggi")}</span>
-            </div>
-          </div>
-        </section>
 
-        {/* 3. PLATFORM USAGE SECTION */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-24">
-          <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Mobile Interface", "Antarmuka Seluler")}</h3>
-            <div className="flex gap-8 md:gap-12 relative h-64 justify-center items-center">
-              <div className="w-32 h-60 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] border-[6px] border-gray-900 relative overflow-hidden shrink-0">
-                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-gray-900 rounded-full"></div>
-                 <div className="mt-8 px-3 flex flex-col gap-3">
-                   <div className="w-full h-12 bg-gray-100 rounded-xl"></div>
-                   <div className="w-full h-20 bg-blue-50 rounded-xl"></div>
-                   <div className="w-1/2 h-8 bg-gray-100 rounded-xl"></div>
-                 </div>
-              </div>
-              <div className="w-32 h-60 bg-gray-900 shadow-[0_20px_50px_rgba(0,0,0,0.2)] rounded-[2rem] border-[6px] border-gray-800 mt-8 relative overflow-hidden shrink-0">
-                 <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-1.5 bg-gray-800 rounded-full"></div>
-                 <div className="mt-8 px-3 flex flex-col gap-3">
-                   <div className="w-full h-12 bg-gray-800 rounded-xl"></div>
-                   <div className="w-full h-20 bg-blue-900/40 rounded-xl"></div>
-                   <div className="w-1/2 h-8 bg-gray-800 rounded-xl"></div>
-                 </div>
-              </div>
-            </div>
-            <div className="flex justify-around mt-8">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">iOS / Android</span>
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Dark Mode</span>
-            </div>
-          </div>
+                {/* Stars */}
+                <div className="absolute top-[25%] left-[20%] text-3xl z-10 pointer-events-none font-bold">✶</div>
+                <div className="absolute top-[25%] right-[15%] text-3xl z-10 pointer-events-none font-bold">✶</div>
+                <div className="absolute bottom-[20%] left-[25%] text-3xl z-10 pointer-events-none font-bold text-[#4F46E5] drop-shadow">✶</div>
 
-          <div className="flex flex-col h-full">
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Desktop Interface", "Antarmuka Desktop")}</h3>
-            <div className="flex flex-col gap-6 flex-1 justify-center">
-              <div className="w-full h-48 bg-white border border-gray-100 shadow-xl rounded-2xl flex flex-col overflow-hidden relative">
-                 <div className="w-full h-8 bg-gray-50 border-b border-gray-100 flex items-center px-4 gap-2 shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div><div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div><div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                 </div>
-                 <div className="flex h-full p-4 gap-4">
-                    <div className="w-1/4 h-full bg-gray-100 rounded-lg shrink-0"></div>
-                    <div className="w-3/4 h-full flex flex-col gap-4">
-                      <div className="w-full h-1/2 bg-blue-50 rounded-lg"></div>
-                      <div className="flex gap-4 flex-1">
-                        <div className="w-1/2 h-full bg-gray-50 rounded-lg border border-gray-100"></div>
-                        <div className="w-1/2 h-full bg-gray-50 rounded-lg border border-gray-100"></div>
-                      </div>
+                {/* Central Logo Header */}
+                <div className="relative z-20 flex flex-col items-center mt-12 md:max-w-2xl px-4">
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className=" text-white px-6 md:px-12 py-4 md:py-6 border-b-[6px] md:border-b-[8px] border-black flex flex-col items-center shadow-lg relative overflow-hidden"
+                    >
+                        <div className="flex items-center justify-center gap-1 md:gap-2 font-bold">
+                            {/* Main text */}
+                            <span className="text-[3.5rem] md:text-8xl lg:text-[9rem] leading-none tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                                PURTO
+                            </span>
+
+                            {/* Stylized F with accents */}
+                            <div className="relative inline-flex flex-col items-center justify-center">
+                                <span className="text-[3.5rem] md:text-8xl lg:text-[9rem] leading-none tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                                    F
+                                </span>
+                                <span className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 text-[0.3em] md:text-[0.25em] font-medium text-gray-400">
+                                    ~
+                                </span>
+                                <span className="absolute -bottom-2 md:-bottom-3 left-1/2 -translate-x-1/2 text-[0.4em] md:text-[0.3em] font-medium text-gray-500">
+                                    A
+                                </span>
+                            </div>
+
+                            {/* Remaining text */}
+                            <span className="text-[3.5rem] md:text-8xl lg:text-[9rem] leading-none tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                                LIO
+                            </span>
+                        </div>
+
+                        <div className="mt-8 flex flex-wrap items-center justify-between w-full border-t-[1.5px] border-white pt-2 text-[6px] sm:text-[8px] md:text-[10px] tracking-[0.2em] font-bold">
+                            <span>DESIGNED BY ABDUL AZIZ ANNAJIH</span>
+                            <span className="flex-grow mx-2 md:mx-4 h-[1.5px] bg-white hidden sm:block"></span>
+                            <span className="ml-auto sm:ml-0">2024</span>
+                        </div>
+                    </motion.div>
+
+                    {/* VVVV Patterns */}
+                    <div className="text-[#4F46E5] text-[10px] sm:text-xs md:text-lg font-mono tracking-[0.2em] md:tracking-[0.4em] font-bold mt-8 md:mt-12 whitespace-nowrap overflow-hidden w-full text-center mix-blend-multiply opacity-90 z-20">
+                        vvvv vvvv vvvv vvvv vvvv vvvv vvvv vvvv vvvv vvvv
                     </div>
-                 </div>
-              </div>
-            </div>
-            <div className="flex justify-around mt-8">
-              <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{t("Web Application", "Aplikasi Web")}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* 4. DESIGN SYSTEM SECTION */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-24 pt-16 border-t border-gray-100">
-          <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Colors", "Warna")}</h3>
-            <div className="flex flex-wrap gap-12 mb-10">
-              {colors.map((color) => (
-                <div key={color.hex} className="flex flex-col gap-6">
-                  <div className="w-40 h-44 rounded-3xl shadow-2xl border-2 border-white" style={{ backgroundColor: color.hex }}></div>
-                  <div className="text-center">
-                    <span className="block text-sm font-black text-gray-300 mb-1">{color.hex}</span>
-                    <span className="block text-xs font-bold text-black uppercase tracking-widest">{color.name}</span>
-                  </div>
                 </div>
-              ))}
-            </div>
-            <p className="text-gray-400 text-sm font-medium italic max-w-sm">
-              {t("A robust design system ensures consistency and speeds up development across platforms.", "Sistem desain yang kuat memastikan konsistensi dan mempercepat pengembangan di seluruh platform.")}
-            </p>
-          </div>
 
-          <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Font System", "Sistem Font")}</h3>
-            <div className="flex flex-col gap-6 mb-12">
-              <div className="flex flex-col">
-                <span className="text-5xl md:text-7xl font-black text-black tracking-tighter" style={{ fontFamily: 'Inter, sans-serif' }}>Inter Bold</span>
-                <span className="text-2xl md:text-3xl font-medium text-gray-400 tracking-tight mt-2" style={{ fontFamily: 'Inter, sans-serif' }}>Inter Medium</span>
-              </div>
-            </div>
-            <p className="text-gray-400 text-sm font-medium italic max-w-md leading-relaxed">
-              {t(
-                "Inter is a typeface carefully crafted & designed for computer screens, ensuring excellent readability.",
-                "Inter adalah jenis huruf yang dirancang hati-hati untuk layar komputer, memastikan keterbacaan yang sangat baik."
-              )}
-            </p>
-          </div>
-        </section>
-      </div>
+                {/* Left Statue */}
+                <div className="absolute bottom-[-10%] left-[-10%] md:bottom-0 md:left-[-2%] w-64 h-80 md:w-96 md:h-[30rem] z-10 opacity-100 select-none pointer-events-none">
+                    {/* Faking brand outline with glowing background blob */}
+                    <svg viewBox="0 0 200 200" className="absolute inset-x-0 bottom-0 top-1/4 w-full h-[80%] transform scale-110 drop-shadow-[0_0_15px_rgba(79,70,229,0.8)]" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4F46E5" d="M39.9,-27.2C54.4,-11.2,70.9,4.4,68.9,21.9C67,39.4,46.7,58.8,25.4,64.2C4.1,69.5,-18.2,60.8,-35.3,46.4C-52.5,32,-64.4,12.1,-60.8,-6.2C-57.2,-24.5,-38.1,-41.2,-20.9,-46.7C-3.8,-52.1,11.5,-46.2,25.4,-43.3L39.9,-27.2Z" transform="translate(100 100) scale(1.1)" />
+                    </svg>
+                    <Image
+                        src="https://images.unsplash.com/photo-1544413156-f446cc22b4cb?w=600&q=70"
+                        alt="Statue Left"
+                        fill
+                        className="object-contain origin-bottom object-bottom filter grayscale contrast-[1.1] mix-blend-multiply"
+                    />
+                </div>
 
-      <Footer />
-    </div>
-  );
+                {/* Right Statue */}
+                <div className="absolute bottom-[-10%] right-[-10%] md:bottom-0 md:right-[-2%] w-64 h-80 md:w-96 md:h-[30rem] z-10 opacity-100 select-none pointer-events-none">
+                    {/* Outline blob */}
+                    <svg viewBox="0 0 200 200" className="absolute inset-x-0 bottom-0 top-1/4 w-[110%] h-[80%] transform scale-125 drop-shadow-[0_0_15px_rgba(79,70,229,0.8)]" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4F46E5" d="M47.7,-64.1C59.7,-51.9,65.8,-34.5,69.5,-17.7C73.1,-0.8,74.3,15.6,67.8,29.9C61.3,44.2,47,56.5,31.7,64.3C16.3,72.2,0,75.6,-16.9,73.6C-33.7,71.6,-51.2,64.1,-63.9,51C-76.5,37.8,-84.3,18.9,-83.4,0.6C-82.5,-17.8,-72.9,-35.6,-60.1,-48.1C-47.2,-60.6,-31,-67.7,-14.8,-69.5C1.3,-71.4,17.7,-68.1,33.7,-61.7L47.7,-64.1Z" transform="translate(100 100) scale(1.1) rotate(45)" />
+                    </svg>
+                    <Image
+                        src="https://images.unsplash.com/photo-1552559092-23c3167b2d5f?w=600&q=70"
+                        alt="Statue Right"
+                        fill
+                        className="object-contain origin-bottom object-bottom filter grayscale contrast-[1.1] mix-blend-multiply"
+                    />
+                </div>
+
+            </div>
+
+            {/* 2. ABOUT SECTION */}
+            <div className="relative w-full py-24 px-8 md:px-20 bg-[#0f172a] text-white overflow-hidden shadow-[inset_0_20px_30px_rgba(0,0,0,0.5)]">
+                {/* Dark paper texture overlay */}
+                <div
+                    className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none z-0 filter grayscale"
+                    style={{ backgroundImage: `url(${darkPaperTexture})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                ></div>
+
+                <div className="relative z-10 max-w-6xl mx-auto flex flex-col md:flex-row gap-16 md:gap-32">
+
+                    {/* Left: About Me */}
+                    <div className="flex-1 max-w-2xl">
+                        <div className="inline-block bg-[#4F46E5] text-white px-4 py-1.5 font-bold text-xl md:text-3xl tracking-tight mb-8 transform -skew-x-[5deg] shadow-lg">
+                            <span className="block transform skew-x-[5deg]">ABOUT ME</span>
+                        </div>
+                        <p className="text-gray-200 text-sm md:text-[17px] leading-relaxed font-medium">
+                            Hello, my name is Abdul Aziz Annajih. i am a student at Al-Azhar University, i am now pursuing the field of graphic design for about the last 3 years and i prefer the sport of graphic design.
+                            <br /><br />
+                            Hope you like to get to know me.
+                        </p>
+                    </div>
+
+                    {/* Right: Software */}
+                    <div className="flex-1 flex flex-col items-start md:items-end md:text-right">
+                        <div className="inline-block bg-[#4F46E5] text-white px-4 py-1.5 font-bold text-xl md:text-3xl tracking-tight mb-8 transform -skew-x-[5deg] shadow-lg">
+                            <span className="block transform skew-x-[5deg]">SOFTWARE</span>
+                        </div>
+                        <div className="flex flex-wrap md:justify-end gap-3 mt-4 max-w-xs">
+                            {['Pr', 'Ps', 'Ae', 'Ai'].map((sw, idx) => (
+                                <div key={idx} className="w-[4.5rem] h-[4.5rem] bg-white rounded-2xl flex items-center justify-center transform transition duration-300 hover:scale-110 shadow-lg cursor-pointer hover:shadow-[0_0_20px_rgba(79,70,229,0.8)] border border-gray-100">
+                                    <span className="text-black font-black text-2xl tracking-tighter" style={{ fontFamily: 'Impact, sans-serif' }}>{sw}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* Sparkles bottom right */}
+                <div className="absolute bottom-[30%] right-[10%] text-white text-3xl z-10 select-none pointer-events-none">✶</div>
+            </div>
+
+            {/* 3. MASONRY GRID (PORTFOLIO PROJECTS) */}
+            <div className="relative w-full bg-[#111] min-h-screen pt-4 pb-20">
+                {/* "DESIGN" sticker label */}
+                <div className="absolute top-12 left-6 md:top-20 md:left-20 z-20 bg-[#4F46E5] text-white px-6 py-2 md:px-10 md:py-3 font-bold text-2xl md:text-4xl shadow-2xl hover:scale-105 transition-transform cursor-crosshair border border-indigo-400">
+                    DESIGN
+                </div>
+
+                {/* Masonry Layout Container */}
+                {/* Simple columns wrapper for masonry */}
+                <div className="columns-2 sm:columns-3 lg:columns-4 gap-0 space-y-0 w-full hover:opacity-100 transition-opacity duration-500 overflow-hidden">
+                    {masonryImages.map((src, i) => (
+                        <div key={i} className="relative group overflow-hidden break-inside-avoid bg-black p-[1px]">
+                            <Image
+                                src={src}
+                                alt={`Project ${i}`}
+                                width={500}
+                                height={i % 3 === 0 ? 600 : i % 2 === 0 ? 400 : 300} // Masonry varied heights
+                                className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.03] filter brightness-90 group-hover:brightness-110"
+                                unoptimized
+                            />
+                            {/* Subtle vignette on hover */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                        </div>
+                    ))}
+                </div>
+                <Footer />
+            </div>
+        </div >
+    );
 }
-

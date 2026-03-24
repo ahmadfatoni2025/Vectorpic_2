@@ -11,22 +11,22 @@ export default function Track() {
     {
       link: "/services/branding",
       text: "Branding",
-      image: "https://images.unsplash.com/photo-1558655146-d09347e92766",
+      image: "https://i.pinimg.com/avif/1200x/cc/4a/51/cc4a51556f7440f1768797ff68855ffd.avf",
     },
     {
       link: "/services/ui-ux",
       text: "UI/UX Design",
-      image: "https://images.unsplash.com/photo-1586717791821-3f44a563dc4c",
+      image: "https://i.pinimg.com/avif/1200x/f8/51/4a/f8514a4aa0939413a5bf0cd9a963768b.avf",
     },
     {
       link: "/services/illustration",
       text: "Illustration",
-      image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
+      image: "https://i.pinimg.com/avif/1200x/5c/c1/89/5cc189e4ec60557024728d112351960e.avf",
     },
     {
       link: "/services/motion-graphics",
       text: "Motion Graphics",
-      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f",
+      image: "https://i.pinimg.com/avif/1200x/09/e4/0a/09e40a3f556058ae2f57ba22bce36f12.avf",
     },
   ];
 

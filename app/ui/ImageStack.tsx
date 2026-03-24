@@ -21,6 +21,17 @@ export function ImageStack() {
     restDelta: 0.001
   });
 
+  const [windowWidth, setWindowWidth] = React.useState(0);
+  React.useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth > 0 && windowWidth < 640;
+  const isTablet = windowWidth >= 640 && windowWidth < 1024;
+
   // Optimized image set with size constraints
   const cards = [
     { id: 1, label: t("Modern Vector Art", "Seni Vektor Modern"), imageUrl: "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=400&q=70" },
@@ -33,7 +44,7 @@ export function ImageStack() {
   ];
 
   return (
-    <section ref={containerRef} className="relative h-[100vh] -top-54 flex flex-col items-center bg-white overflow-hidden sm:overflow-visible">
+    <section ref={containerRef} className="relative h-[100vh] -mt-16 sm:-mt-54 flex flex-col items-center bg-white overflow-hidden sm:overflow-visible">
 
       <div className="sticky top-0 h-screen flex items-center justify-center w-full">
         <div className="relative flex items-center justify-center w-full max-w-screen-2xl mx-auto h-full px-4 sm:px-10">
@@ -43,16 +54,16 @@ export function ImageStack() {
             const offset = idx - middle;
 
             // INITIAL STATE (Partially visible at start)
-            const initialRotation = offset * 4;
-            const initialX = offset * -35;
-            const initialY = Math.abs(offset) * 12 + 80; // Pushed down but visible
+            const initialRotation = offset * (isMobile ? 2 : 4);
+            const initialX = offset * (isMobile ? -15 : -35);
+            const initialY = Math.abs(offset) * (isMobile ? 6 : 12) + (isMobile ? 40 : 80); // Pushed down but visible
             const initialScale = 0.9;
 
             // TARGET STATE (Wide curved arc)
-            const targetX = offset * 180;
-            const targetRotation = offset * 8;
-            const targetScale = 1.25 - (Math.abs(offset) * 0.08);
-            const targetY = Math.abs(offset) * 45;
+            const targetX = offset * (isMobile ? 35 : (isTablet ? 120 : 180));
+            const targetRotation = offset * (isMobile ? 4 : 8);
+            const targetScale = (isMobile ? 1.0 : 1.25) - (Math.abs(offset) * (isMobile ? 0.05 : 0.08));
+            const targetY = Math.abs(offset) * (isMobile ? 10 : (isTablet ? 30 : 45));
 
             // Transform progress: 0.1 to 0.5 for the main animation
             const x = useTransform(smoothProgress, [0, 0.5], [initialX, targetX]);

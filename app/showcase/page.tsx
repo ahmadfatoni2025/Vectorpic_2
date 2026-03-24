@@ -2,269 +2,403 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '../ui/Navbar';
 import { Footer } from '../ui/footer';
-import { ChevronLeft, ChevronRight, Clock, Heart, MoreHorizontal, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Heart, MoreHorizontal, Search, X, MessageCircle, ExternalLink } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useState, useEffect } from 'react';
 
-const EthIcon = () => (
-  <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block text-blue-500 mr-1">
-    <path d="M4.99968 0L4.85156 0.530368V11.0261L4.99968 11.1738L9.99936 8.16782L4.99968 0Z" fill="currentColor" />
-    <path d="M4.99999 0L0 8.16782L4.99999 11.1738V5.88219V0Z" fill="currentColor" fillOpacity="0.7" />
-    <path d="M4.99968 12.0163L4.88086 12.1648V15.7001L4.99968 16L10 8.99591L4.99968 12.0163Z" fill="currentColor" />
-    <path d="M5.00003 16V12.0163L0 8.99591L5.00003 16Z" fill="currentColor" fillOpacity="0.7" />
-  </svg>
-);
+const categories = [
+  "All Work", "Vector Art", "Branding", "UI/UX Design", "Packaging", "Illustration", "Motion"
+];
 
-const FlowIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block text-green-500 mr-1">
-    <path d="M12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0ZM12 18.3333C8.50219 18.3333 5.66667 15.4978 5.66667 12C5.66667 8.50219 8.50219 5.66667 12 5.66667C15.4978 5.66667 18.3333 8.50219 18.3333 12C18.3333 15.4978 15.4978 18.3333 12 18.3333Z" fill="currentColor" fillOpacity="0.2" />
-    <path d="M12 5.66667C8.50219 5.66667 5.66667 8.50219 5.66667 12C5.66667 15.4978 8.50219 18.3333 12 18.3333C15.4978 18.3333 18.3333 15.4978 18.3333 12C18.3333 8.50219 15.4978 5.66667 12 5.66667ZM12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12C15 13.6569 13.6569 15 12 15Z" fill="currentColor" />
-  </svg>
-);
+const projects = [
+  { id: 1, title: "Modern Brand Identity", category: "Branding", img: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800", size: "lg", description: "A high-end visual identity system designed for premium brands looking to stand out." },
+  { id: 2, title: "Abstract Vector Set", category: "Vector Art", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800", size: "sm", description: "Carefully crafted vector illustrations with a focus on geometric patterns and modern aesthetics." },
+  { id: 3, title: "Premium Package Design", category: "Packaging", img: "https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?q=80&w=800", size: "sm", description: "Eco-friendly and visually stunning packaging solutions for luxury goods." },
+  { id: 4, title: "Fintech Mobile App", category: "UI/UX Design", img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800", size: "md", description: "A seamless, secure, and intuitive banking experience designed for the next generation." },
+  { id: 5, title: "Minimalist Poster", category: "Illustration", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800", size: "lg", description: "Bold, minimal compositions that capture complex ideas through simplicity." },
+  { id: 6, title: "Digital Art Collection", category: "Vector Art", img: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?q=80&w=800", size: "md", description: "NFT-ready digital artwork created with precision and vibrant color palettes." },
+  { id: 7, title: "Corporate Rebrand", category: "Branding", img: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=800", size: "sm", description: "Refreshing established corporate identities for a digital-first world." },
+  { id: 8, title: "Social Media Motion", category: "Motion", img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=800", size: "md", description: "High-engagement motion graphics tailored for maximum impact on social platforms." },
+];
 
-const XtzIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block text-blue-400 mr-1">
-    <path d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z" fill="currentColor" fillOpacity="0.2" />
-    <path d="M15.4286 7.71429V6H8.57143V7.71429H10.2857C10.6011 7.71429 10.8571 7.97029 10.8571 8.28571V15.4286H9.42857С9.11314 15.4286 8.85714 15.6846 8.85714 16V17.7143H15.4286V16H14.5714C14.256 16 14 15.744 14 15.4286V8.28571C14 7.97029 14.256 7.71429 14.5714 7.71429H15.4286Z" fill="currentColor" />
-  </svg>
-);
+function ShowcaseContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const [activeCategory, setActiveCategory] = useState("All Work");
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (categoryParam && categories.includes(categoryParam)) {
+      setActiveCategory(categoryParam);
+    }
+  }, [categoryParam]);
 
-export default function ShowcasePage() {
+  // Close modal on escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedProject) {
+        setSelectedProject(null);
+        setIsModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [selectedProject]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProject]);
+
+  const filteredProjects = projects.filter(p => activeCategory === "All Work" || p.category === activeCategory);
+
   return (
-    <main className="min-h-screen bg-white font-sans text-gray-900 pb-20">
+    <main className="min-h-screen bg-stone-50/50 font-sans text-gray-900 pb-20 overflow-x-hidden">
       <Navbar />
 
-      <div className="max-w-[1400px] mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28 pb-8 text-center bg-transparent">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="px-4 sm:px-0"
+        >
+          <span className="text-[10px] sm:text-[11px] font-black tracking-[0.3em] text-[#4F46E5] uppercase mb-3 sm:mb-4 block">
+            Visual Excellence
+          </span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black tracking-tighter leading-[1.1] sm:leading-[1.1] mb-4 sm:mb-6">
+            Curated <span className="text-gray-300">Showcase.</span>
+          </h1>
+          <p className="max-w-xl mx-auto text-gray-400 text-sm sm:text-base md:text-lg font-medium leading-relaxed px-4 sm:px-0 mb-8 sm:mb-12">
+            A collection of high-end vector graphics, brand identities, and digital experiences crafted with precision.
+          </p>
+        </motion.div>
 
-        {/* --- HEADER GRID --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
-          {/* Hero Left Banner */}
-          <div className="relative rounded-[2rem] bg-gradient-to-br from-[#8A2387] via-[#E94057] to-[#F27121] p-10 flex flex-col justify-end min-h-[480px] overflow-hidden group">
-            {/* Decorative floating circular images */}
-            <div className="absolute top-[10%] left-[10%] w-24 h-24 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
-              <Image src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200" alt="3d" fill className="object-cover" />
-            </div>
-            <div className="absolute top-[5%] left-[45%] w-16 h-16 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
-              <Image src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=200" alt="3d" fill className="object-cover" />
-            </div>
-            <div className="absolute top-[20%] right-[15%] w-28 h-28 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl bg-black">
-              <Image src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200" alt="3d" fill className="object-cover" />
-            </div>
-            <div className="absolute top-[40%] left-[15%] w-20 h-20 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl bg-black">
-              <Image src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=200" alt="3d" fill className="object-cover" />
-            </div>
-            <div className="absolute top-[35%] left-[38%] w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl bg-purple-500">
-              <Image src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=200" alt="3d" fill className="object-cover" />
-            </div>
-            <div className="absolute top-[45%] right-[5%] w-24 h-24 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl bg-orange-400">
-              <Image src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200" alt="3d" fill className="object-cover" />
-            </div>
-
-
-            {/* Text Content */}
-            <div className="relative z-10 text-center text-white mt-auto">
-              <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-md">Explore and collect NFTs</h1>
-              <p className="text-white/80 max-w-md mx-auto mb-8 text-sm md:text-base font-medium drop-shadow-sm">
-                Our marketplace is the world's first and largest NFT market for independent creators worldwide
-              </p>
-              <button className="bg-[#6366f1] hover:bg-[#4f46e5] text-white px-8 py-3.5 rounded-full font-bold shadow-lg transition-transform hover:scale-105 active:scale-95 text-sm">
-                See 240,590 items
-              </button>
+        {/* --- FILTERS (Responsive Scrollable) --- */}
+        <div className="relative mb-12 sm:mb-16">
+          <div className="overflow-x-auto pb-2 hide-scrollbar">
+            <div className="flex flex-nowrap justify-start md:justify-center gap-2 px-4 sm:px-0 min-w-min">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap ${activeCategory === cat
+                    ? "bg-black text-white shadow-lg scale-105"
+                    : "bg-white text-gray-400 border border-gray-100 hover:border-gray-300 hover:text-black"
+                    }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
-
-          {/* Right Grid */}
-          <div className="grid grid-cols-2 gap-4 h-full">
-            {/* Box 1 */}
-            <div className="relative rounded-[2rem] overflow-hidden group">
-              <Image src="https://images.unsplash.com/photo-1618172193622-ae2d025f4032?q=80&w=400" alt="Trendy Robot" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent pt-16 pb-6 text-center">
-                <h3 className="text-white font-bold text-lg leading-tight">Trendy Robot</h3>
-                <p className="text-white/70 text-xs font-medium mt-1">by Xuan Jingyi</p>
-              </div>
-            </div>
-            {/* Box 2 */}
-            <div className="relative rounded-[2rem] overflow-hidden group bg-purple-100">
-              <Image src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=400" alt="Meta Angels" fill className="object-cover mix-blend-multiply opacity-80 transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/60 to-transparent pt-16 pb-6 text-center">
-                <h3 className="text-white font-bold text-lg leading-tight">Meta Angels</h3>
-                <p className="text-white/70 text-xs font-medium mt-1">by Pan Su</p>
-              </div>
-            </div>
-            {/* Box 3 */}
-            <div className="relative rounded-[2rem] overflow-hidden group bg-gray-200">
-              <Image src="https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?q=80&w=400" alt="Mutant Sqaure" fill className="object-cover mix-blend-multiply opacity-50 transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/50 to-transparent pt-16 pb-6 text-center">
-                <h3 className="text-white font-bold text-lg leading-tight">Mutant Sqaure</h3>
-                <p className="text-white/70 text-xs font-medium mt-1">by Marco Alves</p>
-              </div>
-            </div>
-            {/* Box 4 */}
-            <div className="relative rounded-[2rem] overflow-hidden group bg-stone-200">
-              <Image src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400" alt="Immersive Toys" fill className="object-cover mix-blend-multiply opacity-80 transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/60 to-transparent pt-16 pb-6 text-center">
-                <h3 className="text-white font-bold text-lg leading-tight">Immersive Toys</h3>
-                <p className="text-white/70 text-xs font-medium mt-1">by Julian Gruber</p>
-              </div>
-            </div>
-          </div>
+          {/* Gradient fade indicators for scrollable filters on mobile */}
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-stone-50/50 to-transparent pointer-events-none md:hidden" />
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-stone-50/50 to-transparent pointer-events-none md:hidden" />
         </div>
 
-        {/* --- RUNNING AUCTIONS --- */}
-        <div className="mb-16">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Running auctions</h2>
-            <div className="flex gap-2">
-              <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+        {/* --- PORTFOLIO GRID (Fully Responsive Masonry) --- */}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-6 space-y-4 sm:space-y-6 px-2 sm:px-0">
+          {filteredProjects.map((project, idx) => (
+            <motion.div
+              layout
+              key={project.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: idx * 0.05 }}
+              onClick={() => {
+                setSelectedProject(project);
+                setIsModalOpen(true);
+              }}
+              className="relative group rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-gray-100 cursor-pointer break-inside-avoid shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div className="relative overflow-hidden">
+                <Image
+                  src={project.img}
+                  alt={project.title}
+                  width={800}
+                  height={1000}
+                  className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "Right Messages and Memes", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400", time: "10:40:57", likes: 24, price: "1.90 Eth", author: "Martina Brito", icon: <EthIcon />, bg: "bg-orange-100" },
-              { title: "Brick-and-Mortar Travails", img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=400", time: "05:45:10", likes: 19, price: "0.45 Flow", author: "Haim Chuwrqn", icon: <FlowIcon />, bg: "bg-indigo-100" },
-              { title: "Free Way to Back Up", img: "https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?q=80&w=400", time: "15:32:10", likes: 20, price: "0.53 Flow", author: "Langke Zambo", icon: <FlowIcon />, bg: "bg-gray-200" },
-              { title: "Patturb and Waymo", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=400", time: "03:39:57", likes: 12, price: "2.43 Eth", author: "Shirai Subaru", icon: <EthIcon />, bg: "bg-pink-100" },
-            ].map((item, i) => (
-              <div key={i} className="bg-white rounded-3xl p-4 shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-50 group hover:shadow-xl transition-shadow cursor-pointer">
-                <div className={`relative w-full aspect-square rounded-[1.5rem] overflow-hidden mb-4 ${item.bg}`}>
-                  <Image src={item.img} alt={item.title} fill className="object-cover mix-blend-multiply opacity-90 transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold text-gray-800 shadow-sm">
-                    <Clock className="w-3.5 h-3.5 text-gray-500" />
-                    {item.time}
-                  </div>
-                  <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold text-gray-800 shadow-sm">
-                    <Heart className="w-3.5 h-3.5 text-gray-400" />
-                    {item.likes}
-                  </div>
-                </div>
-                <h3 className="font-bold text-gray-900 mb-4">{item.title}</h3>
-                <div className="flex justify-between items-end border-t border-gray-100 pt-4">
-                  <div>
-                    <p className="text-gray-400 text-xs mb-1">Price</p>
-                    <p className="font-bold text-sm tracking-tight">{item.icon} {item.price}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-gray-400 text-xs mb-1">Author</p>
-                    <div className="flex items-center gap-2 justify-end">
-                      <div className="w-5 h-5 rounded-full overflow-hidden bg-gray-200 relative">
-                        <Image src={`https://i.pravatar.cc/100?img=${i + 15}`} alt={item.author} fill className="object-cover" />
-                      </div>
-                      <p className="font-bold text-sm tracking-tight text-gray-900">{item.author}</p>
+                {/* Overlay on hover (desktop only) */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden sm:flex flex-col justify-end p-4 sm:p-6 md:p-8 text-left">
+                  <span className="text-[10px] font-bold text-white/70 uppercase tracking-widest mb-1">{project.category}</span>
+                  <h3 className="text-base sm:text-lg md:text-xl font-black text-white leading-tight">{project.title}</h3>
+                  <div className="mt-3 sm:mt-4 flex items-center gap-2">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
+                    <span className="text-[10px] sm:text-xs font-bold text-white">View Details</span>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* --- TOP COLLECTIONS --- */}
-        <div className="mb-16">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Top collections</h2>
-            <div className="bg-gray-100 p-1 rounded-full inline-flex text-xs font-bold text-gray-500">
-              <button className="px-4 py-1.5 bg-purple-100 text-purple-700 rounded-full shadow-sm">1 Day</button>
-              <button className="px-4 py-1.5 hover:text-black">7 Days</button>
-              <button className="px-4 py-1.5 hover:text-black">30 Days</button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-            {[
-              { name: "Bored Ape Yacht Club", vol: "10,450.00", icon: <EthIcon />, img: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?q=80&w=100" },
-              { name: "Bored Ape Chemistry Club", vol: "5344.13", icon: <EthIcon />, img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=100" },
-              { name: "RTFKT CloneX Mintvial", vol: "33457.59", icon: <EthIcon />, img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=100" },
-              { name: "Chromie Squiggle by Snowfro", vol: "18,520.00", icon: <FlowIcon />, img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=100" },
-              { name: "Bored Ape Kennel Club", vol: "4579.40", icon: <EthIcon />, img: "https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?q=80&w=100" },
-              { name: "Psychedelics Anonymous", vol: "5344.13", icon: <EthIcon />, img: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=100" },
-              { name: "Worldwide Webb Land", vol: "13457.59", icon: <XtzIcon />, img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=100" },
-              { name: "Brick-and-Mortar Travails", vol: "3355.20", icon: <FlowIcon />, img: "https://images.unsplash.com/photo-1579546678183-a9c101ad59b6?q=80&w=100" },
-              { name: "Free Way to Back Up", vol: "6890.34", icon: <FlowIcon />, img: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?q=80&w=100" },
-            ].map((col, i) => (
-              <div key={i} className="flex items-center gap-4 cursor-pointer hover:bg-gray-50 p-2 rounded-2xl transition-colors">
-                <span className="text-gray-900 font-bold w-4">{i + 1}</span>
-                <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
-                  <Image src={col.img} alt={col.name} fill className="object-cover mix-blend-multiply opacity-90" />
+              {/* Visible label (mobile and desktop) */}
+              <div className="p-4 sm:p-5 md:p-6 text-left flex justify-between items-center group-hover:bg-gray-50 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-bold text-gray-900 leading-tight text-sm sm:text-base truncate">{project.title}</h4>
+                  <p className="text-[10px] sm:text-xs text-gray-400 font-medium mt-1">{project.category}</p>
                 </div>
-                <div>
-                  <h4 className="font-bold text-sm text-gray-900 leading-tight mb-1">{col.name}</h4>
-                  <p className="text-xs text-gray-500 flex items-center">{col.icon} {col.vol}</p>
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border border-gray-100 flex items-center justify-center text-gray-300 group-hover:text-black group-hover:border-black transition-all flex-shrink-0 ml-2">
+                  <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
                 </div>
               </div>
-            ))}
-          </div>
+            </motion.div>
+          ))}
         </div>
 
-        {/* --- TRENDING ITEMS --- */}
-        <div className="mb-12">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-2xl font-black text-gray-900 tracking-tight">Trending items</h2>
-            <div className="flex gap-2">
-              <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black transition-colors">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+        {/* Empty state */}
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12 sm:py-20">
+            <p className="text-gray-400 text-sm sm:text-base">No projects found in this category.</p>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "May Bring Back", price: "0.45 Flow", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400", likes: 99, icon: <FlowIcon />, bg: "bg-gray-100", avatars: [1, 2] },
-              { title: "Auto Technology", price: "7 XTZ", img: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=400", likes: 99, icon: <XtzIcon />, bg: "bg-orange-50", avatars: [3] },
-              { title: "Agents Were Behind", price: "17.50 Flow", img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=400", likes: 99, icon: <FlowIcon />, bg: "bg-fuchsia-100", avatars: [4, 5, 6] },
-              { title: "Front Desk", price: "3 Flow", img: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?q=80&w=400", likes: 99, icon: <FlowIcon />, bg: "bg-stone-200", avatars: [7, 8] },
-            ].map((item, i) => (
-              <div key={i} className="bg-white rounded-3xl p-3 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] group hover:shadow-xl transition-shadow cursor-pointer">
-                <div className={`relative w-full aspect-square rounded-[1.5rem] overflow-hidden mb-4 ${item.bg}`}>
-                  <Image src={item.img} alt={item.title} fill className="object-cover mix-blend-multiply opacity-90 transition-transform duration-700 group-hover:scale-105" />
-
-                  {/* Top floating elements */}
-                  <div className="absolute top-3 left-3 flex -space-x-1.5">
-                    {item.avatars.map(avId => (
-                      <div key={avId} className="w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-gray-200 relative">
-                        <Image src={`https://i.pravatar.cc/100?img=${avId + 20}`} alt="avatar" fill />
-                      </div>
-                    ))}
-                  </div>
-                  <button className="absolute top-3 right-3 w-6 h-6 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-gray-500 shadow-sm hover:text-black">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="px-2 pb-1">
-                  <h3 className="font-bold text-gray-900 text-sm mb-2">{item.title}</h3>
-                  <div className="flex justify-between items-center mt-auto">
-                    <p className="text-gray-500 text-xs flex items-center gap-1 font-medium">from <span className="font-bold text-gray-900">{item.icon} {item.price}</span></p>
-                    <div className="flex items-center gap-1 text-gray-400 text-xs font-bold bg-gray-50 px-2 py-1 rounded-full">
-                      <Heart className="w-3 h-3 text-gray-400" />
-                      {item.likes}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Load More */}
-        <div className="text-center mt-4">
-          <button className="bg-indigo-50 hover:bg-indigo-100 text-[#6366f1] font-bold px-8 py-2.5 rounded-full text-sm transition-colors transition-transform active:scale-95 cursor-pointer">
-            Load More
+        <div className="mt-12 sm:mt-16 md:mt-20 px-4">
+          <button className="group relative px-6 sm:px-8 md:px-10 py-3 sm:py-4 bg-black text-white rounded-full font-bold overflow-hidden transition-all hover:pr-10 sm:hover:pr-14 active:scale-95 shadow-xl text-sm sm:text-base w-full sm:w-auto">
+            <span>Explore More Works</span>
+            <span className="absolute right-4 opacity-0 group-hover:opacity-100 transition-all">
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            </span>
           </button>
         </div>
-
       </div>
 
       <Footer />
+
+      {/* --- DETAIL MODAL (Fully Responsive) --- */}
+      <AnimatePresence>
+        {selectedProject && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => {
+                setSelectedProject(null);
+                setIsModalOpen(false);
+              }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-md"
+            />
+
+            {/* Modal Sheet */}
+            <motion.div
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="relative w-full max-w-[95vw] sm:max-w-[90vw] md:max-w-4xl lg:max-w-5xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden mx-2 sm:mx-4 md:mx-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="max-h-[85vh] sm:max-h-[90vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar">
+                {/* Decorative Swirl - hidden on mobile */}
+                <div className="absolute top-0 left-0 w-full h-40 pointer-events-none overflow-hidden opacity-5 sm:opacity-10 hidden sm:block">
+                  <svg viewBox="0 0 800 200" className="w-full h-full text-blue-600 fill-none stroke-current" strokeWidth="2">
+                    <path d="M-50,150 C200,50 600,250 850,100" />
+                    <path d="M-50,180 C250,80 550,280 850,130" />
+                  </svg>
+                </div>
+
+                {/* Top Actions / Close */}
+                <div className="sticky top-0 right-0 p-3 sm:p-4 md:p-6 flex justify-end z-50 bg-white/95 sm:bg-white/10 sm:backdrop-blur-sm border-b border-gray-100 sm:border-0">
+                  <button
+                    onClick={() => {
+                      setSelectedProject(null);
+                      setIsModalOpen(false);
+                    }}
+                    className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg flex items-center justify-center text-gray-400 hover:text-black transition-colors border border-gray-100 active:scale-95"
+                  >
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+
+                <div className="px-6 sm:px-8 md:px-10 lg:px-12 py-8 sm:py-10 md:py-12 flex flex-col lg:flex-row items-center lg:items-start gap-8 sm:gap-10 md:gap-14">
+
+                  {/* Left Column - Visual */}
+                  <div className="shrink-0 w-full lg:w-auto">
+                    <div className="relative mx-auto lg:mx-0 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72">
+                      {/* Subtle Background Ring */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-50 to-transparent" />
+
+                      {/* Project Image */}
+                      <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                        <Image
+                          src={selectedProject.img}
+                          alt={selectedProject.title}
+                          width={600}
+                          height={600}
+                          className="w-full h-full object-cover"
+                          sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, 288px"
+                        />
+                      </div>
+
+                      {/* Decorative accent */}
+                      <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-indigo-500 rounded-full opacity-10 blur-md" />
+                    </div>
+
+                    <div className="hidden lg:block text-center mt-6">
+                      <span className="text-[9px] text-gray-400 font-mono tracking-wide">
+                        VP-{selectedProject.id}024
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right Column - Content */}
+                  <div className="flex-1 w-full">
+                    {/* Category Badge */}
+                    <div className="mb-5 sm:mb-6 text-center lg:text-left">
+                      <span className="inline-block px-3.5 py-1.5 bg-gray-50 text-gray-600 text-[11px] font-semibold uppercase tracking-wide rounded-full">
+                        {selectedProject.category}
+                      </span>
+                    </div>
+
+                    {/* Title & Description */}
+                    <div className="mb-6 sm:mb-8 text-center lg:text-left">
+                      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 leading-[1.2] tracking-tight">
+                        {selectedProject.title}
+                      </h2>
+                      <p className="text-gray-500 text-sm sm:text-base leading-relaxed max-w-lg mx-auto lg:mx-0">
+                        {selectedProject.description || "Premium visual content crafted for high-end digital experiences and brand storytelling."}
+                      </p>
+                    </div>
+
+                    {/* Info Cards */}
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
+                      <div className="bg-gray-50 rounded-xl p-4 sm:p-5 transition-all hover:bg-white hover:shadow-md">
+                        <Clock className="w-5 h-5 text-indigo-500 mb-2" />
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
+                            Timeline
+                          </p>
+                          <p className="text-sm sm:text-base font-bold text-gray-900">
+                            2-3 Days
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-xl p-4 sm:p-5 transition-all hover:bg-white hover:shadow-md">
+                        <Search className="w-5 h-5 text-teal-500 mb-2" />
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
+                            Quality
+                          </p>
+                          <p className="text-sm sm:text-base font-bold text-gray-900">
+                            High Resolution
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 mb-8">
+                      <button className="flex-1 px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-all active:scale-98 shadow-sm">
+                        <ExternalLink className="w-4 h-4 inline mr-2" />
+                        View Project
+                      </button>
+                      <button className="flex-1 px-6 py-3.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm rounded-xl transition-all active:scale-98">
+                        <MessageCircle className="w-4 h-4 inline mr-2" />
+                        Order Now
+                      </button>
+                    </div>
+
+                    {/* Social Proof */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+                      <div className="flex -space-x-2">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
+                            <Image src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" width={28} height={28} className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-gray-400 font-medium">
+                        Trusted by 120+ designers worldwide
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Notch Indicator (Mobile Only) */}
+                <div className="flex justify-center pb-3 sm:pb-4 lg:hidden">
+                  <div className="w-12 sm:w-16 h-1 bg-gray-200 rounded-full" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <style jsx>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #555;
+        }
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
+        }
+        .animate-bounce-subtle {
+          animation: bounce-subtle 2s ease-in-out infinite;
+        }
+        @keyframes bounce-subtle {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-5px);
+          }
+        }
+      `}</style>
     </main>
+  );
+}
+
+export default function ShowcasePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
+      </div>
+    }>
+      <ShowcaseContent />
+    </Suspense>
   );
 }

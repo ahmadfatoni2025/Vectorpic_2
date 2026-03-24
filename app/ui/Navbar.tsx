@@ -352,51 +352,39 @@ export function Navbar() {
   // Showcase mega menu data with icons
   const showcaseItems = [
     {
-      name: t("Poster Design", "Desain Poster"),
-      sub: t("Visual Artistry", "Seni Visual"),
-      href: "/showcase/poster",
-      icon: <Layers className="w-6 h-6 text-gray-700" />
-    },
-    {
-      name: t("Vector Graphics", "Grafis Vektor"),
+      name: t("Vector Art", "Seni Vektor"),
       sub: t("Scalable Assets", "Aset Skalabel"),
-      href: "/showcase/graphics",
+      href: "/showcase?category=Vector%20Art",
       icon: <Shapes className="w-6 h-6 text-gray-700" />
     },
     {
-      name: t("Bespoke Carpets", "Karpet Eksklusif"),
-      sub: t("Premium Textiles", "Tekstil Premium"),
-      href: "/showcase/carpets",
-      icon: <Grid3X3 className="w-6 h-6 text-gray-700" />
-    },
-    {
-      name: t("Packaging", "Kemasan"),
-      sub: t("Strategic Packaging", "Kemasan Strategis"),
-      href: "/showcase/packaging",
-      icon: <Package className="w-6 h-6 text-gray-700" />
-    },
-    {
-      name: t("Brand Identity", "Identitas Merek"),
-      sub: t("Logo & Systems", "Logo & Sistem"),
-      href: "/showcase/graphics",
+      name: t("Branding", "Pencitraan"),
+      sub: t("Identity & Strategy", "Identitas & Strategi"),
+      href: "/showcase?category=Branding",
       icon: <BadgeCheck className="w-6 h-6 text-gray-700" />
     },
     {
       name: t("UI/UX Design", "Desain UI/UX"),
-      sub: t("Digital Interfaces", "Antarmuka Digital"),
-      href: "/showcase",
+      sub: t("Digital Experience", "Pengalaman Digital"),
+      href: "/showcase?category=UI/UX%20Design",
       icon: <Monitor className="w-6 h-6 text-gray-700" />
     },
     {
+      name: t("Packaging", "Kemasan"),
+      sub: t("Product Display", "Tampilan Produk"),
+      href: "/showcase?category=Packaging",
+      icon: <Package className="w-6 h-6 text-gray-700" />
+    },
+    {
       name: t("Illustration", "Ilustrasi"),
-      sub: t("Custom Artwork", "Karya Seni Kustom"),
-      href: "/showcase",
+      sub: t("Digital Artwork", "Karya Seni Digital"),
+      href: "/showcase?category=Illustration",
       icon: <PenTool className="w-6 h-6 text-gray-700" />
     },
     {
       name: t("Motion Graphics", "Grafis Gerak"),
-      sub: t("Animated Assets", "Aset Animasi"),
-      href: "/showcase",
+      sub: t("Animated Motion", "Gerakan Animasi"),
+      href: "/showcase?category=Motion",
       icon: <Video className="w-6 h-6 text-gray-700" />
     },
   ];
