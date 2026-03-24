@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLanguage } from '../context/LanguageContext';
 import { ChevronDown, Plus, Minus, Search, Filter } from 'lucide-react';
 
 interface FAQItem {
@@ -54,92 +53,67 @@ const AccordionItem = ({ item, isOpen, onClick }: {
 };
 
 export default function Qna() {
-  const { t } = useLanguage();
   const [openId, setOpenId] = useState<number | null>(1);
   const [activeCategory, setActiveCategory] = useState('all');
   const [showDropdown, setShowDropdown] = useState(false);
 
   const categories = [
-    { id: 'all', label: t("All Categories", "Semua Kategori") },
-    { id: 'service', label: t("Design Service", "Layanan Desain") },
-    { id: 'process', label: t("Work Process", "Proses Kerja") },
-    { id: 'ownership', label: t("Ownership & Data", "Kepemilikan & Data") },
+    { id: 'all', label: "All Categories" },
+    { id: 'service', label: "Design Service" },
+    { id: 'process', label: "Work Process" },
+    { id: 'ownership', label: "Ownership & Data" },
   ];
 
   const faqData: FAQItem[] = useMemo(() => [
     {
       id: 1,
       category: 'service',
-      question: t("Layanan desain apa yang menjadi spesialisasi Vectorpic?", "What design services does Vectorpic specialize in?"),
-      answer: t(
-        "Vectorpic fokus pada aset vektor berkualitas tinggi, ilustrasi kustom, desain logo, dan identitas visual yang siap digunakan untuk berbagai platform digital maupun cetak.",
-        "Vectorpic focuses on high-quality vector assets, custom illustrations, logo design, and visual identities ready for use across digital and print platforms."
-      )
+      question: "What design services does Vectorpic specialize in?",
+      answer: "Vectorpic focuses on high-quality vector assets, custom illustrations, logo design, and visual identities ready for use across digital and print platforms."
     },
     {
       id: 2,
       category: 'service',
-      question: t("Bagaimana cara memesan desain kustom?", "How do I request a custom design?"),
-      answer: t(
-        "Anda dapat menghubungi tim desain kami melalui formulir pertanyaan atau mengirim email ke design@vectorpic.com dengan ringkasan proyek Anda. Kami akan menanggapi dalam waktu 24 jam.",
-        "You can contact our design team through the inquiry form or email us at design@vectorpic.com with your project brief. We will respond within 24 hours."
-      )
+      question: "How do I request a custom design?",
+      answer: "You can contact our design team through the inquiry form or email us at design@vectorpic.com with your project brief. We will respond within 24 hours."
     },
     {
       id: 3,
       category: 'service',
-      question: t("Apakah desain Vectorpic bisa disesuaikan dengan brand saya?", "Can Vectorpic designs be customized to my brand?"),
-      answer: t(
-        "Tentu, tim kami bekerja secara kolaboratif untuk memastikan setiap elemen desain, mulai dari warna hingga gaya visual, selaras dengan identitas brand Anda. Kami menyesuaikan estetika kami dengan visi Anda.",
-        "Sure, our team works collaboratively to ensure every design element, from colors to visual style, aligns with your brand identity. We adapt our aesthetics to your vision."
-      )
+      question: "Can Vectorpic designs be customized to my brand?",
+      answer: "Sure, our team works collaboratively to ensure every design element, from colors to visual style, aligns with your brand identity. We adapt our aesthetics to your vision."
     },
     {
       id: 4,
       category: 'process',
-      question: t("Format file desain apa yang akan saya dapatkan?", "What design file formats will I receive?"),
-      answer: t(
-        "Anda akan menerima file master dalam format AI (Adobe Illustrator), EPS, dan SVG, serta format siap pakai seperti PNG transparan dan JPG resolusi tinggi.",
-        "You will receive master files in AI (Adobe Illustrator), EPS, and SVG formats, as well as ready-to-use formats like transparent PNG and high-resolution JPG."
-      )
+      question: "What design file formats will I receive?",
+      answer: "You will receive master files in AI (Adobe Illustrator), EPS, and SVG formats, as well as ready-to-use formats like transparent PNG and high-resolution JPG."
     },
     {
       id: 5,
       category: 'process',
-      question: t("Berapa kali saya bisa meminta revisi desain?", "How many design revisions can I request?"),
-      answer: t(
-        "Kami menyediakan hingga 3 kali revisi untuk setiap proyek untuk memastikan hasil akhir benar-benar memenuhi ekspektasi dan kebutuhan bisnis Anda tanpa biaya tambahan.",
-        "We provide up to 3 revisions for each project to ensure the final result truly meets your expectations and business needs at no additional cost."
-      )
+      question: "How many design revisions can I request?",
+      answer: "We provide up to 3 revisions for each project to ensure the final result truly meets your expectations and business needs at no additional cost."
     },
     {
       id: 6,
       category: 'process',
-      question: t("Berapa lama waktu pengerjaan untuk satu proyek desain?", "How long does one design project take?"),
-      answer: t(
-        "Waktu pengerjaan bervariasi antara 3 hingga 5 hari kerja tergantung pada tingkat kerumitan dan detail teknis dari desain yang diminta.",
-        "The turnaround time varies between 3 to 5 business days depending on the complexity level and technical details of the requested design."
-      )
+      question: "How long does one design project take?",
+      answer: "The turnaround time varies between 3 to 5 business days depending on the complexity level and technical details of the requested design."
     },
     {
       id: 7,
       category: 'ownership',
-      question: t("Apakah saya mendapatkan hak milik penuh atas desain?", "Do I get full ownership of the design?"),
-      answer: t(
-        "Setelah pembayaran selesai, Anda akan memiliki hak eksklusif dan kepemilikan penuh atas desain final yang telah kami buat untuk Anda. Anda bebas menggunakannya untuk tujuan komersial.",
-        "Once payment is complete, you will have exclusive rights and full ownership of the final design we have created for you. You are free to use it for commercial purposes."
-      )
+      question: "Do I get full ownership of the design?",
+      answer: "Once payment is complete, you will have exclusive rights and full ownership of the final design we have created for you. You are free to use it for commercial purposes."
     },
     {
       id: 8,
       category: 'ownership',
-      question: t("Apakah data proyek saya aman bersama Vectorpic?", "Is my project data safe with Vectorpic?"),
-      answer: t(
-        "Kami memprioritaskan kerahasiaan dan menggunakan penyimpanan aman untuk semua aset klien serta komunikasi selama proses pengerjaan. Data Anda tidak akan dibagikan kepada pihak ketiga.",
-        "We prioritize confidentiality and use secure storage for all client assets and communication throughout the production process. Your data will not be shared with third parties."
-      )
+      question: "Is my project data safe with Vectorpic?",
+      answer: "We prioritize confidentiality and use secure storage for all client assets and communication throughout the production process. Your data will not be shared with third parties."
     }
-  ], [t]);
+  ], []);
 
   const filteredData = faqData.filter(item => 
     activeCategory === 'all' || item.category === activeCategory
@@ -156,13 +130,10 @@ export default function Qna() {
               <span className="text-[10px] font-bold text-blue-500 tracking-widest uppercase">/ FAQS</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-black tracking-tight">
-              {t("Frequently asked question", "Pertanyaan yang sering diajukan")}
+              Frequently asked question
             </h2>
             <p className="text-gray-400 text-sm md:text-base max-w-2xl leading-relaxed">
-              {t(
-                "Find answers to common questions about our design services, workflow, and how we help your brand grow through high-quality vector assets.",
-                "Temukan jawaban untuk pertanyaan umum tentang layanan desain kami, alur kerja, dan bagaimana kami membantu brand Anda tumbuh melalui aset vektor berkualitas tinggi."
-              )}
+              Find answers to common questions about our design services, workflow, and how we help your brand grow through high-quality vector assets.
             </p>
           </div>
           
@@ -240,14 +211,14 @@ export default function Qna() {
            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 blur-[100px] rounded-full -mr-32 -mt-32 group-hover:bg-blue-600/30 transition-all duration-700" />
            <div className="relative z-10 space-y-2 text-center md:text-left">
               <h3 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                {t("Still have questions?", "Masih punya pertanyaan?")}
+                Still have questions?
               </h3>
               <p className="text-gray-400 max-w-md">
-                {t("Can't find what you're looking for? Our design specialist is here to help you directly.", "Tidak menemukan apa yang Anda cari? Spesialis desain kami siap membantu Anda secara langsung.")}
+                Can't find what you're looking for? Our design specialist is here to help you directly.
               </p>
            </div>
            <button className="relative z-10 bg-white hover:bg-blue-50 text-black px-10 py-4 rounded-2xl font-bold transition-all active:scale-95 shadow-xl">
-              {t("Contact Us", "Hubungi Kami")}
+              Contact Us
            </button>
         </div>
 

@@ -2,12 +2,10 @@
 
 import React, { useState } from "react";
 import { ImageStack } from "./ImageStack";
-import { useLanguage } from "../context/LanguageContext";
 import { motion } from "framer-motion";
 import RotatingText from "./RotatingText";
 
 export function Hero() {
-  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const bgColors = ["bg-blue-600", "bg-emerald-600", "bg-indigo-600", "bg-teal-600", "bg-purple-600"];
 
@@ -16,14 +14,14 @@ export function Hero() {
 
       <div className="relative z-10 max-w-5xl mx-auto">
         <h1 className="text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-black tracking-tighter leading-[1.05] mb-6 sm:mb-8">
-          {t("Where", "Dimana")}{" "}
+          Where{" "}
           <RotatingText
             texts={[
-              t("Sophisticated", "Keanggunan"),
-              t("Beautiful", "Keindahan"),
-              t("Clean", "Kebersihan"),
-              t("Modern", "Modernitas"),
-              t("Minimalist", "Minimalisme")
+              "Sophisticated",
+              "Beautiful",
+              "Clean",
+              "Modern",
+              "Minimalist"
             ]}
             mainClassName={`px-4 sm:px-5 text-white overflow-hidden py-0.5 sm:py-1 justify-center rounded-2xl md:rounded-3xl shadow-2xl inline-flex transition-colors duration-700 items-center leading-none ${bgColors[currentIndex]}`}
             staggerFrom={"first"}
@@ -38,14 +36,11 @@ export function Hero() {
             animatePresenceMode="popLayout"
           />{" "}
           <br className="hidden sm:block" />
-          {t("Meet", "Bertemu")} <span>{t("Performance.", "Performa.")}</span>
+          Meet <span>Performance.</span>
         </h1>
 
         <p className="max-w-xl mx-auto text-gray-400 text-xs sm:text-sm md:text-base font-medium leading-relaxed mb-8 sm:mb-10 px-2">
-          {t(
-            "Build stunning illustrations, brand identities, and digital assets effortlessly. From concept to masterpiece in minutes, not months.",
-            "Bangun ilustrasi menakjubkan, identitas merek, dan aset digital dengan mudah. Dari konsep ke mahakarya dalam hitungan menit, bukan bulan."
-          )}
+          Build stunning illustrations, brand identities, and digital assets effortlessly. From concept to masterpiece in minutes, not months.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-12 sm:mb-16">
           {/* Watch Demo Button */}
@@ -57,7 +52,7 @@ export function Hero() {
                 </svg>
               </div>
               <span className="text-sm font-semibold tracking-wide">
-                {t("Watch Demo", "Tonton Demo")}
+                Watch Demo
                 <span className="text-gray-400 ml-2 font-normal text-xs">3 mins</span>
               </span>
             </button>
@@ -72,7 +67,7 @@ export function Hero() {
                 </svg>
               </div>
               <span className="text-sm font-semibold tracking-wide">
-                {t("Get Started", "Mulai Sekarang")}
+                Get Started
               </span>
             </button>
           </div>

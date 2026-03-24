@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
-import { useLanguage } from '../context/LanguageContext';
 
 // --- Types ---
 export interface StatsItem {
@@ -90,12 +89,12 @@ const ParticleCard: React.FC<{
     enableMagnetism = false
 }) => {
         const cardRef = useRef<HTMLDivElement>(null);
+        const isHoveredRef = useRef(false);
+        const magnetismAnimationRef = useRef<gsap.core.Tween | null>(null);
         const particlesRef = useRef<HTMLDivElement[]>([]);
         const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-        const isHoveredRef = useRef(false);
         const memoizedParticles = useRef<HTMLDivElement[]>([]);
         const particlesInitialized = useRef(false);
-        const magnetismAnimationRef = useRef<gsap.core.Tween | null>(null);
 
         const initializeParticles = useCallback(() => {
             if (particlesInitialized.current || !cardRef.current) return;
@@ -220,67 +219,7 @@ const GlobalSpotlight: React.FC<{
 // --- Main Components ---
 
 export default function Statistik() {
-    const { t } = useLanguage();
     const gridRef = useRef<HTMLDivElement>(null);
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= MOBILE_BREAKPOINT;
-
-    // Mapping items to the image layout:
-    // Left: [Large Top] [Small Bottom L] [Small Bottom R]
-    // Right: [Tall Item]
-    const stats: StatsItem[] = [
-        {
-            type: 'testimonial',
-            content: t(
-                "FOR EVERYONE BUT NOT ANYONE",
-                "UNTUK SEMUA TAPI BUKAN SIAPA SAJA"
-            ),
-            desc: t(
-                "We establish personal relationships with our boutiques, to make sure each is vetted for a stress-free shopping experience",
-                "Kami menjalin hubungan pribadi dengan butik kami, untuk memastikan masing-masing diperiksa untuk pengalaman berbelanja tanpa stres"
-            ),
-            gridSpan: "col-span-12 md:col-span-7 row-span-1",
-            bgColor: "#dbdbd6",
-            textColor: "#000"
-        },
-        {
-            type: 'large-metric',
-            title: "#RIP STOP",
-            image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
-            gridSpan: "col-span-12 md:col-span-3.5", // Half of 7
-            bgColor: "#9ea49d"
-        },
-        {
-            type: 'large-metric',
-            title: "#INSULATED",
-            image: "https://images.unsplash.com/photo-1558655146-d09347e92766",
-            gridSpan: "col-span-12 md:col-span-3.5", // Half of 7
-            bgColor: "#5b6b61"
-        },
-        {
-            type: 'feature',
-            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-            gridSpan: "col-span-12 md:col-span-5 row-span-2",
-            bgColor: "#e2e2dd"
-        }
-    ];
-
-    // More items can be added below or modified to fit the grid
-    const remainingStats = [
-        {
-            type: 'metric',
-            value: "98%",
-            label: t("Customer Satisfaction", "Kepuasan Pelanggan"),
-            gridSpan: "col-span-12 md:col-span-3",
-            bgColor: "#fff"
-        },
-        {
-            type: 'metric',
-            value: "50,000+",
-            label: t("Assets Delivered", "Aset Terkirim"),
-            gridSpan: "col-span-12 md:col-span-3",
-            bgColor: "#f0f0f0"
-        }
-    ];
 
     return (
         <section className="bg-white py-10 sm:py-16 px-4">
@@ -313,13 +252,13 @@ export default function Statistik() {
                     >
                         {/* Floating Labels */}
                         <div className="absolute top-1/4 left-8 bg-black/80 backdrop-blur-sm text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest floating-pill z-30 shadow-2xl" style={{ "--tw-rotate": "-12deg" } as React.CSSProperties}>
-                            {t("Receive", "Terima")}
+                            Receive
                         </div>
                         <div className="absolute top-1/3 right-10 bg-white text-black px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest floating-pill z-30 shadow-2xl" style={{ "--tw-rotate": "8deg" } as React.CSSProperties}>
-                            {t("Send", "Kirim")}
+                            Send
                         </div>
                         <div className="absolute bottom-1/4 right-8 bg-[#111] text-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest floating-pill z-30 shadow-2xl" style={{ "--tw-rotate": "-5deg" } as React.CSSProperties}>
-                            {t("Save", "Simpan")}
+                            Save
                         </div>
 
                         {/* Character Video */}
@@ -344,15 +283,15 @@ export default function Statistik() {
                         {/* Text Content */}
                         <div className="w-full md:w-1/2 flex flex-col justify-end text-white relative z-20">
                             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-[0.95] mb-8 tracking-tighter">
-                                {t("Design", "Desain")} <span className="font-thin block opacity-80 leading-[0.8] italic">{t("doesn't", "tidak")}</span>
-                                {t("have to", "harus")} <br />
-                                <span className="text-[#111]">{t("Lazy.", "bosan.")}</span>
+                                Design <span className="font-thin block opacity-80 leading-[0.8] italic">doesn't</span>
+                                have to <br />
+                                <span className="text-[#111]">Lazy.</span>
                             </h2>
                             <div className="flex flex-col gap-4 border-l-2 border-white/20 pl-6">
                                 <p className="text-xs md:text-sm font-black opacity-90 leading-relaxed uppercase tracking-widest">
-                                    {t("Do everything through the app,", "Lakukan segalanya melalui aplikasi,")} <br /> {t("with a few clicks.", "dengan beberapa klik.")}
+                                    Do everything through the app, <br /> with a few clicks.
                                 </p>
-                                <span className="text-[10px] opacity-60 font-medium uppercase tracking-widest">{t("Refining the Digital Experience", "Menyempurnakan Pengalaman Digital")}</span>
+                                <span className="text-[10px] opacity-60 font-medium uppercase tracking-widest">Refining the Digital Experience</span>
                             </div>
                         </div>
                     </ParticleCard>
@@ -364,13 +303,13 @@ export default function Statistik() {
                         <div className="w-full">
 
                             <h3 className="text-5xl md:text-6xl font-black tracking-tighter leading-none mb-6 text-black">
-                                {t("Speed &", "Kecepatan &")} <br />
-                                <span className="text-blue-600">{t("Security", "Keamanan")}</span> <br />
-                                <span className="text-xs font-black uppercase tracking-widest text-gray-300 mt-2 block">{t("you can Trust", "yang Anda Percayai")}</span>
+                                Speed & <br />
+                                <span className="text-blue-600">Security</span> <br />
+                                <span className="text-xs font-black uppercase tracking-widest text-gray-300 mt-2 block">you can Trust</span>
                             </h3>
 
                             <p className="text-sm font-medium text-gray-400 max-w-[220px] leading-relaxed">
-                                {t("Manage everything right from your dashboard and keep assets where they belong.", "Kelola segalanya langsung dari dasbor Anda dan jaga aset tetap berada di tempatnya.")}
+                                Manage everything right from your dashboard and keep assets where they belong.
                             </p>
                         </div>
 
@@ -403,12 +342,12 @@ export default function Statistik() {
                                 </div>
                                 <div className="text-left">
                                     <div className="text-[10px] font-medium opacity-50 leading-none">Github</div>
-                                    <div className="text-xs font-black tracking-tight">{t("Open Project", "Proyek Terbuka")}</div>
+                                    <div className="text-xs font-black tracking-tight">Open Project</div>
                                 </div>
                             </button>
                             <button className="bg-white hover:bg-gray-50 text-black border border-gray-200 rounded-2xl px-5 py-3 flex items-center gap-3 transition-all shadow-sm">
                                 <div className="text-left">
-                                    <div className="text-[10px] font-medium opacity-50 leading-none">{t("Join our", "Bergabunglah")}</div>
+                                    <div className="text-[10px] font-medium opacity-50 leading-none">Join our</div>
                                     <div className="text-xs font-black tracking-tight">Discord</div>
                                 </div>
                                 <div className="w-5 h-5 text-indigo-600">
@@ -441,8 +380,8 @@ export default function Statistik() {
                     >
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 brounded-full blur-3xl transition-colors"></div>
                         <h4 className="text-3xl font-black tracking-tighter leading-[0.85]">
-                            {t("Your style,", "Gayamu,")} <br />
-                            <span className="text-blue-500">{t("your way.", "caramu.")}</span>
+                            Your style, <br />
+                            <span className="text-blue-500">your way.</span>
                         </h4>
                         <div className="absolute -right-6 -top-6 w-24 h-24 bg-white/5 rounded-full transform transition-transform duration-700"></div>
                     </ParticleCard>

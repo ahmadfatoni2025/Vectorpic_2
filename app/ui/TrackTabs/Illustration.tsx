@@ -3,14 +3,11 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useLanguage } from "../../context/LanguageContext";
 import { Navbar } from '../Navbar';
 import { Footer } from '../footer';
 import { Eye, Mic2, Music, Activity, Camera } from 'lucide-react';
 
 export default function Illustration() {
-  const { t } = useLanguage();
-
   const artworks = [
     { src: "/ilustrasi/citacita.png", label: "content creators", color: "#04cce7", icon: <Eye size={32} strokeWidth={2.5} className="text-blue-600" /> },
     { src: "/ilustrasi/coretax.png", label: "freestyle", color: "#ffec00", icon: <Mic2 size={32} strokeWidth={2.5} className="text-yellow-700" /> },
@@ -32,7 +29,7 @@ export default function Illustration() {
               CODE PRO<br />BLACK
             </h1>
             <p className="max-w-xs text-[10px] font-bold text-gray-500 uppercase leading-relaxed">
-              {t("Our specialized fonts for creative impact, ensuring that every stroke of our illustration tells a story.", "Font khusus kami untuk dampak kreatif, memastikan setiap goresan ilustrasi menceritakan kisah.")}
+              Our specialized fonts for creative impact, ensuring that every stroke of our illustration tells a story.
             </p>
             {/* Floating Blobs */}
             <motion.div
@@ -46,7 +43,7 @@ export default function Illustration() {
               helvetica neue<br />cyrillic pro
             </h2>
             <p className="max-w-xs text-xs font-bold text-gray-400 uppercase leading-loose">
-              {t("Modern, sleek, and timeless. The foundation of our digital aesthetics.", "Modern, ramping, dan abadi. Dasar dari estetika digital kami.")}
+              Modern, sleek, and timeless. The foundation of our digital aesthetics.
             </p>
             <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-yellow-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
           </div>
@@ -104,10 +101,7 @@ export default function Illustration() {
           <div className="text-center z-10">
             <span className="text-gray-400 font-mono text-xs mb-4 block">_icons & organic shapes</span>
             <p className="max-w-lg text-black font-bold uppercase text-[10px] leading-relaxed mx-auto px-6">
-              {t(
-                "Organic forms and illustrated icons are the stars of this season. Each icon represents a category. The forms intertwine and overlap creating dynamic illustrations.",
-                "Bentuk organik dan ikon bergambar adalah bintang musim ini. Setiap ikon mewakili kategori. Bentuk-bentuknya terjalin dan tumpang tindih menciptakan ilustrasi dinamis."
-              )}
+              Organic forms and illustrated icons are the stars of this season. Each icon represents a category. The forms intertwine and overlap creating dynamic illustrations.
             </p>
           </div>
 

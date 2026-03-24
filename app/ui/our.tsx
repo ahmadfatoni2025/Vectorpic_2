@@ -3,10 +3,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLanguage } from '../context/LanguageContext';
 
 export function OurDesign() {
-    const { t } = useLanguage();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
@@ -16,61 +14,43 @@ export function OurDesign() {
 
     const advantages = [
         {
-            title: t("Visual Identity", "Identitas Visual"),
-            desc: t(
-                "A bespoke creative suite designed to achieve unparalleled aesthetic perfection for modern brands.",
-                "Rangkaian kreatif yang dirancang untuk mencapai kesempurnaan estetika bagi merek modern."
-            ),
+            title: "Visual Identity",
+            desc: "A bespoke creative suite designed to achieve unparalleled aesthetic perfection for modern brands.",
             media: "https://cdn.dribbble.com/userupload/47124760/file/50bfef1d96f832785708aebfa71627dc.mp4",
             type: "video",
             tag: "Brand Identity"
         },
         {
-            title: t("Strategic Assets", "Aset Strategis"),
-            desc: t(
-                "High-performance asset systems that tackle routine branding tasks, allowing you to focus on core growth.",
-                "Sistem aset berperforma tinggi yang menangani tugas branding rutin, membuat Anda fokus pada pertumbuhan."
-            ),
+            title: "Strategic Assets",
+            desc: "High-performance asset systems that tackle routine branding tasks, allowing you to focus on core growth.",
             media: "https://cdn.dribbble.com/uploads/67234/original/237b6de01a45c98571b102df8218d03e.mp4?1765339677",
             type: "video",
             tag: "Asset Management"
         },
         {
-            title: t("Global Delivery", "Pengiriman Global"),
-            desc: t(
-                "Sophisticated handling of complex project lifecycles through extensive creative research and retrieval.",
-                "Penanganan siklus proyek kompleks yang canggih melalui riset kreatif dan penyampaian yang mendalam."
-            ),
+            title: "Global Delivery",
+            desc: "Sophisticated handling of complex project lifecycles through extensive creative research and retrieval.",
             media: "https://cdn.dribbble.com/userupload/45688590/file/cf070e74c379030ab61645fea227459d.mp4",
             type: "video",
             tag: "Global Reach"
         },
         {
-            title: t("AI-Powered Automation", "Otomatisasi AI"),
-            desc: t(
-                "Leverage cutting-edge AI to automate repetitive design tasks and accelerate your creative workflow.",
-                "Manfaatkan AI canggih untuk mengotomatisasi tugas desain berulang dan mempercepat alur kerja kreatif Anda."
-            ),
+            title: "AI-Powered Automation",
+            desc: "Leverage cutting-edge AI to automate repetitive design tasks and accelerate your creative workflow.",
             media: "https://cdn.dribbble.com/userupload/45161820/file/1d6956a9c499dbe7f69ce142751a6c3b.mp4",
             type: "video",
             tag: "AI Technology"
         },
         {
-            title: t("Real-Time Collaboration", "Kolaborasi Real-Time"),
-            desc: t(
-                "Collaborate seamlessly with your team in real-time, eliminating version control issues and feedback loops.",
-                "Berkolaborasi dengan tim secara real-time, menghilangkan masalah kontrol versi dan loop umpan balik."
-            ),
+            title: "Real-Time Collaboration",
+            desc: "Collaborate seamlessly with your team in real-time, eliminating version control issues and feedback loops.",
             media: "https://cdn.dribbble.com/userupload/44750973/file/40ec88109744371df26c13b08f68f6fe.mp4",
             type: "video",
             tag: "Team Workflow"
         },
         {
-            title: t("Analytics & Insights", "Analitik & Wawasan"),
-            desc: t(
-                "Track performance metrics and gain actionable insights to optimize your brand's visual strategy.",
-                "Lacak metrik kinerja dan dapatkan wawasan yang dapat ditindaklanjuti untuk mengoptimalkan strategi visual merek Anda."
-            ),
+            title: "Analytics & Insights",
+            desc: "Track performance metrics and gain actionable insights to optimize your brand's visual strategy.",
             media: "https://cdn.dribbble.com/userupload/45547077/file/90ccc5124f188b48adb0eb827a2786df.mp4",
             type: "video",
             tag: "Data Driven"
@@ -154,23 +134,17 @@ export function OurDesign() {
                 <div className="flex flex-col md:flex-row justify-between items-start gap-6 sm:gap-8 mb-8 sm:mb-10">
                     <div className="max-w-2xl">
                         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#111] mb-4 sm:mb-6 leading-tight tracking-tight">
-                            {t(
-                                "Why professional creators choose Vectorpic Excellence",
-                                "Mengapa kreator profesional memilih Vectorpic Excellence"
-                            )}
+                            Why professional creators choose Vectorpic Excellence
                         </h2>
                         <p className="text-gray-500 text-xs sm:text-sm md:text-base leading-relaxed max-w-lg">
-                            {t(
-                                "Vectorpic streamlines branding workflows by offering tools for visual parallelization, strategic customization, and efficient asset management.",
-                                "Vectorpic menyederhanakan alur kerja branding dengan alat untuk paralelisasi visual, kustomisasi strategis, dan manajemen aset yang efisien."
-                            )}
+                            Vectorpic streamlines branding workflows by offering tools for visual parallelization, strategic customization, and efficient asset management.
                         </p>
                     </div>
                     <Link
                         href="/showcase"
                         className="px-6 sm:px-8 py-2.5 sm:py-3 rounded-full border border-gray-200 text-xs sm:text-sm font-medium text-black hover:bg-gray-50 transition-all active:scale-95 whitespace-nowrap"
                     >
-                        {t("Explore Portfolio", "Jelajahi Portfolio")}
+                        Explore Portfolio
                     </Link>
                 </div>
 
@@ -182,7 +156,7 @@ export function OurDesign() {
                             <path d="M6 8L2 12L6 16" />
                             <path d="M2 12H22" />
                         </svg>
-                        <span>{t("Drag or use arrows to navigate", "Geser atau gunakan panah untuk navigasi")}</span>
+                        <span>Drag or use arrows to navigate</span>
                     </div>
                     <div className="flex gap-2">
                         <button
@@ -311,7 +285,7 @@ export function OurDesign() {
                             <path d="M2 12H22" />
                         </svg>
                         <span className="text-[10px] sm:text-xs font-medium text-gray-500">
-                            {t("Swipe to explore", "Geser untuk menjelajah")}
+                            Swipe to explore
                         </span>
                     </div>
                     <div className="flex gap-1.5 mt-2">

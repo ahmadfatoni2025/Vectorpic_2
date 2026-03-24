@@ -1,11 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useLanguage } from "../context/LanguageContext";
 
 export function Sponsor() {
-    const { t } = useLanguage();
-
     const sponsors = [
         { name: "Airbnb", logo: "/Airbnb.png" },
         { name: "Stripe", logo: "/Stripe.png" },
@@ -17,10 +14,7 @@ export function Sponsor() {
     return (
         <div className="w-full relative -mt-24 sm:-mt-32 md:-mt-48 lg:-mt-56 flex flex-col items-center justify-center px-4 sm:px-6 py-10 md:py-16 z-20">
             <h4 className="text-[9px] sm:text-[10px] md:text-xs font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-gray-400 text-center mb-6 sm:mb-8 md:mb-10 max-w-[260px] sm:max-w-[280px] md:max-w-sm leading-relaxed">
-                {t(
-                    "Trusted by 1000+ agencies growing fast without hiring full-time designers",
-                    "Dipercaya oleh 1000+ agensi yang berkembang pesat tanpa merekrut desainer penuh waktu"
-                )}
+                Trusted by 1000+ agencies growing fast without hiring full-time designers
             </h4>
             <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700 max-w-6xl mx-auto px-4">
                 {sponsors.map((sponsor) => (

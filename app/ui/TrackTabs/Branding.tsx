@@ -3,16 +3,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useLanguage } from "../../context/LanguageContext";
 import { Navbar } from '../Navbar';
 import { Footer } from '../footer';
 
 export default function Branding() {
-  const { t } = useLanguage();
-
   const colors = [
-    { name: t("Vector Blue", "Biru Vektor"), hex: "#04cce7", desc: t("Provides freshness and technological trust to the users.", "Memberikan kesegaran dan kepercayaan teknologi kepada pengguna.") },
-    { name: t("Energy Orange", "Oranye Energi"), hex: "#FDB62F", desc: t("Represents creativity and vibrant energy flow.", "Mewakili kreativitas dan aliran energi yang bersemangat.") },
+    { name: "Vector Blue", hex: "#04cce7", desc: "Provides freshness and technological trust to the users." },
+    { name: "Energy Orange", hex: "#FDB62F", desc: "Represents creativity and vibrant energy flow." },
   ];
 
   return (
@@ -48,13 +45,10 @@ export default function Branding() {
             className="max-w-xl"
           >
             <p className="text-white/80 text-lg md:text-xl font-medium leading-relaxed mb-12">
-              {t(
-                "Vectorpic is a leading digital design studio, providing premium vector assets, brand identities, and high-performance creative solutions.",
-                "Vectorpic adalah studio desain digital terkemuka, menyediakan aset vektor premium, identitas merek, dan solusi kreatif berkinerja tinggi."
-              )}
+              Vectorpic is a leading digital design studio, providing premium vector assets, brand identities, and high-performance creative solutions.
             </p>
             <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-md rounded-lg text-white/50 text-xs font-black tracking-widest uppercase border border-white/5">
-              {t("Official Rebrand Material 2024", "Materi Rebrand Resmi 2024")}
+              Official Rebrand Material 2024
             </span>
           </motion.div>
         </div>
@@ -66,12 +60,9 @@ export default function Branding() {
         <section>
           <div className="flex flex-col md:flex-row justify-between items-start mb-20 gap-8">
             <div className="max-w-2xl">
-              <h2 className="text-4xl font-black text-black mb-6 uppercase tracking-tight">{t("Logo", "Logo")}</h2>
+              <h2 className="text-4xl font-black text-black mb-6 uppercase tracking-tight">Logo</h2>
               <p className="text-gray-500 font-medium leading-relaxed">
-                {t(
-                  "We are dealing between precision and creativity to get our visual outputs with good vibes and meaningful impact, so our logo should say something about the quality and our relationship with clients.",
-                  "Kami berurusan antara presisi dan kreativitas untuk mendapatkan hasil visual kami dengan suasana yang baik dan dampak yang bermakna."
-                )}
+                We are dealing between precision and creativity to get our visual outputs with good vibes and meaningful impact, so our logo should say something about the quality and our relationship with clients.
               </p>
             </div>
             {/* Checklist badge */}
@@ -94,7 +85,7 @@ export default function Branding() {
                   <span className="text-xs font-black text-gray-200">LINE CONCEPT</span>
                 </div>
               </div>
-              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">{t("Line concept of the logo", "Konsep garis dari logo")}</span>
+              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">Line concept of the logo</span>
             </div>
 
             <div className="flex flex-col items-center gap-6 text-center">
@@ -106,7 +97,7 @@ export default function Branding() {
                 </div>
                 <div className="w-32 h-32 bg-gray-100/50 rounded-2xl"></div>
               </div>
-              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">{t("Removing direct interactions", "Menghapus interaksi langsung")}</span>
+              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">Removing direct interactions</span>
             </div>
 
             <div className="flex flex-col items-center gap-6 text-center">
@@ -114,7 +105,7 @@ export default function Branding() {
                 <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-transparent"></div>
                 <Image src="/logo/logo-brand.jpg" alt="Final" width={180} height={180} className="object-contain relative z-10" />
               </div>
-              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">{t("Final Output", "Hasil Akhir")}</span>
+              <span className="text-[10px] font-black text-gray-400 tracking-widest uppercase">Final Output</span>
             </div>
           </div>
         </section>
@@ -122,7 +113,7 @@ export default function Branding() {
         {/* 3. USAGE SECTION */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-24">
           <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("App Usage", "Penggunaan Aplikasi")}</h3>
+            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">App Usage</h3>
             <div className="flex gap-12">
               <div className="w-36 h-36 bg-white shadow-xl rounded-[2.5rem] flex items-center justify-center p-8 border border-gray-50">
                 <Image src="/logo/logo-brand.jpg" alt="App Icon" width={60} height={60} />
@@ -138,7 +129,7 @@ export default function Branding() {
           </div>
 
           <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Web Usage", "Penggunaan Web")}</h3>
+            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">Web Usage</h3>
             <div className="flex flex-col gap-6">
               <div className="w-full h-24 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-4 px-10">
                 <Image src="/logo/logo-brand.jpg" alt="Web Logo" width={40} height={40} />
@@ -159,7 +150,7 @@ export default function Branding() {
         {/* 4. ASSETS SECTION */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-24 pt-16 border-t border-gray-100">
           <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Colors", "Warna")}</h3>
+            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">Colors</h3>
             <div className="flex flex-wrap gap-12 mb-10">
               {colors.map((color) => (
                 <div key={color.hex} className="flex flex-col gap-6">
@@ -172,12 +163,12 @@ export default function Branding() {
               ))}
             </div>
             <p className="text-gray-400 text-sm font-medium italic max-w-sm">
-              {t("Both are brighter colours, it will give freshness to the users.", "Keduanya adalah warna yang lebih cerah, itu akan memberikan kesegaran bagi pengguna.")}
+              Both are brighter colours, it will give freshness to the users.
             </p>
           </div>
 
           <div>
-            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">{t("Font", "Font")}</h3>
+            <h3 className="text-2xl font-black text-black mb-10 uppercase tracking-widest">Font</h3>
             <div className="flex flex-col gap-6 mb-12">
               <div className="flex flex-col">
                 <span className="text-5xl md:text-7xl font-black text-black tracking-tighter">Outfit Heavy</span>
@@ -185,10 +176,7 @@ export default function Branding() {
               </div>
             </div>
             <p className="text-gray-400 text-sm font-medium italic max-w-md leading-relaxed">
-              {t(
-                "Outfit is one of the best and premium fonts used by worldwide designers for modern digital experiences.",
-                "Outfit adalah salah satu font terbaik dan premium yang digunakan oleh desainer di seluruh dunia untuk pengalaman digital modern."
-              )}
+              Outfit is one of the best and premium fonts used by worldwide designers for modern digital experiences.
             </p>
           </div>
         </section>

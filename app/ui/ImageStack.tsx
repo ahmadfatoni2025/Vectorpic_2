@@ -2,22 +2,20 @@
 
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useLanguage } from "../context/LanguageContext";
 
 export function ImageStack() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
 
-  // Smoothen the scroll progress - tuned for maximum 'lightness'
+  // Smoothen the scroll progress - tuned for maximum 'lightness' and fluid feel
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 50,
-    damping: 20,
-    mass: 0.3,
+    stiffness: 40,
+    damping: 30,
+    mass: 0.5,
     restDelta: 0.001
   });
 
@@ -33,15 +31,18 @@ export function ImageStack() {
   const isTablet = windowWidth >= 640 && windowWidth < 1024;
 
   // Optimized image set with size constraints
-  const cards = [
-    { id: 1, label: t("Modern Vector Art", "Seni Vektor Modern"), imageUrl: "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=400&q=70" },
-    { id: 2, label: t("Brand Identity", "Identitas Merek"), imageUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=70" },
-    { id: 3, label: t("Illustration", "Ilustrasi"), imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=400&q=70" },
-    { id: 4, label: t("Logo System", "Sistem Logo"), imageUrl: "https://images.unsplash.com/photo-1554188248-986adbb73be4?auto=format&fit=crop&w=400&q=70" },
-    { id: 5, label: t("Motion Graphics", "Grafis Gerak"), imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=400&q=70" },
-    { id: 6, label: t("UI/UX Concept", "Konsep UI/UX"), imageUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=400&q=70" },
-    { id: 7, label: t("Print Assets", "Aset Cetak"), imageUrl: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=400&q=70" },
+  const allCards = [
+    { id: 1, label: "Modern Vector Art", imageUrl: "https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=400&q=70" },
+    { id: 2, label: "Brand Identity", imageUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=400&q=70" },
+    { id: 3, label: "Illustration", imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=400&q=70" },
+    { id: 4, label: "Logo System", imageUrl: "https://images.unsplash.com/photo-1554188248-986adbb73be4?auto=format&fit=crop&w=400&q=70" },
+    { id: 5, label: "Motion Graphics", imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=400&q=70" },
+    { id: 6, label: "UI/UX Concept", imageUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=400&q=70" },
+    { id: 7, label: "Print Assets", imageUrl: "https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?auto=format&fit=crop&w=400&q=70" },
   ];
+
+  // Performance optimization: Render fewer items on smaller screens
+  const cards = isMobile ? allCards.slice(2, 5) : (isTablet ? allCards.slice(1, 6) : allCards);
 
   return (
     <section ref={containerRef} className="relative h-[100vh] -mt-16 sm:-mt-54 flex flex-col items-center bg-white overflow-hidden sm:overflow-visible">
@@ -98,7 +99,7 @@ export function ImageStack() {
 
                   {/* Premium overlay label */}
                   <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 bg-linear-to-t from-black/60 via-black/10 to-transparent">
-                    <span className="text-[10px] font-black text-white/50 uppercase tracking-widest block mb-0.5">{t("Showcase", "Karya")}</span>
+                    <span className="text-[10px] font-black text-white/50 uppercase tracking-widest block mb-0.5">Showcase</span>
                     <h3 className="text-xs md:text-sm font-bold text-white tracking-tight leading-tight truncate">
                       {card.label}
                     </h3>

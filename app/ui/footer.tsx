@@ -2,11 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useLanguage } from '../context/LanguageContext';
 
 export function Footer() {
-    const { t } = useLanguage();
-
     return (
         <footer className="relative w-full bg-white pt-10 sm:pt-10 overflow-hidden">
             {/* Background Large Text Watermark */}
@@ -29,13 +26,13 @@ export function Footer() {
                             </div>
 
                             <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black leading-[1.1] mb-4 max-w-sm tracking-tighter mt-6 sm:mt-8">
-                                {t("Digital Art", "Seni Digital")} <br /> {t("Meets Tech Perfection.", "Bertemu Kesempurnaan Teknologi.")}
+                                Digital Art <br /> Meets Tech Perfection.
                             </h3>
                         </div>
 
                         <div className="mt-12 sm:mt-20">
                             <span className="text-[10px] sm:text-xs font-medium text-white/60 mb-4 sm:mb-6mb block italic uppercase tracking-widest">
-                                {t("Connect with Us", "Terhubung dengan Kami")}
+                                Connect with Us
                             </span>
                             <div className="flex items-center gap-3 sm:gap-4">
                                 {[
@@ -59,24 +56,24 @@ export function Footer() {
 
                         <div className="grid grid-cols-2 gap-8 sm:gap-12 md:gap-20 lg:gap-32">
                             <div className="flex flex-col gap-6 sm:gap-8">
-                                <span className="text-[10px] sm:text-[11px] font-black text-gray-300 uppercase tracking-widest italic">{t("Navigation", "Navigasi")}</span>
+                                <span className="text-[10px] sm:text-[11px] font-black text-gray-300 uppercase tracking-widest italic">Navigation</span>
                                 <div className="flex flex-col gap-3 sm:gap-4 font-black text-[#111] text-sm sm:text-base">
-                                    <Link href="/" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Home", "Beranda")}</Link>
-                                    <Link href="/showcase" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Showcase", "Galeri")}</Link>
-                                    <Link href="/management" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Leadership", "Kepemimpinan")}</Link>
-                                    <Link href="/about" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("About Us", "Tentang Kami")}</Link>
-                                    <Link href="/contact" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Contact", "Kontak")}</Link>
+                                    <Link href="/" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Home</Link>
+                                    <Link href="/showcase" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Showcase</Link>
+                                    <Link href="/management" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Leadership</Link>
+                                    <Link href="/about" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">About Us</Link>
+                                    <Link href="/contact" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Contact</Link>
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-6 sm:gap-8">
-                                <span className="text-[10px] sm:text-[11px] font-black text-gray-300 uppercase tracking-widest italic">{t("Company", "Perusahaan")}</span>
+                                <span className="text-[10px] sm:text-[11px] font-black text-gray-300 uppercase tracking-widest italic">Company</span>
                                 <div className="flex flex-col gap-3 sm:gap-4 font-black text-[#111] text-sm sm:text-base">
-                                    <Link href="/company/mission" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Our Mission", "Misi Kami")}</Link>
-                                    <Link href="/company/team" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Creative Team", "Tim Kreatif")}</Link>
-                                    <Link href="/company/careers" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Global Careers", "Karir Global")}</Link>
-                                    <Link href="/company/privacy" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Privacy Policy", "Kebijakan Privasi")}</Link>
-                                    <Link href="/company/terms" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">{t("Terms & Condition", "Syarat & Ketentuan")}</Link>
+                                    <Link href="/company/mission" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Our Mission</Link>
+                                    <Link href="/company/team" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Creative Team</Link>
+                                    <Link href="/company/careers" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Global Careers</Link>
+                                    <Link href="/company/privacy" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Privacy Policy</Link>
+                                    <Link href="/company/terms" className="hover:text-blue-600 transition-all hover:translate-x-1 inline-block">Terms & Condition</Link>
                                 </div>
                             </div>
                         </div>

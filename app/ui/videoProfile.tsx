@@ -2,78 +2,60 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useLanguage } from '../context/LanguageContext';
 
 export function VideoProfile() {
-    const { t } = useLanguage();
-
     const contentData = [
         {
-            tab: t("Vector Illustration", "Ilustrasi Vektor"),
-            highlight: t("charming,", "memukau,"),
-            subtext: t("clean, and modern.", "bersih, dan modern."),
-            quote: t(
-                "Vectorpic made our landing page stand out with charming characters and a perfectly balanced color palette.",
-                "Vectorpic membuat landing page kami menonjol dengan karakter menawan dan palet warna yang seimbang sempurna."
-            ),
+            tab: "Vector Illustration",
+            highlight: "charming,",
+            subtext: "clean, and modern.",
+            quote: "Vectorpic made our landing page stand out with charming characters and a perfectly balanced color palette.",
             author: "Alex Rivera",
-            role: t("Product Manager @ TechFlow", "Manajer Produk @ TechFlow"),
+            role: "Product Manager @ TechFlow",
             image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2",
             videoId: "https://framerusercontent.com/assets/Kny5Ty8J6mn9PsM1TGpXsWNtNh4.mp4",
             bgColor: "bg-[#6366F1]"
         },
         {
-            tab: t("Brand Identity", "Identitas Merek"),
-            highlight: t("unique,", "unik,"),
-            subtext: t("bold, and iconic.", "berani, dan ikonik."),
-            quote: t(
-                "Their retro-modern aesthetic gave our brand a unique voice in a crowded market. Truly world-class design work.",
-                "Estetika retro-modern mereka memberikan suara unik pada merek kami di pasar yang ramai. Karya desain berkelas dunia."
-            ),
+            tab: "Brand Identity",
+            highlight: "unique,",
+            subtext: "bold, and iconic.",
+            quote: "Their retro-modern aesthetic gave our brand a unique voice in a crowded market. Truly world-class design work.",
             author: "Sarah Jenkins",
-            role: t("Creative Director @ RetroWave", "Direktur Kreatif @ RetroWave"),
+            role: "Creative Director @ RetroWave",
             image: "https://images.unsplash.com/photo-1580489944761-15a19d654956",
             videoId: "29_u9_0Vv08",
             bgColor: "bg-[#8B5CF6]"
         },
         {
-            tab: t("Social Content", "Konten Sosial"),
-            highlight: t("playful,", "menyenangkan,"),
-            subtext: t("vibrant, and engaging.", "cerah, dan menarik."),
-            quote: t(
-                "Our engagement skyrocketed after switching to Vectorpic's playful illustrations for our daily social media assets.",
-                "Engagement kami meroket setelah beralih ke ilustrasi Vectorpic yang playful untuk aset media sosial harian kami."
-            ),
+            tab: "Social Content",
+            highlight: "playful,",
+            subtext: "vibrant, and engaging.",
+            quote: "Our engagement skyrocketed after switching to Vectorpic's playful illustrations for our daily social media assets.",
             author: "David Chen",
-            role: t("Founder @ SocialPulse", "Pendiri @ SocialPulse"),
+            role: "Founder @ SocialPulse",
             image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
             videoId: "dQw4w9WgXcQ",
             bgColor: "bg-[#EC4899]"
         },
         {
-            tab: t("Character Design", "Desain Karakter"),
-            highlight: t("whimsical,", "ajaib,"),
-            subtext: t("layered, and alive.", "berlapis, dan hidup."),
-            quote: t(
-                "The whimsy and personality in their characters are unmatched. They bring a soul to every project they touch.",
-                "Fantasi dan kepribadian dalam karakter mereka tak tertandingi. Mereka membawa jiwa ke setiap proyek."
-            ),
+            tab: "Character Design",
+            highlight: "whimsical,",
+            subtext: "layered, and alive.",
+            quote: "The whimsy and personality in their characters are unmatched. They bring a soul to every project they touch.",
             author: "Emily Watson",
-            role: t("Head of Art @ GameSprint", "Kepala Seni @ GameSprint"),
+            role: "Head of Art @ GameSprint",
             image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
             videoId: "29_u9_0Vv08",
             bgColor: "bg-[#10B981]"
         },
         {
-            tab: t("Print & Merch", "Cetak & Merchandise"),
-            highlight: t("crisp,", "tajam,"),
-            subtext: t("scalable, and precise.", "skalabel, dan presisi."),
-            quote: t(
-                "Clean lines and perfect color palettes. Every file is production-ready and looks stunning on any physical medium.",
-                "Garis bersih dan palet warna sempurna. Setiap file siap produksi dan tampil menakjubkan di media fisik apa pun."
-            ),
+            tab: "Print & Merch",
+            highlight: "crisp,",
+            subtext: "scalable, and precise.",
+            quote: "Clean lines and perfect color palettes. Every file is production-ready and looks stunning on any physical medium.",
             author: "Marcus Thorne",
-            role: t("Owner @ MerchKing", "Pemilik @ MerchKing"),
+            role: "Owner @ MerchKing",
             image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
             videoId: "dQw4w9WgXcQ",
             bgColor: "bg-[#F59E0B]"
@@ -108,13 +90,10 @@ export function VideoProfile() {
                 {/* Header Section */}
                 <div className="max-w-3xl mb-8 sm:mb-10">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-black leading-tight tracking-tighter mb-3 sm:mb-4">
-                        {t("Design solutions for every business", "Solusi desain untuk setiap bisnis")}
+                        Design solutions for every business
                     </h2>
                     <p className="text-gray-500 text-sm sm:text-base md:text-lg leading-relaxed max-w-lg">
-                        {t(
-                            "From startups to established brands, we provide tailored design support for your specific needs.",
-                            "Dari startup hingga brand mapan, kami menyediakan dukungan desain yang disesuaikan dengan kebutuhan spesifik Anda."
-                        )}
+                        From startups to established brands, we provide tailored design support for your specific needs.
                     </p>
                 </div>
 
@@ -149,7 +128,7 @@ export function VideoProfile() {
                             <div key={idx} className="w-full h-full shrink-0 snap-center grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 md:gap-16 items-center pr-4 select-none">
                                 {/* Left Column - Video Thumbnail Card */}
                                 <div
-                                    className={`relative group cursor-pointer aspect-video md:aspect-[4/3] rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden ${content.bgColor} flex items-center justify-center transition-colors duration-700`}
+                                    className={`relative group cursor-pointer aspect-video md:aspect-4/3 rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden ${content.bgColor} flex items-center justify-center transition-colors duration-700`}
                                     onClick={() => setShowVideo(true)}
                                 >
                                     <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -174,11 +153,11 @@ export function VideoProfile() {
                                     </div>
 
                                     <div className="relative z-20 w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-2xl scale-90 group-hover:scale-100 transition-transform duration-500">
-                                        <div className="w-0 h-0 border-t-[5px] sm:border-t-[6px] md:border-t-[8px] border-t-transparent border-l-10 sm:border-l-12 md:border-l-[16px] border-l-[#4F46E5] border-b-[5px] sm:border-b-[6px] md:border-b-[8px] border-b-transparent ml-1 sm:ml-1.5 md:ml-2"></div>
+                                        <div className="w-0 h-0 border-t-[5px] sm:border-t-[6px] md:border-t-8 border-t-transparent border-l-10 sm:border-l-12 md:border-l-16 border-l-[#4F46E5] border-b-[5px] sm:border-b-[6px] md:border-b-8 border-b-transparent ml-1 sm:ml-1.5 md:ml-2"></div>
                                     </div>
 
                                     <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 bg-white/20 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full text-[7px] sm:text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                                        {t("Watch Tutorial", "Tonton Tutorial")}
+                                        Watch Tutorial
                                     </div>
                                 </div>
 
@@ -206,7 +185,7 @@ export function VideoProfile() {
 
                 {/* Video Player Modal */}
                 {showVideo && (
-                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-10 transition-opacity animate-in fade-in duration-300">
+                    <div className="fixed inset-0 z-200 flex items-center justify-center p-4 md:p-10 transition-opacity animate-in fade-in duration-300">
                         <div
                             className="absolute inset-0 bg-black/95 backdrop-blur-2xl"
                             onClick={() => setShowVideo(false)}
