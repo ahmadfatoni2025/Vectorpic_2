@@ -1,6 +1,6 @@
 "use client";
 
-import UIUX from "../../ui/TrackTabs/UIUX";
+import UIUX from "../../components/ui/TrackTabs/UIUX";
 
 export default function Page() {
   return (

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SmoothScroll } from "./ui/SmoothScroll";
+import { SmoothScroll } from "./components/layout/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "Vectorpic",

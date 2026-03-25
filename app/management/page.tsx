@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from 'react';
-import ManagementContent from './management';
+import ManagementContent from './_components/ManagementContent';
 
 export default function ManagementPage() {
   return (

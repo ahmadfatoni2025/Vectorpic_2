@@ -1,6 +1,6 @@
 "use client";
 
-import Illustration from "../../ui/TrackTabs/Illustration";
+import Illustration from "../../components/ui/TrackTabs/Illustration";
 
 export default function Page() {
   return (

@@ -4,8 +4,8 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Navbar } from "../../ui/Navbar";
-import { Footer } from "../../ui/footer";
+import { Navbar } from "../../components/layout/Navbar";
+import { Footer } from "../../components/layout/Footer";
 import { Palette, Camera, Image as ImageIcon, Stars, Sparkles, Layout } from "lucide-react";
 
 const stats = [

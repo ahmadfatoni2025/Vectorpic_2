@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { FlowingMenu } from "./FlowingMenu";
+import { FlowingMenu } from "../../components/ui/FlowingMenu";
 
 export default function Track() {
   const steps = [

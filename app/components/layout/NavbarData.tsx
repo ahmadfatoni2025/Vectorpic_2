@@ -1,4 +1,4 @@
-import { LayoutGrid, Palette, Box, Smartphone, Play, Zap, ShieldCheck, Briefcase, Globe, Target, Terminal, Camera, Layers, Users } from "lucide-react";
+import { LayoutGrid, Palette, Box, Smartphone, Play, Zap, ShieldCheck, Briefcase, Globe, Target, Terminal, Camera, Layers, Users, MessageCircle } from "lucide-react";
 
 export const showcaseItems = [
   { name: "Vector Art", icon: <Palette className="w-5 h-5" />, sub: "Premium vector illustrations", href: "/showcase?category=Vector%20Art" },
@@ -22,6 +22,21 @@ export const leadershipItems = [
   { name: "Strategy", icon: <Globe className="w-5 h-5" />, sub: "Market & Growth", href: "/management/strategy" },
   { name: "Production", icon: <Briefcase className="w-5 h-5" />, sub: "Execution lead", href: "/management/production" },
   { name: "Operations", icon: <Target className="w-5 h-5" />, sub: "Efficiency & Quality", href: "/management" },
+];
+
+export const communityItems = [
+  { name: "Live Support Feed", icon: <MessageCircle className="w-5 h-5" />, sub: "Connect with our experts", href: "/community" },
+  { name: "Documentation", icon: <Layers className="w-5 h-5" />, sub: "Master our visual tools", href: "/docs" },
+  { name: "Forum", icon: <Users className="w-5 h-5" />, sub: "Join the conversation", href: "/community" },
+  { name: "Latest Insights", icon: <Globe className="w-5 h-5" />, sub: "Articles and tutorials", href: "/blog" },
+  { name: "Brand Assets", icon: <Briefcase className="w-5 h-5" />, sub: "Download our brand kit", href: "/about" },
+  { name: "Case Studies", icon: <Target className="w-5 h-5" />, sub: "See how others thrive", href: "/showcase" },
+];
+
+export const communityDiscover = [
+  { name: "Trending Topics", href: "/community" },
+  { name: "Become a Contributor", href: "/careers" },
+  { name: "Help Center", href: "/support" },
 ];
 
 export const leadershipDiscover = [

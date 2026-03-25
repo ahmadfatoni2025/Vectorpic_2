@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Navbar } from "../../ui/Navbar";
-import { Footer } from "../../ui/footer";
+import { Navbar } from "../../components/layout/Navbar";
+import { Footer } from "../../components/layout/Footer";
 
 export default function MissionPage() {
   const [activeTab, setActiveTab] = useState<'vision' | 'mission'>('vision');

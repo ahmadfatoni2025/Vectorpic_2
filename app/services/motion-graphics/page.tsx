@@ -1,6 +1,6 @@
 "use client";
 
-import MotionGraphics from "../../ui/TrackTabs/MotionGraphics";
+import MotionGraphics from "../../components/ui/TrackTabs/MotionGraphics";
 
 export default function Page() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from 'react';
-import ShowcaseContent from './showcase';
+import ShowcaseContent from './_components/ShowcaseContent';
 
 export default function ShowcasePage() {
   return (

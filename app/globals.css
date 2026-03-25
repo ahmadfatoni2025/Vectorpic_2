@@ -7,6 +7,13 @@
 
 :root {
   --font-sans: "Google Sans", "Inter", sans-serif;
+  --fluid-h1: clamp(3rem, 8vw, 7rem);
+  --fluid-h2: clamp(2.5rem, 5vw, 4.5rem);
+  --fluid-h3: clamp(1.5rem, 3vw, 2.5rem);
+  --fluid-p: clamp(0.9rem, 1vw, 1.1rem);
+  --fluid-gap: clamp(1rem, 2.5vw, 2.5rem);
+  --fluid-padding: clamp(1.5rem, 4vw, 3.5rem);
+  --fluid-section-py: clamp(4rem, 10vw, 8rem);
 }
 
 html,
@@ -107,4 +114,49 @@ body {
   50% {
     transform: translateY(-10px) rotate(var(--tw-rotate, 0deg));
   }
+}
+
+/* FAQ Specific Fluid Styling */
+.faq-grid {
+  columns: 1;
+  column-gap: var(--fluid-gap);
+}
+
+@media (min-width: 768px) {
+  .faq-grid {
+    columns: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .faq-grid {
+    columns: 3;
+  }
+}
+
+.faq-item {
+  break-inside: avoid-column;
+  margin-bottom: var(--fluid-gap);
+  border-radius: 2.5rem;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-question {
+  font-size: clamp(1rem, 1.2vw + 0.5rem, 1.3rem);
+  padding: var(--fluid-padding);
+}
+
+.faq-answer {
+  font-size: var(--fluid-p);
+  padding-inline: var(--fluid-padding);
+  padding-bottom: var(--fluid-padding);
+}
+
+.faq-section-padding {
+  padding-block: var(--fluid-section-py);
+}
+
+.faq-main-title {
+  font-size: var(--fluid-h2);
+  line-height: 0.95;
 }

@@ -9,7 +9,7 @@ import {
   Search,
   Zap,
 } from "lucide-react";
-import { showcaseItems, showcaseDiscover, leadershipItems, leadershipDiscover } from "./navbar-data";
+import { showcaseItems, showcaseDiscover, leadershipItems, leadershipDiscover } from "./NavbarData";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -50,6 +50,7 @@ export function Navbar() {
     { name: "Home", href: "/" },
     { name: "Showcase", href: "/showcase", dropdown: "showcase" },
     { name: "Management", href: "/management", dropdown: "leadership" },
+    { name: "Community", href: "/community" },
     { name: "About", href: "/about" },
   ];
 
@@ -64,7 +65,7 @@ export function Navbar() {
   const renderMegaDropdown = (
     items: typeof showcaseItems,
     discoverLinks: typeof showcaseDiscover,
-    type: "showcase" | "leadership"
+    type: "showcase" | "leadership" | "community"
   ) => {
     const direction = getDirection();
 
@@ -91,7 +92,7 @@ export function Navbar() {
           <div className="flex-1 p-8 grid grid-cols-2 gap-x-8 gap-y-2">
             <div className="col-span-1">
               <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6 px-4">
-                {type === "showcase" ? "GALLERY" : "LEADERSHIP"}
+                {type === "showcase" ? "GALLERY" : type === "leadership" ? "LEADERSHIP" : "COMMUNITY"}
               </h3>
               <div className="flex flex-col gap-1">
                 {items.slice(0, 4).map((item) => (
@@ -109,7 +110,7 @@ export function Navbar() {
             </div>
             <div className="col-span-1">
               <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6 px-4">
-                {type === "showcase" ? "DISCOVER" : "DIVISIONS"}
+                {type === "showcase" ? "DISCOVER" : type === "leadership" ? "DIVISIONS" : "RESOURCES"}
               </h3>
               <div className="flex flex-col gap-1">
                 {items.slice(4).map((item) => (
@@ -135,17 +136,21 @@ export function Navbar() {
               <img
                 src={type === 'showcase'
                   ? "https://i.pinimg.com/originals/00/05/e1/0005e1c3aab875cb48ef130c55533cbb.gif"
-                  : "https://i.pinimg.com/originals/22/09/5d/22095d8fd02905f537e78a507c7536e0.gif"}
+                  : type === 'leadership'
+                  ? "https://i.pinimg.com/originals/22/09/5d/22095d8fd02905f537e78a507c7536e0.gif"
+                  : "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3hpeXR6Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3gmbnA9MSZscD0x/3o7TKVUn7iM8FMEU24/giphy.gif"}
                 alt={type === 'showcase' ? "Img showcase" : "Img leadership"}
                 className='w-full h-full object-cover'
               />
               {/* <Zap className="w-10 h-10 text-indigo-500 animate-pulse relative z-10" /> */}
             </div>
-            <h4 className="font-bold text-gray-900 mb-2">{type === 'showcase' ? 'Visual Flow Builder' : 'New Strategic Pillar'}</h4>
+            <h4 className="font-bold text-gray-900 mb-2">{type === 'showcase' ? 'Visual Flow Builder' : type === 'leadership' ? 'New Strategic Pillar' : 'Community Feed'}</h4>
             <p className="text-xs text-gray-500 leading-relaxed mb-6">
               {type === 'showcase'
                 ? "Build websites through a visual flow where every section connects seamlessly."
-                : "How our new high-value leadership layers lead to assigned success."}
+                : type === 'leadership'
+                ? "How our new high-value leadership layers lead to assigned success."
+                : "Join over 50,000 creators sharing thoughts and assets daily."}
             </p>
             <div className="space-y-3">
               {discoverLinks.slice(0, 3).map(link => (

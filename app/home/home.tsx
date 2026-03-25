@@ -1,18 +1,18 @@
 "use client";
 
 import React from "react";
-import { Navbar } from "../ui/Navbar";
-import { Hero } from "../ui/Hero";
-import { Sponsor } from "../ui/sponsor";
-import { OurDesign } from "../ui/our";
-import { VideoProfile } from "../ui/videoProfile";
-import { Footer } from "../ui/footer";
-import Track from "../ui/track";
-import Statistik from "../ui/statistik";
-import Services from "../ui/servics";
-import Qna from "../ui/qna";
-import Rateing from "../ui/rateing";
-import ScrollReveal from "../ui/ScrollReveal";
+import { Navbar } from "../components/layout/Navbar";
+import { Hero } from "./_components/Hero";
+import { Sponsor } from "./_components/Sponsor";
+import { OurDesign } from "../components/sections/OurDesign";
+import { VideoProfile } from "./_components/VideoProfile";
+import { Footer } from "../components/layout/Footer";
+import Track from "./_components/Track";
+import Statistik from "./_components/Statistics";
+import Services from "./_components/Services";
+import Rateing from "./_components/Rating";
+import ScrollReveal from "../components/ui/ScrollReveal";
+import Form from "./_components/Form";
 
 export default function HomeContent() {
   return (
@@ -28,7 +28,7 @@ export default function HomeContent() {
         <Statistik />
         <Services />
         <Rateing />
-        <Qna />
+        <Form />
       </div>
 
       <Footer />

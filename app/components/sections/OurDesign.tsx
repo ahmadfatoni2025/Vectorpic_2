@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import ScrollReveal from './ScrollReveal';
+import ScrollReveal from '../ui/ScrollReveal';
 
 export function OurDesign() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);

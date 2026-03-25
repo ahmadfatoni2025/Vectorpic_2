@@ -1,6 +1,6 @@
 "use client";
 
-import Branding from "../../ui/TrackTabs/Branding";
+import Branding from "../../components/ui/TrackTabs/Branding";
 
 export default function Page() {
   return (

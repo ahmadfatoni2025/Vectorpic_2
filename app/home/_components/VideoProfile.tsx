@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import ScrollReveal from './ScrollReveal';
+import ScrollReveal from '@/app/components/ui/ScrollReveal';
 
 export function VideoProfile() {
     const contentData = [
