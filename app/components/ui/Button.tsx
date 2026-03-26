@@ -8,15 +8,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
 
-export function Button({ 
-  children, 
-  variant = "primary", 
-  size = "md", 
-  className = "", 
-  ...props 
+export function Button({
+  children,
+  variant = "primary",
+  size = "md",
+  className = "",
+  ...props
 }: ButtonProps) {
   const baseStyles = "inline-flex items-center justify-center rounded-full font-bold transition-all active:scale-95 focus:outline-none disabled:opacity-50 disabled:pointer-events-none";
-  
+
   const variants = {
     primary: "bg-black text-white shadow-md hover:bg-zinc-800 hover:shadow-lg",
     secondary: "bg-gray-100 text-black hover:bg-gray-200",

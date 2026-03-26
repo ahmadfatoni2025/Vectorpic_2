@@ -3,8 +3,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Navbar } from '../Navbar';
-import { Footer } from '../footer';
+import { Navbar } from '../../layout/Navbar';
+import { Footer } from '../../layout/Footer';
 
 export default function UIUX() {
     const paperTexture = "https://images.unsplash.com/photo-1603484477859-abe6a73f9366?w=1200&q=60";
@@ -76,7 +76,7 @@ export default function UIUX() {
 
                             {/* Stylized F with accents */}
                             <div className="relative inline-flex flex-col items-center justify-center">
-                                <span className="text-[3.5rem] md:text-8xl lg:text-[9rem] leading-none tracking-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                                <span className="text-[3.5rem] md:text-8xl lg:text-[9rem] leading-none tracking-tight bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                                     F
                                 </span>
                                 <span className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 text-[0.3em] md:text-[0.25em] font-medium text-gray-400">

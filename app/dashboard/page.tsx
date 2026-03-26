@@ -50,7 +50,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 flex font-sans text-[#111] overflow-hidden">
       {/* --- SIDEBAR --- */}
-      <aside className="w-64 bg-white border-r border-gray-100 flex flex-col justify-between p-6 h-screen hidden lg:flex shrink-0">
+      <aside className="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col justify-between p-6 h-screen shrink-0">
         <div>
           <Link href="/" className="flex items-center gap-3 mb-10 pl-2">
             <div className="w-8 h-8 flex items-center justify-center bg-black rounded-lg">
@@ -108,7 +108,7 @@ export default function Dashboard() {
               <input 
                 type="text" 
                 placeholder="Search projects, assets..." 
-                className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-hidden focus:ring-4 focus:ring-indigo-100 transition-all text-sm font-medium" 
+                className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all text-sm font-medium" 
               />
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function Dashboard() {
         </header>
 
         {/* --- SCROLLABLE CONTENT --- */}
-        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-8 custom-scrollbar" data-lenis-prevent>
           {/* Welcome Message */}
           <motion.div 
              initial={{ opacity: 0, y: 10 }}
@@ -204,7 +204,7 @@ export default function Dashboard() {
                           </button>
                         </div>
                         <div className="absolute bottom-4 left-4">
-                           <span className="bg-black/20 backdrop-blur-md text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest uppercase">{project.category}</span>
+                           <span className="bg-black/20 backdrop-blur-md text-white text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">{project.category}</span>
                         </div>
                       </div>
                       <div className="p-6 flex items-center justify-between">

@@ -84,8 +84,7 @@ export default function Services() {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="text-4xl sm:text-5xl md:text-7xl font-black text-slate-900 leading-[0.95] tracking-tighter mb-8"
                     >
-                        Transform your <br />
-                        <span className="text-blue-600 italic font-thin">design</span> process
+                        Transform your design process.
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}

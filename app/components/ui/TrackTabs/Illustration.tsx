@@ -3,8 +3,8 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Navbar } from '../Navbar';
-import { Footer } from '../footer';
+import { Navbar } from '../../layout/Navbar';
+import { Footer } from '../../layout/Footer';
 import { Eye, Mic2, Music, Activity, Camera } from 'lucide-react';
 
 export default function Illustration() {

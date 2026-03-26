@@ -231,7 +231,7 @@ export function Navbar() {
 
             <Link href="/contact" className="hidden sm:block text-sm font-semibold text-gray-500 hover:text-gray-900 px-2 transition-colors">Contact</Link>
 
-            <Link href="/login" className="px-8 py-3 bg-gray-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center gap-2">Login</Link>
+            <Link href="/auth/user/login" className="px-8 py-3 bg-gray-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center gap-2">Login</Link>
 
             <button className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-1002 bg-white rounded-full ml-2 shadow-sm border border-gray-100" onClick={() => setIsOpen(!isOpen)}>
               <span className={`w-4 h-0.5 bg-gray-900 transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-1' : ''}`} />
@@ -280,7 +280,7 @@ export function Navbar() {
                     <Link href="/about" className="text-xl font-black text-gray-900 tracking-tight" onClick={() => setIsOpen(false)}>
                       Our Story
                     </Link>
-                    <Link href="/login" className="px-6 py-4 bg-gray-900 text-white rounded-2xl text-center text-sm font-black uppercase tracking-widest shadow-xl shadow-gray-200 active:scale-95" onClick={() => setIsOpen(false)}>
+                    <Link href="/auth/user/login" className="px-6 py-4 bg-gray-900 text-white rounded-2xl text-center text-sm font-black uppercase tracking-widest shadow-xl shadow-gray-200 active:scale-95" onClick={() => setIsOpen(false)}>
                       Login
                     </Link>
                   </div>

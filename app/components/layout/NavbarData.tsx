@@ -35,7 +35,7 @@ export const communityItems = [
 
 export const communityDiscover = [
   { name: "Trending Topics", href: "/community" },
-  { name: "Become a Contributor", href: "/careers" },
+  { name: "Become a Contributor", href: "/company/careers" },
   { name: "Help Center", href: "/support" },
 ];
 

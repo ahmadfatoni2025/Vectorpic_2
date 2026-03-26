@@ -19,6 +19,7 @@ interface ScrollRevealProps {
   textClassName?: string;
   rotationEnd?: string;
   wordAnimationEnd?: string;
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div';
 }
 
 const ScrollReveal: React.FC<ScrollRevealProps> = ({
@@ -31,9 +32,10 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   containerClassName = '',
   textClassName = '',
   rotationEnd = 'bottom bottom',
-  wordAnimationEnd = 'bottom bottom'
+  wordAnimationEnd = 'bottom bottom',
+  as: Tag = 'h2'
 }) => {
-  const containerRef = useRef<HTMLHeadingElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
   const splitText = useMemo(() => {
     const text = typeof children === 'string' ? children : '';
@@ -74,7 +76,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         }
       );
 
-      const wordElements = el.querySelectorAll<HTMLElement>('.word');
+      const wordElements = (el as HTMLElement).querySelectorAll<HTMLElement>('.word');
 
       // Opacity and Transform animation for words
       gsap.fromTo(
@@ -124,9 +126,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 
   return (
-    <h2 ref={containerRef} className={`my-5 ${containerClassName}`}>
+    <Tag ref={containerRef as any} className={`my-5 ${containerClassName}`}>
       <div className={`text-[clamp(1.6rem,4vw,3rem)] leading-normal font-semibold ${textClassName}`}>{splitText}</div>
-    </h2>
+    </Tag>
   );
 };
 
