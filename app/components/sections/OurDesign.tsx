@@ -12,51 +12,36 @@ export function OurDesign() {
     const [scrollLeft, setScrollLeft] = useState(0);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+    const [advantages, setAdvantages] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const advantages = [
-        {
-            title: "Visual Identity",
-            desc: "A bespoke creative suite designed to achieve unparalleled aesthetic perfection for modern brands.",
-            media: "https://cdn.dribbble.com/userupload/47124760/file/50bfef1d96f832785708aebfa71627dc.mp4",
-            type: "video",
-            tag: "Brand Identity"
-        },
-        {
-            title: "Strategic Assets",
-            desc: "High-performance asset systems that tackle routine branding tasks, allowing you to focus on core growth.",
-            media: "https://cdn.dribbble.com/uploads/67234/original/237b6de01a45c98571b102df8218d03e.mp4?1765339677",
-            type: "video",
-            tag: "Asset Management"
-        },
-        {
-            title: "Global Delivery",
-            desc: "Sophisticated handling of complex project lifecycles through extensive creative research and retrieval.",
-            media: "https://cdn.dribbble.com/userupload/45688590/file/cf070e74c379030ab61645fea227459d.mp4",
-            type: "video",
-            tag: "Global Reach"
-        },
-        {
-            title: "AI-Powered Automation",
-            desc: "Leverage cutting-edge AI to automate repetitive design tasks and accelerate your creative workflow.",
-            media: "https://cdn.dribbble.com/userupload/45161820/file/1d6956a9c499dbe7f69ce142751a6c3b.mp4",
-            type: "video",
-            tag: "AI Technology"
-        },
-        {
-            title: "Real-Time Collaboration",
-            desc: "Collaborate seamlessly with your team in real-time, eliminating version control issues and feedback loops.",
-            media: "https://cdn.dribbble.com/userupload/44750973/file/40ec88109744371df26c13b08f68f6fe.mp4",
-            type: "video",
-            tag: "Team Workflow"
-        },
-        {
-            title: "Analytics & Insights",
-            desc: "Track performance metrics and gain actionable insights to optimize your brand's visual strategy.",
-            media: "https://cdn.dribbble.com/userupload/45547077/file/90ccc5124f188b48adb0eb827a2786df.mp4",
-            type: "video",
-            tag: "Data Driven"
+    useEffect(() => {
+        async function fetchVectors() {
+            try {
+                const response = await fetch("/api/vectors");
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    const mappedVectors = data.map((v: any) => ({
+                        title: v.title,
+                        desc: v.description,
+                        media: v.thumbnailUrl || v.imageUrl,
+                        type: 'image',
+                        tag: v.category?.name || 'Vector'
+                    }));
+                    setAdvantages(mappedVectors);
+                } else {
+                    // Fallback to minimal placeholder if DB is truly empty, 
+                    // but we should ideally have data.
+                    setAdvantages([]);
+                }
+            } catch (error) {
+                console.error("Failed to fetch vectors:", error);
+            } finally {
+                setLoading(false);
+            }
         }
-    ];
+        fetchVectors();
+    }, []);
 
     // Check scroll position for navigation buttons
     const checkScrollButtons = () => {
@@ -74,7 +59,9 @@ export function OurDesign() {
             checkScrollButtons();
             return () => container.removeEventListener('scroll', checkScrollButtons);
         }
-    }, []);
+    }, [loading]);
+
+    if (loading) return null;
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -218,11 +205,11 @@ export function OurDesign() {
                         {advantages.map((item, idx) => (
                             <div
                                 key={idx}
-                                className="flex-shrink-0 w-[85vw] sm:w-[70vw] md:w-[45vw] lg:w-[380px]"
+                                className="shrink-0 w-[85vw] sm:w-[70vw] md:w-[45vw] lg:w-[380px]"
                             >
                                 <div className="flex flex-col group h-full">
                                     {/* Media Container */}
-                                    <div className="relative w-full aspect-[16/10] rounded-xl sm:rounded-2xl mb-4 sm:mb-5 overflow-hidden bg-gray-900">
+                                    <div className="relative w-full aspect-16/10 rounded-xl sm:rounded-2xl mb-4 sm:mb-5 overflow-hidden bg-gray-900">
                                         <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
                                             {item.type === 'video' ? (
                                                 <video
@@ -269,7 +256,7 @@ export function OurDesign() {
                                             )}
 
                                             {/* Gradient Overlay on Hover */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                         </div>
                                     </div>
 

@@ -220,6 +220,20 @@ const GlobalSpotlight: React.FC<{
 
 export default function Statistik() {
     const gridRef = useRef<HTMLDivElement>(null);
+    const [stats, setStats] = useState<any[]>([]);
+
+    useEffect(() => {
+        async function fetchStats() {
+            try {
+                const response = await fetch("/api/statistics");
+                const data = await response.json();
+                setStats(data);
+            } catch (error) {
+                console.error("Failed to fetch statistics:", error);
+            }
+        }
+        fetchStats();
+    }, []);
 
     return (
         <section className="bg-white py-10 sm:py-16 px-4">
@@ -355,7 +369,9 @@ export default function Statistik() {
                                     <Image src={`https://i.pravatar.cc/100?u=${i + 10}`} alt="User" width={40} height={40} />
                                 </div>
                             ))}
-                            <div className="ml-5 text-[10px] font-black text-blue-600 uppercase tracking-widest">+50K USERS</div>
+                            <div className="ml-5 text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                                {stats.find(s => s.label.toLowerCase().includes('user'))?.value || '+50K'} {stats.find(s => s.label.toLowerCase().includes('user'))?.suffix || 'USERS'}
+                            </div>
                         </div>
                     </ParticleCard>
 
