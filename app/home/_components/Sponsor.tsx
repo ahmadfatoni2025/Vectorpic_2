@@ -1,15 +1,23 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 export function Sponsor() {
-    const sponsors = [
-        { name: "Airbnb", logo: "/Airbnb.png" },
-        { name: "Stripe", logo: "/Stripe.png" },
-        { name: "Google", logo: "/Google.png" },
-        { name: "Amazon", logo: "/Amazon.webp" },
-        { name: "Meta", logo: "/Meta.png" },
-    ];
+    const [sponsors, setSponsors] = useState<{ name: string, logo: string }[]>([]);
+
+    useEffect(() => {
+        async function fetchSponsors() {
+            try {
+                const response = await fetch("/api/sponsors");
+                const data = await response.json();
+                setSponsors(data);
+            } catch (error) {
+                console.error("Failed to fetch sponsors:", error);
+            }
+        }
+        fetchSponsors();
+    }, []);
 
     return (
         <div className="w-full relative -mt-24 sm:-mt-32 md:-mt-48 lg:-mt-56 flex flex-col items-center justify-center px-4 sm:px-6 py-10 md:py-16 z-20">

@@ -137,8 +137,8 @@ export function Navbar() {
                 src={type === 'showcase'
                   ? "https://i.pinimg.com/originals/00/05/e1/0005e1c3aab875cb48ef130c55533cbb.gif"
                   : type === 'leadership'
-                  ? "https://i.pinimg.com/originals/22/09/5d/22095d8fd02905f537e78a507c7536e0.gif"
-                  : "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3hpeXR6Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3gmbnA9MSZscD0x/3o7TKVUn7iM8FMEU24/giphy.gif"}
+                    ? "https://i.pinimg.com/originals/22/09/5d/22095d8fd02905f537e78a507c7536e0.gif"
+                    : "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3hpeXR6Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3g5Z3gmbnA9MSZscD0x/3o7TKVUn7iM8FMEU24/giphy.gif"}
                 alt={type === 'showcase' ? "Img showcase" : "Img leadership"}
                 className='w-full h-full object-cover'
               />
@@ -149,8 +149,8 @@ export function Navbar() {
               {type === 'showcase'
                 ? "Build websites through a visual flow where every section connects seamlessly."
                 : type === 'leadership'
-                ? "How our new high-value leadership layers lead to assigned success."
-                : "Join over 50,000 creators sharing thoughts and assets daily."}
+                  ? "How our new high-value leadership layers lead to assigned success."
+                  : "Join over 50,000 creators sharing thoughts and assets daily."}
             </p>
             <div className="space-y-3">
               {discoverLinks.slice(0, 3).map(link => (
@@ -229,8 +229,6 @@ export function Navbar() {
               <Search className="w-5 h-5" />
             </button>
 
-            <Link href="/contact" className="hidden sm:block text-sm font-semibold text-gray-500 hover:text-gray-900 px-2 transition-colors">Contact</Link>
-
             <Link href="/auth/user/login" className="px-8 py-3 bg-gray-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center gap-2">Login</Link>
 
             <button className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-1002 bg-white rounded-full ml-2 shadow-sm border border-gray-100" onClick={() => setIsOpen(!isOpen)}>
@@ -272,7 +270,7 @@ export function Navbar() {
                   ))}
                 </div>
 
-                <div className="mt-20 pt-10 border-t border-gray-100">
+                <div className="mt-20 pt-10 border-t border-gray-100">@
                   <div className="flex flex-col gap-6">
                     <Link href="/contact" className="text-xl font-black text-gray-900 tracking-tight" onClick={() => setIsOpen(false)}>
                       Contact Us

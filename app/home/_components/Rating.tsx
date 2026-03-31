@@ -4,73 +4,15 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 
-const testimonials = [
-    {
-        id: 1,
-        content: "Vectorpic transformed our brand identity completely. The vector illustrations are top-notch and exactly what we needed for our scale-up.",
-        author: "@sarah.design",
-        avatar: "https://i.pravatar.cc/150?u=sarah",
-        role: "Senior Designer"
-    },
-    {
-        id: 2,
-        content: "The turnaround time is incredible. We usually get our complex illustrations back in less than 24 hours. A game changer.",
-        author: "@marcus_v",
-        avatar: "https://i.pravatar.cc/150?u=marcus",
-        role: "Marketing Director"
-    },
-    {
-        id: 3,
-        content: "Finally a design service that actually understands minimalist aesthetics. Every icon has been pixel-perfect.",
-        author: "@elena_roberts",
-        avatar: "https://i.pravatar.cc/150?u=elena",
-        role: "Founder, Bloom AI"
-    },
-    {
-        id: 4,
-        content: "I've tried many agencies, but Vectorpic's subscription model is the only one that actually works for us.",
-        author: "@dave_devs",
-        avatar: "https://i.pravatar.cc/150?u=dave",
-        role: "Fullstack Developer"
-    },
-    {
-        id: 5,
-        content: "The quality of the custom illustrations is level-above. It's like having a world-class dedicated design team.",
-        author: "@jessica_p",
-        avatar: "https://i.pravatar.cc/150?u=jessica",
-        role: "Product Manager"
-    },
-    {
-        id: 6,
-        content: "Vectorpic has become the ultimate visual asset library for our projects. The flexibility they offer is unmatched.",
-        author: "@alex_creative",
-        avatar: "https://i.pravatar.cc/150?u=alex",
-        role: "Art Director"
-    },
-    {
-        id: 7,
-        content: "Really impressed by the attention to detail. The SVG files are perfectly organized and easy to integrate.",
-        author: "@kevin_codes",
-        avatar: "https://i.pravatar.cc/150?u=kevin",
-        role: "Lead Engineer"
-    },
-    {
-        id: 8,
-        content: "Everything about this is next level: the quality, the speed, and the seamless communication. Highly recommended!",
-        author: "@liam.ux",
-        avatar: "https://i.pravatar.cc/150?u=liam",
-        role: "Freelance Designer"
-    },
-    {
-        id: 9,
-        content: "Our landing pages now shine with the unique assets from Vectorpic. Our conversion rates have actually improved.",
-        author: "@sophie_m",
-        avatar: "https://i.pravatar.cc/150?u=sophie",
-        role: "Growth Lead"
-    }
-];
+interface Testimonial {
+    id: number | string;
+    content: string;
+    author: string;
+    avatar: string;
+    role: string;
+}
 
-const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] }) => (
+const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
     <div className="shrink-0 w-[350px] bg-white border border-slate-100 p-8 rounded-4xl flex flex-col justify-between group transition-all hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 cursor-default">
         <div>
             <p className="text-slate-600 text-[15px] leading-relaxed font-medium">
@@ -97,7 +39,7 @@ const TestimonialCard = ({ testimonial }: { testimonial: typeof testimonials[0] 
     </div>
 );
 
-const MarqueeRow = ({ items, direction = 'left', speed = 60 }: { items: typeof testimonials, direction?: 'left' | 'right', speed?: number }) => {
+const MarqueeRow = ({ items, direction = 'left', speed = 60 }: { items: Testimonial[], direction?: 'left' | 'right', speed?: number }) => {
     const [isPaused, setIsPaused] = useState(false);
 
     return (
@@ -146,10 +88,30 @@ const MarqueeRow = ({ items, direction = 'left', speed = 60 }: { items: typeof t
 };
 
 export default function Rateing() {
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetch("/api/testimonials");
+                const data = await response.json();
+                setTestimonials(data);
+            } catch (error) {
+                console.error("Failed to fetch testimonials:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, []);
+
+    if (loading || testimonials.length === 0) return null;
+
     // Split testimonials for different rows
-    const row1 = testimonials.slice(0, 3);
-    const row2 = testimonials.slice(3, 6);
-    const row3 = testimonials.slice(6, 9);
+    const row1 = testimonials.slice(0, Math.ceil(testimonials.length / 3));
+    const row2 = testimonials.slice(Math.ceil(testimonials.length / 3), Math.ceil(2 * testimonials.length / 3));
+    const row3 = testimonials.slice(Math.ceil(2 * testimonials.length / 3));
 
     return (
         <section className="w-full bg-white pt-28 overflow-hidden relative">

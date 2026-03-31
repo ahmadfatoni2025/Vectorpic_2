@@ -27,8 +27,44 @@ const Marquee = ({ reverse = false }: { reverse?: boolean }) => {
         </div>
     );
 };
-
 const Form = () => {
+    const [formData, setFormData] = React.useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+    });
+    const [submitting, setSubmitting] = React.useState(false);
+    const [status, setStatus] = React.useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSubmitting(true);
+        setStatus(null);
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                setStatus({ type: 'success', message: 'Message sent successfully!' });
+                setFormData({ firstName: '', lastName: '', email: '', phone: '', subject: '', message: '' });
+            } else {
+                setStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setStatus({ type: 'error', message: 'An error occurred. Please try again.' });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     return (
         <section className="bg-white w-full">
             {/* Top Marquee */}
@@ -55,15 +91,23 @@ const Form = () => {
                             <p className="text-gray-500 text-base leading-relaxed max-w-2xl mx-auto lg:mx-0">
                                 Have a project in mind? We'd love to hear from you. Fill out the form and our team will get back to you within 24 hours.
                             </p>
+                            {status && (
+                                <div className={`p-4 rounded-xl text-sm ${status.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                    {status.message}
+                                </div>
+                            )}
                         </div>
 
                         {/* Form */}
-                        <form className="max-w-6xl mx-auto lg:mx-0 space-y-5">
+                        <form onSubmit={handleSubmit} className="max-w-6xl mx-auto lg:mx-0 space-y-5">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div className="relative">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
                                         type="text"
+                                        required
+                                        value={formData.firstName}
+                                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                         placeholder="First name"
                                         className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
                                     />
@@ -72,6 +116,9 @@ const Form = () => {
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
                                         type="text"
+                                        required
+                                        value={formData.lastName}
+                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                                         placeholder="Last name"
                                         className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
                                     />
@@ -83,6 +130,9 @@ const Form = () => {
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
                                         type="email"
+                                        required
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         placeholder="Email address"
                                         className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
                                     />
@@ -91,6 +141,8 @@ const Form = () => {
                                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
                                         type="tel"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                                         placeholder="Phone number"
                                         className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
                                     />
@@ -101,6 +153,8 @@ const Form = () => {
                                 <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                 <input
                                     type="text"
+                                    value={formData.subject}
+                                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                                     placeholder="Subject"
                                     className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
                                 />
@@ -109,6 +163,9 @@ const Form = () => {
                             <div className="relative">
                                 <MessageSquare className="absolute left-4 top-5 w-4 h-4 text-gray-400" />
                                 <textarea
+                                    required
+                                    value={formData.message}
+                                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                     placeholder="Tell us about your project"
                                     rows={5}
                                     className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-11 pr-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none resize-none transition-all"
@@ -116,10 +173,11 @@ const Form = () => {
                             </div>
 
                             <button
-                                onClick={() => alert("Send message!")}
-                                className="w-full sm:w-auto mx-auto bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-[1.2rem] font-semibold transition-all flex items-center justify-center gap-3 active:scale-[0.98] group shadow-lg shadow-indigo-200">
+                                type="submit"
+                                disabled={submitting}
+                                className="w-full sm:w-auto mx-auto bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-[1.2rem] font-semibold transition-all flex items-center justify-center gap-3 active:scale-[0.98] group shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <Send className="w-8 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                                <span>Send Message</span>
+                                <span>{submitting ? 'Sending...' : 'Send Message'}</span>
                             </button>
                         </form>
                     </div>

@@ -5,63 +5,23 @@ import Image from 'next/image';
 import ScrollReveal from '@/app/components/ui/ScrollReveal';
 
 export function VideoProfile() {
-    const contentData = [
-        {
-            tab: "Vector Illustration",
-            highlight: "charming,",
-            subtext: "clean, and modern.",
-            quote: "Vectorpic made our landing page stand out with charming characters and a perfectly balanced color palette.",
-            author: "Alex Rivera",
-            role: "Product Manager @ TechFlow",
-            image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2",
-            videoId: "https://framerusercontent.com/assets/Kny5Ty8J6mn9PsM1TGpXsWNtNh4.mp4",
-            bgColor: "bg-[#6366F1]"
-        },
-        {
-            tab: "Brand Identity",
-            highlight: "unique,",
-            subtext: "bold, and iconic.",
-            quote: "Their retro-modern aesthetic gave our brand a unique voice in a crowded market. Truly world-class design work.",
-            author: "Sarah Jenkins",
-            role: "Creative Director @ RetroWave",
-            image: "https://images.unsplash.com/photo-1580489944761-15a19d654956",
-            videoId: "29_u9_0Vv08",
-            bgColor: "bg-[#8B5CF6]"
-        },
-        {
-            tab: "Social Content",
-            highlight: "playful,",
-            subtext: "vibrant, and engaging.",
-            quote: "Our engagement skyrocketed after switching to Vectorpic's playful illustrations for our daily social media assets.",
-            author: "David Chen",
-            role: "Founder @ SocialPulse",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-            videoId: "dQw4w9WgXcQ",
-            bgColor: "bg-[#EC4899]"
-        },
-        {
-            tab: "Character Design",
-            highlight: "whimsical,",
-            subtext: "layered, and alive.",
-            quote: "The whimsy and personality in their characters are unmatched. They bring a soul to every project they touch.",
-            author: "Emily Watson",
-            role: "Head of Art @ GameSprint",
-            image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
-            videoId: "29_u9_0Vv08",
-            bgColor: "bg-[#10B981]"
-        },
-        {
-            tab: "Print & Merch",
-            highlight: "crisp,",
-            subtext: "scalable, and precise.",
-            quote: "Clean lines and perfect color palettes. Every file is production-ready and looks stunning on any physical medium.",
-            author: "Marcus Thorne",
-            role: "Owner @ MerchKing",
-            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e",
-            videoId: "dQw4w9WgXcQ",
-            bgColor: "bg-[#F59E0B]"
+    const [contentData, setContentData] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    React.useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetch("/api/video-profiles");
+                const data = await response.json();
+                setContentData(data);
+            } catch (error) {
+                console.error("Failed to fetch video profiles:", error);
+            } finally {
+                setLoading(false);
+            }
         }
-    ];
+        fetchData();
+    }, []);
 
     const [activeIdx, setActiveIdx] = useState(0);
     const [showVideo, setShowVideo] = useState(false);

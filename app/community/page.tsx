@@ -15,7 +15,14 @@ import {
   Mail,
   ChevronDown,
   Star,
-  Check
+  Check,
+  HelpCircle,
+  MessageSquare,
+  User,
+  Smile,
+  Megaphone,
+  Layers,
+  Briefcase
 } from 'lucide-react';
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
@@ -122,14 +129,14 @@ const threads: Thread[] = [
 ];
 
 const sidebarCategories = [
-  { name: "FAQ's", color: "#F59E0B" },
-  { name: "Off-Topic Chatter", color: "#10B981" },
-  { name: "Feedback", color: "#8B5CF6" },
-  { name: "Member Spotlight", color: "#EF4444" },
-  { name: "Introductions", color: "#06B6D4" },
-  { name: "Announcements", color: "#F43F5E" },
-  { name: "Showcase", color: "#94A3B8" },
-  { name: "Jobs", color: "#D97706" }
+  { name: "FAQ's", color: "#F59E0B", icon: HelpCircle },
+  { name: "Off-Topic Chatter", color: "#10B981", icon: MessageSquare },
+  { name: "Feedback", color: "#8B5CF6", icon: MessageCircle },
+  { name: "Member Spotlight", color: "#EF4444", icon: User },
+  { name: "Introductions", color: "#06B6D4", icon: Smile },
+  { name: "Announcements", color: "#F43F5E", icon: Megaphone },
+  { name: "Showcase", color: "#94A3B8", icon: Layers },
+  { name: "Jobs", color: "#D97706", icon: Briefcase }
 ];
 
 // --- Main Page ---
@@ -237,10 +244,12 @@ export default function CommunityPage() {
 
             <div className="pt-8 space-y-4">
               <h4 className="px-2 text-[10px] font-black text-gray-300 uppercase tracking-widest mb-4">Categories</h4>
-              <div className="space-y-3 px-2">
+              <div className="">
                 {sidebarCategories.map((cat) => (
-                  <button key={cat.name} className="flex items-center gap-4 w-full group text-left">
-                    <div className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: cat.color }} />
+                  <button key={cat.name} className="flex items-center gap-2 w-full group text-left px-2 py-2 rounded-xl hover:bg-white transition-all">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-gray-50 group-hover:bg-gray-100 transition-colors">
+                      <cat.icon className="w-4 h-4 text-gray-900" />
+                    </div>
                     <span className="text-sm font-bold text-gray-500 group-hover:text-gray-900 transition-colors">{cat.name}</span>
                   </button>
                 ))}
@@ -252,11 +261,12 @@ export default function CommunityPage() {
       </div>
 
       <Footer />
-
-      <NewDiscussionModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <div className="overscroll-contain z-100">
+        <NewDiscussionModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </div>
 
       {/* Subtle Background Elements */}
       <div className="fixed top-0 right-0 w-[1000px] h-[1000px] bg-blue-50/30 rounded-full blur-[150px] -z-10 pointer-events-none" />

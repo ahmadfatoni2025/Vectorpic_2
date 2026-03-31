@@ -8,32 +8,56 @@ import { Footer } from '../../components/layout/Footer';
 import { ChevronRight, Clock, Search, X, MessageCircle, ExternalLink } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
-const categories = [
-  "All Work", "Vector Art", "Branding", "UI/UX Design", "Packaging", "Illustration", "Motion"
-];
-
-const projects = [
-  { id: 1, title: "Modern Brand Identity", category: "Branding", img: "https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800", size: "lg", description: "A high-end visual identity system designed for premium brands looking to stand out." },
-  { id: 2, title: "Abstract Vector Set", category: "Vector Art", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800", size: "sm", description: "Carefully crafted vector illustrations with a focus on geometric patterns and modern aesthetics." },
-  { id: 3, title: "Premium Package Design", category: "Packaging", img: "https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?q=80&w=800", size: "sm", description: "Eco-friendly and visually stunning packaging solutions for luxury goods." },
-  { id: 4, title: "Fintech Mobile App", category: "UI/UX Design", img: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800", size: "md", description: "A seamless, secure, and intuitive banking experience designed for the next generation." },
-  { id: 5, title: "Minimalist Poster", category: "Illustration", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800", size: "lg", description: "Bold, minimal compositions that capture complex ideas through simplicity." },
-  { id: 6, title: "Digital Art Collection", category: "Vector Art", img: "https://images.unsplash.com/photo-1618172193622-ae2d025f4032?q=80&w=800", size: "md", description: "NFT-ready digital artwork created with precision and vibrant color palettes." },
-  { id: 7, title: "Corporate Rebrand", category: "Branding", img: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=800", size: "sm", description: "Refreshing established corporate identities for a digital-first world." },
-  { id: 8, title: "Social Media Motion", category: "Motion", img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=800", size: "md", description: "High-engagement motion graphics tailored for maximum impact on social platforms." },
-];
-
 export default function ShowcaseContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
+  const [categories, setCategories] = useState<string[]>(["All Work"]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState("All Work");
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const [catsRes, vectorsRes] = await Promise.all([
+          fetch("/api/categories"),
+          fetch("/api/vectors")
+        ]);
+
+        const catsData = await catsRes.json();
+        const vectorsData = await vectorsRes.json();
+
+        if (Array.isArray(catsData)) {
+          setCategories(["All Work", ...catsData.map((c: any) => c.name)]);
+        }
+
+        if (Array.isArray(vectorsData)) {
+          const mappedVectors = vectorsData.map((v: any) => ({
+            id: v.id,
+            title: v.title,
+            category: v.category?.name || 'Uncategorized',
+            img: v.imageUrl,
+            description: v.description,
+            size: v.id.length % 3 === 0 ? "lg" : (v.id.length % 2 === 0 ? "md" : "sm") // Procedural sizing
+          }));
+          setProjects(mappedVectors);
+        }
+      } catch (error) {
+        console.error("Failed to fetch showcase data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (categoryParam && categories.includes(categoryParam)) {
       setActiveCategory(categoryParam);
     }
-  }, [categoryParam]);
+  }, [categoryParam, categories]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -51,7 +75,9 @@ export default function ShowcaseContent() {
     }
   }, [selectedProject]);
 
-  const filteredProjects = projects.filter(p => activeCategory === "All Work" || p.category === activeCategory);
+  const filteredProjects = projects.filter(p => 
+    activeCategory === "All Work" || p.category === activeCategory
+  );
 
   return (
     <main className="min-h-screen bg-stone-50/50 font-sans text-gray-900 pb-20 overflow-x-hidden pt-40">
