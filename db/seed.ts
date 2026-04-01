@@ -2,7 +2,7 @@ import { db, client } from "./index";
 import { 
 	users, vectors, categories, navbarItems, 
 	imageStacks, videoProfiles, testimonials, 
-	statistics, sponsors 
+	statistics, sponsors, ourDesigns 
 } from "./schema";
 
 async function seed() {
@@ -123,11 +123,22 @@ async function seed() {
 		}
 	]).onConflictDoNothing();
 
-	// 8. Statistics
-	await db.insert(statistics).values([
-		{ label: "Design Projects", value: "2.5", suffix: "k+", order: 0 },
-		{ label: "Happy Clients", value: "99", suffix: "%", order: 1 },
-		{ label: "Years Experience", value: "10", suffix: "+", order: 2 },
+	// 9. Our Designs (YouTube)
+	await db.insert(ourDesigns).values([
+		{ 
+			title: "Creative Branding Strategy", 
+			description: "How we developed the brand identity for TechFlow using minimalist vector elements.",
+			youtubeUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+			tag: "Branding",
+			order: 0
+		},
+		{ 
+			title: "Abstract 3D Motion", 
+			description: "Behind the scenes of creating abstract 3D shapes for Vectorpic showcase.",
+			youtubeUrl: "https://www.youtube.com/watch?v=29_u9_0Vv08",
+			tag: "3D Art",
+			order: 1
+		}
 	]).onConflictDoNothing();
 
 	console.log("✅ Seeding completed!");

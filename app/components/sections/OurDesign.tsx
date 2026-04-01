@@ -220,7 +220,7 @@ export function OurDesign() {
                                                      src={item.media}
                                                      alt={item.title}
                                                      fill
-                                                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                     className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-0"
                                                  />
                                              ) : (
                                                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -231,9 +231,21 @@ export function OurDesign() {
                                                  </div>
                                              )}
 
+                                             {/* Video Clip Preview on Hover */}
+                                             {item.videoId && (
+                                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                                                   <iframe
+                                                      className="w-full h-full object-cover scale-[1.5]"
+                                                      src={`https://www.youtube.com/embed/${item.videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${item.videoId}&rel=0&showinfo=0&modestbranding=1`}
+                                                      title="YouTube video player"
+                                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                   />
+                                                </div>
+                                             )}
+ 
                                              {/* YouTube Play Icon Overlay */}
-                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                 <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-75 group-hover:scale-100 ring-1 ring-white/30 shadow-2xl">
+                                             <div className="absolute inset-0 flex items-center justify-center bg-black/5 group-hover:bg-transparent transition-colors">
+                                                 <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-100 group-hover:opacity-0 transition-all duration-500 scale-75 group-hover:scale-100 ring-1 ring-white/30 shadow-2xl">
                                                      <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
                                                      <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
                                                  </div>

@@ -8,7 +8,8 @@ import { Sidebar } from './_components/Sidebar';
 import { Overview } from './_components/Overview';
 import { Uploader } from './_components/Uploader';
 import { AssetHub } from './_components/AssetHub';
-import { Management, Messages, VideoProfileManagement, OurDesignManagement } from './_components/Management';
+import { Management, Messages, VideoProfileManagement } from './_components/Management';
+import { OurDesignManagement } from './_components/OurDesignVideo';
 import { SimpleInput, ImageUploadInput, SimpleTextarea } from './_components/SharedUI';
 
 export default function AdminDashboard() {
@@ -73,9 +74,12 @@ export default function AdminDashboard() {
         fetchAllData();
         return true;
       }
-      showStatus('error', 'Operation failed');
+      const errorData = await res.json().catch(() => ({}));
+      console.error('API Error:', res.status, errorData);
+      showStatus('error', errorData?.error || `Operation failed (${res.status})`);
       return false;
     } catch (e) {
+      console.error('Network error:', e);
       showStatus('error', 'Network error');
       return false;
     }
@@ -186,23 +190,38 @@ export default function AdminDashboard() {
                       const url = editingItem.id ? `/api/${formType}/${editingItem.id}` : `/api/${formType}`;
 
                       const submitData = { ...formData };
-                      delete submitData.type;
+                      const allowedFields: Record<string, string[]> = {
+                        'categories': ['name', 'slug', 'description', 'icon'],
+                        'statistics': ['label', 'value'],
+                        'sponsors': ['name', 'logo'],
+                        'testimonials': ['author', 'role', 'avatar', 'content'],
+                        'image-stacks': ['label', 'imageUrl'],
+                        'video-profiles': ['tab', 'highlight', 'subtext', 'quote', 'author', 'role', 'image', 'videoId', 'bgColor'],
+                        'our-designs': ['title', 'description', 'youtubeUrl', 'tag', 'order'],
+                        'vectors': ['title', 'imageUrl', 'description', 'categoryId', 'isPremium']
+                      };
 
-                      const success = await handleAction(method, url, submitData);
+                      const finalData: any = {};
+                      if (allowedFields[formType]) {
+                         allowedFields[formType].forEach(key => {
+                            if (submitData[key] !== undefined) finalData[key] = submitData[key];
+                         });
+                      }
+
+                      const success = await handleAction(method, url, finalData);
                       if (success) setEditingItem(null);
                     }}
                   >
                     <div className="px-8 pb-8 space-y-6 max-h-[600px] overflow-y-auto no-scrollbar">
-                      {/* Common Uploader at top (conditional for types with images) */}
-                      {['vectors', 'sponsors', 'testimonials', 'image-stacks', 'video-profiles', 'our-designs'].includes(formType) && (
+                      {/* Common Uploader at top (vectors, sponsors, testimonials, etc) */}
+                      {['vectors', 'sponsors', 'testimonials', 'image-stacks', 'video-profiles'].includes(formType) && (
                         <div className="mb-8">
                           <ImageUploadInput 
-                             value={formData.imageUrl || formData.logo || formData.avatar || formData.image || formData.youtubeUrl} 
+                             value={formData.imageUrl || formData.logo || formData.avatar || formData.image} 
                              onChange={(v: string) => {
                                if (formType === 'sponsors') setFormData({...formData, logo: v});
                                else if (formType === 'testimonials') setFormData({...formData, avatar: v});
                                else if (formType === 'video-profiles') setFormData({...formData, image: v});
-                               else if (formType === 'our-designs') setFormData({...formData, youtubeUrl: v});
                                else setFormData({...formData, imageUrl: v});
                              }} 
                           />
@@ -247,6 +266,7 @@ export default function AdminDashboard() {
                              <SimpleInput label="Tag" value={formData.tag} onChange={(v: string) => setFormData({ ...formData, tag: v })} placeholder="Pick a tag" />
                           </div>
                           <SimpleTextarea label="Description" value={formData.description} onChange={(v: string) => setFormData({ ...formData, description: v })} required placeholder="Describe the project goals and scope" />
+                          <SimpleInput label="YouTube Link" value={formData.youtubeUrl} onChange={(v: string) => setFormData({ ...formData, youtubeUrl: v })} placeholder="https://youtube.com/watch?v=..." required />
                         </div>
                       ) : (
                         <div className="space-y-5">
