@@ -3,9 +3,10 @@ import { sponsors } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id);
+    const { id: rawId } = await params;
+    const id = parseInt(rawId);
     const body = await req.json();
     const data = await db.update(sponsors).set(body).where(eq(sponsors.id, id)).returning();
     return NextResponse.json(data[0] || {});
@@ -15,9 +16,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = parseInt(params.id);
+    const { id: rawId } = await params;
+    const id = parseInt(rawId);
     await db.delete(sponsors).where(eq(sponsors.id, id));
     return NextResponse.json({ success: true });
   } catch (error) {
