@@ -66,7 +66,7 @@ export function VideoProfile() {
                     <div className="flex gap-4 sm:gap-6 md:gap-10 min-w-max pb-3">
                         {contentData.map((item, idx) => (
                             <button
-                                key={item.tab}
+                                key={`tab-${idx}`}
                                 onClick={() => scrollToSlide(idx)}
                                 className={`text-[10px] sm:text-xs md:text-sm font-bold transition-all relative whitespace-nowrap uppercase tracking-wider ${activeIdx === idx ? "text-[#4F46E5]" : "text-gray-400 hover:text-black"
                                     }`}
