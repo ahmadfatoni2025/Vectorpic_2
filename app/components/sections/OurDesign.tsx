@@ -16,32 +16,36 @@ export function OurDesign() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        async function fetchVectors() {
+        async function fetchOurDesigns() {
             try {
-                const response = await fetch("/api/vectors");
+                const response = await fetch("/api/our-designs");
                 const data = await response.json();
                 if (data && data.length > 0) {
-                    const mappedVectors = data.map((v: any) => ({
-                        title: v.title,
-                        desc: v.description,
-                        media: v.thumbnailUrl || v.imageUrl,
-                        type: 'image',
-                        tag: v.category?.name || 'Vector'
-                    }));
-                    setAdvantages(mappedVectors);
+                    const mappedDesigns = data.map((d: any) => {
+                        const videoId = d.youtubeUrl?.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
+                        return {
+                            title: d.title,
+                            desc: d.description,
+                            media: videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null,
+                            youtubeUrl: d.youtubeUrl,
+                            videoId: videoId,
+                            type: 'youtube',
+                            tag: d.tag || 'Design'
+                        };
+                    });
+                    setAdvantages(mappedDesigns);
                 } else {
-                    // Fallback to minimal placeholder if DB is truly empty, 
-                    // but we should ideally have data.
                     setAdvantages([]);
                 }
             } catch (error) {
-                console.error("Failed to fetch vectors:", error);
+                console.error("Failed to fetch our designs:", error);
             } finally {
                 setLoading(false);
             }
         }
-        fetchVectors();
+        fetchOurDesigns();
     }, []);
+
 
     // Check scroll position for navigation buttons
     const checkScrollButtons = () => {
@@ -209,56 +213,53 @@ export function OurDesign() {
                             >
                                 <div className="flex flex-col group h-full">
                                     {/* Media Container */}
-                                    <div className="relative w-full aspect-16/10 rounded-xl sm:rounded-2xl mb-4 sm:mb-5 overflow-hidden bg-gray-900">
-                                        <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
-                                            {item.type === 'video' ? (
-                                                <video
-                                                    src={item.media}
-                                                    autoPlay
-                                                    muted
-                                                    loop
-                                                    playsInline
-                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                />
-                                            ) : (
-                                                <Image
-                                                    src={item.media}
-                                                    alt={item.title}
-                                                    fill
-                                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                                />
-                                            )}
+                                    <div className="relative w-full aspect-video rounded-xl sm:rounded-2xl mb-4 sm:mb-5 overflow-hidden bg-gray-900 group-hover:shadow-2xl transition-all duration-500">
+                                         <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
+                                             {item.media ? (
+                                                 <Image
+                                                     src={item.media}
+                                                     alt={item.title}
+                                                     fill
+                                                     className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                                 />
+                                             ) : (
+                                                 <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                                                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                                                         <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
+                                                         <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
+                                                     </svg>
+                                                 </div>
+                                             )}
 
-                                            {/* Tag Badge */}
-                                            <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10">
-                                                <span className="px-2.5 py-1 text-[10px] sm:text-xs font-medium text-white bg-black/60 backdrop-blur-sm rounded-full">
-                                                    {item.tag}
-                                                </span>
-                                            </div>
+                                             {/* YouTube Play Icon Overlay */}
+                                             <div className="absolute inset-0 flex items-center justify-center">
+                                                 <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-75 group-hover:scale-100 ring-1 ring-white/30 shadow-2xl">
+                                                     <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
+                                                     <div className="w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent ml-1" />
+                                                 </div>
+                                             </div>
 
-                                            {/* UI Elements Deco */}
-                                            <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-1.5 opacity-50 z-10">
-                                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/60"></div>
-                                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/40"></div>
-                                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/20"></div>
-                                            </div>
+                                             {/* Tag Badge */}
+                                             <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10">
+                                                 <span className="px-3 py-1.5 text-[10px] sm:text-xs font-bold text-white bg-black/80 backdrop-blur-md rounded-full tracking-tight border border-white/10">
+                                                     {item.tag}
+                                                 </span>
+                                             </div>
 
-                                            {/* Play Indicator for video */}
-                                            {item.type === 'video' && (
-                                                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10">
-                                                    <div className="flex items-center gap-1 text-[8px] sm:text-[9px] font-medium text-white/70 uppercase tracking-wider backdrop-blur-md px-2 py-1 rounded-full bg-black/40">
-                                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="white">
-                                                            <path d="M5 3l14 9-14 9V3z" />
-                                                        </svg>
-                                                        <span>Demo</span>
-                                                    </div>
-                                                </div>
-                                            )}
+                                             {/* Link Overlay */}
+                                             <a 
+                                                 href={item.youtubeUrl} 
+                                                 target="_blank" 
+                                                 rel="noopener noreferrer" 
+                                                 className="absolute inset-0 z-20"
+                                                 aria-label={`Watch ${item.title} on YouTube`}
+                                             />
 
-                                            {/* Gradient Overlay on Hover */}
-                                            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                        </div>
-                                    </div>
+                                             {/* Bottom Decorative Edge */}
+                                             <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-linear-to-t from-black/20 to-transparent pointer-events-none"></div>
+                                         </div>
+                                     </div>
+
 
                                     {/* Text Content */}
                                     <div className="flex flex-col gap-2 flex-1">

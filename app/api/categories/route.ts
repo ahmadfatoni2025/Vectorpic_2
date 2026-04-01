@@ -20,6 +20,8 @@ export async function POST(request: Request) {
     const [newCategory] = await db.insert(categories).values({
       name: body.name,
       slug: body.slug || body.name.toLowerCase().replace(/ /g, '-'),
+      description: body.description,
+      icon: body.icon,
     }).returning();
     return NextResponse.json(newCategory);
   } catch (error: any) {

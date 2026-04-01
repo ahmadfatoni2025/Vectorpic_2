@@ -3,12 +3,12 @@
 import React from 'react';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 
-export function AssetHub({ data, onEdit, onDelete, onSwitchTab }: any) {
+export function AssetHub({ data, onEdit, onDelete, onSwitchTab, onAddNew }: any) {
    return (
       <div className="space-y-8">
          <div className="flex items-center justify-between">
             <h2 className="text-xl font-black tracking-tight">Active Assets Gallery</h2>
-            <button onClick={() => onSwitchTab('upload')} className="px-5 py-2.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all flex items-center gap-2">
+            <button onClick={onAddNew} className="px-5 py-2.5 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-gray-800 transition-all flex items-center gap-2">
                <Plus size={14} /> Add New
             </button>
          </div>
