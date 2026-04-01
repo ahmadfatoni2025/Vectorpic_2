@@ -5,10 +5,11 @@ import { eq } from "drizzle-orm";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: rawId } = await params;
+    const id = parseInt(rawId);
     const body = await req.json();
     const updated = await db
       .update(videoProfiles)
@@ -29,10 +30,11 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id);
+    const { id: rawId } = await params;
+    const id = parseInt(rawId);
     await db.delete(videoProfiles).where(eq(videoProfiles.id, id));
     return NextResponse.json({ success: true });
   } catch (error) {
