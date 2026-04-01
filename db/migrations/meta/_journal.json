@@ -15,6 +15,13 @@
       "when": 1774889791439,
       "tag": "0001_perfect_hex",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774952579206,
+      "tag": "0002_dear_vindicator",
+      "breakpoints": true
     }
   ]
 }

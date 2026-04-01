@@ -19,7 +19,7 @@ import {
   Video
 } from 'lucide-react';
 
-export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, inquiryCount }: any) {
+export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, inquiryCount, onQuickUpload }: any) {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     library: true // default open
   });
@@ -70,7 +70,7 @@ export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
           activeChildren={['upload', 'assets'].includes(activeTab)}
         >
           <NavChild active={activeTab === 'assets'} label="Assets Gallery" onClick={() => setActiveTab('assets')} />
-          <NavChild active={activeTab === 'upload'} label="Quick Upload" onClick={() => setActiveTab('upload')} />
+          <NavChild active={false} label="Quick Upload" onClick={onQuickUpload} />
         </NavDropdown>
 
         <NavItem 
@@ -88,13 +88,21 @@ export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
            isOpen={isSidebarOpen} 
            onClick={() => setActiveTab('video-profiles')} 
         />
+
+        <NavItem 
+           active={activeTab === 'our-design'} 
+           label="Our Design" 
+           icon={<Layers size={20} strokeWidth={1.5} />} 
+           isOpen={isSidebarOpen} 
+           onClick={() => setActiveTab('our-design')} 
+        />
         
         <NavItem 
-           active={false}
+           active={activeTab === 'settings'}
            label="Settings" 
            icon={<Settings size={20} strokeWidth={1.5} />} 
            isOpen={isSidebarOpen} 
-           onClick={() => {}} 
+           onClick={() => setActiveTab('settings')} 
         />
 
         <NavItem 

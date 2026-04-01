@@ -14,6 +14,8 @@ export const categories = pgTable("categories", {
 	id: serial("id").primaryKey(),
 	name: text("name").notNull().unique(),
 	slug: text("slug").notNull().unique(),
+	description: text("description"),
+	icon: text("icon"), // Nama icon Lucide
 });
 
 export const vectors = pgTable("vectors", {
@@ -157,3 +159,15 @@ export const statistics = pgTable("statistics", {
 	suffix: text("suffix"),
 	order: integer("order").default(0),
 });
+
+export const ourDesigns = pgTable("our_designs", {
+	id: serial("id").primaryKey(),
+	title: text("title").notNull(),
+	description: text("description"),
+	youtubeUrl: text("youtube_url").notNull(),
+	tag: text("tag").default("Design"),
+	order: integer("order").default(0),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+

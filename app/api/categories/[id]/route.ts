@@ -15,6 +15,8 @@ export async function PATCH(
       .set({
         name: body.name,
         slug: body.slug || body.name.toLowerCase().replace(/ /g, '-'),
+        description: body.description,
+        icon: body.icon,
       })
       .where(eq(categories.id, Number(id)))
       .returning();
