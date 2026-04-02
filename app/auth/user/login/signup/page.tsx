@@ -27,7 +27,7 @@ export default function SignupPage() {
       <div className="hidden md:flex w-1/2 bg-black relative flex-col justify-between p-16 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/20 blur-[120px] rounded-full" />
         <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 blur-[100px] rounded-full" />
-        
+
         <Link href="/" className="relative z-10 flex items-center gap-2 group">
           <div className="w-8 h-8 flex items-center justify-center bg-white rounded-lg group-hover:rotate-12 transition-transform duration-500">
             <div className="w-4 h-4 bg-indigo-600 rounded-sm" />
@@ -36,41 +36,30 @@ export default function SignupPage() {
         </Link>
 
         <div className="relative z-10 max-w-md">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }} 
-            animate={{ opacity: 1, scale: 1 }} 
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
             className="w-20 h-20 bg-indigo-600 rounded-3xl flex items-center justify-center mb-10 shadow-2xl shadow-indigo-500/20"
           >
             <CheckCircle className="w-10 h-10 text-white" />
           </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8, delay: 0.2 }} 
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl lg:text-7xl font-black text-white leading-[0.9] tracking-tighter mb-8"
           >
-            Join the <br /> elite <br /> <span className="text-indigo-500 italic font-thin">creators.</span>
+            Join the elite <br /> creators <br />
           </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ delay: 0.6, duration: 1 }} 
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 1 }}
             className="text-gray-400 text-lg font-medium leading-relaxed"
           >
             Ready to scale your design workflow? Join 50,000+ artists worldwide.
           </motion.p>
-        </div>
-
-        <div className="relative z-10 flex items-center gap-6">
-          <div className="flex -space-x-3">
-            {[4, 5, 6].map(i => (
-              <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-gray-800 flex items-center justify-center overflow-hidden">
-                <img src={`https://i.pravatar.cc/100?u=${i + 40}`} alt="user" />
-              </div>
-            ))}
-          </div>
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Global community across 120 countries</span>
         </div>
       </div>
 

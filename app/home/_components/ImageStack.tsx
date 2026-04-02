@@ -35,11 +35,12 @@ export function ImageStack() {
   React.useEffect(() => {
     async function fetchCards() {
       try {
-        const response = await fetch("/api/image-stacks");
-        const data = await response.json();
-        const displayCards = isMobile ? data.slice(2, 5) : (isTablet ? data.slice(1, 6) : data);
-        setCards(displayCards);
+        const res = await fetch("/api/image-stacks");
+        const data = await res.json();
+        const displayCards = isMobile ? (Array.isArray(data) ? data.slice(2, 5) : []) : (isTablet ? (Array.isArray(data) ? data.slice(1, 6) : []) : (Array.isArray(data) ? data : []));
+        setCards(Array.isArray(data) && data.length > 0 ? displayCards : []);
       } catch (error) {
+
         console.error("Failed to fetch image stacks:", error);
       }
     }

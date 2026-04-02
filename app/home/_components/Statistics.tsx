@@ -366,7 +366,7 @@ export default function Statistik() {
                         <div className="mt-auto flex -space-x-3 items-center">
                             {[1, 2, 3, 4].map(i => (
                                 <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-gray-200">
-                                    <Image src={`https://i.pravatar.cc/100?u=${i + 10}`} alt="User" width={40} height={40} />
+                                    <img src={`https://i.pravatar.cc/100?u=${i + 10}`} alt="User" className="w-full h-full object-cover" />
                                 </div>
                             ))}
                             <div className="ml-5 text-[10px] font-black text-blue-600 uppercase tracking-widest">

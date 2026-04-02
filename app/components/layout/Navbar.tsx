@@ -49,7 +49,7 @@ export function Navbar() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Showcase", href: "/showcase", dropdown: "showcase" },
-    { name: "Management", href: "/management", dropdown: "leadership" },
+    { name: "Management", href: "/management" },
     { name: "Community", href: "/community" },
     { name: "About", href: "/about" },
   ];
