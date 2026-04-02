@@ -11,7 +11,7 @@ import Track from "./_components/Track";
 import Statistik from "./_components/Statistics";
 import Services from "./_components/Services";
 import Rateing from "./_components/Rating";
-import ScrollReveal from "../components/ui/ScrollReveal";
+import { ArtworkShowcase } from "./_components/ArtworkShowcase";
 import Form from "./_components/Form";
 
 export default function HomeContent() {
@@ -22,6 +22,7 @@ export default function HomeContent() {
       <div className="grow pt-28 sm:pt-32 flex flex-col items-center">
         <Hero />
         <Sponsor />
+        {/* <ArtworkShowcase /> */}
         <OurDesign />
         <VideoProfile />
         <Track />

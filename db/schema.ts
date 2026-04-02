@@ -37,6 +37,7 @@ export const vectors = pgTable("vectors", {
 export const usersRelations = relations(users, ({ many }) => ({
 	vectors: many(vectors),
 	collections: many(collections),
+	discussions: many(discussions),
 }));
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
@@ -171,3 +172,80 @@ export const ourDesigns = pgTable("our_designs", {
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const discussions = pgTable("discussions", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	title: text("title").notNull(),
+	description: text("description").notNull(),
+	category: text("category").notNull(), // 'ON BOARDING', 'FEEDBACK', etc.
+	visibility: text("visibility").default("Public"), // 'Public', 'Followers Only', 'Private'
+	authorId: uuid("author_id").references(() => users.id),
+	likesCount: integer("likes_count").default(0),
+	commentsCount: integer("comments_count").default(0),
+	viewsCount: integer("views_count").default(0),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const discussionImages = pgTable("discussion_images", {
+	id: serial("id").primaryKey(),
+	discussionId: uuid("discussion_id").references(() => discussions.id),
+	imageUrl: text("image_url").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const discussionComments = pgTable("discussion_comments", {
+	id: serial("id").primaryKey(),
+	discussionId: uuid("discussion_id").references(() => discussions.id).notNull(),
+	authorId: uuid("author_id").references(() => users.id).notNull(),
+	content: text("content").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const discussionReactions = pgTable("discussion_reactions", {
+	id: serial("id").primaryKey(),
+	discussionId: uuid("discussion_id").references(() => discussions.id).notNull(),
+	userId: uuid("user_id").references(() => users.id).notNull(),
+	reactionType: text("reaction_type").notNull(), // 'like', 'love', 'laugh', 'sad', etc.
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Relations for discussions
+export const discussionsRelations = relations(discussions, ({ one, many }) => ({
+	author: one(users, {
+		fields: [discussions.authorId],
+		references: [users.id],
+	}),
+	images: many(discussionImages),
+	comments: many(discussionComments),
+	reactions: many(discussionReactions),
+}));
+
+export const discussionImagesRelations = relations(discussionImages, ({ one }) => ({
+	discussion: one(discussions, {
+		fields: [discussionImages.discussionId],
+		references: [discussions.id],
+	}),
+}));
+
+export const discussionCommentsRelations = relations(discussionComments, ({ one }) => ({
+	discussion: one(discussions, {
+		fields: [discussionComments.discussionId],
+		references: [discussions.id],
+	}),
+	author: one(users, {
+		fields: [discussionComments.authorId],
+		references: [users.id],
+	}),
+}));
+
+export const discussionReactionsRelations = relations(discussionReactions, ({ one }) => ({
+	discussion: one(discussions, {
+		fields: [discussionReactions.discussionId],
+		references: [discussions.id],
+	}),
+	user: one(users, {
+		fields: [discussionReactions.userId],
+		references: [users.id],
+	}),
+}));

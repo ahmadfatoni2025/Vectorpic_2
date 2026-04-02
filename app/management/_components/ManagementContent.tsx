@@ -175,60 +175,6 @@ export default function ManagementContent() {
           </div>
         </div>
 
-        {/* --- SPECIALIZED EXPERTISE --- */}
-        <div className="mt-32 max-w-7xl mx-auto px-6 pb-32">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-            <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-full mb-6">
-                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Trust, Innovation, Excellence</span>
-              </div>
-              <h2 className="text-5xl md:text-7xl font-bold text-black tracking-tighter leading-[0.9]">
-                Expertise driven <br /> by specialization
-              </h2>
-            </div>
-            <div className="flex-1 max-w-md">
-              <p className="text-gray-500 text-lg font-medium leading-relaxed">
-                Our teams are divided into distinct pillars, each led by global experts focused on pushing the boundaries of visual media and strategic growth.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
-            <Link href="/management/executive" className="md:col-span-4 group relative overflow-hidden rounded-[2.5rem] bg-gray-100 shadow-sm transition-all duration-700 hover:shadow-2xl hover:-translate-y-2">
-              <Image src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop" alt="Executive" fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="bg-white/95 backdrop-blur-md p-4 rounded-2xl flex items-center gap-4 shadow-xl">
-                  <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white"><ShieldCheck className="w-5 h-5" /></div>
-                  <div><h4 className="text-sm font-black text-black">The Executive</h4><p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Board & Vision</p></div>
-                </div>
-              </div>
-            </Link>
-
-            <Link href="/management/creative" className="md:col-span-3 group relative overflow-hidden rounded-[2.5rem] bg-[#F59E0B] p-8 shadow-sm transition-all duration-700 hover:shadow-2xl hover:-translate-y-2 flex flex-col justify-between">
-              <div className="flex justify-between items-start"><div className="text-white/40"><Target className="w-8 h-8" /></div></div>
-              <div><span className="block text-[10px] font-bold text-white/60 mb-2 uppercase tracking-[0.3em]">Specialized</span><h4 className="text-3xl font-bold text-white leading-none">Creative <br /> Division</h4></div>
-              <div className="flex justify-between items-end"><div><p className="text-[10px] font-mono text-white/50">4000 5000 6000 7000</p><p className="text-[10px] font-bold text-white/80 mt-1">VECTORPIC CREATIVE</p></div></div>
-            </Link>
-
-            <Link href="/management/technical" className="md:col-span-3 group relative overflow-hidden rounded-[2.5rem] bg-black shadow-sm transition-all duration-700 hover:shadow-2xl hover:-translate-y-2">
-              <Image src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop" alt="Technical" fill className="object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-110" />
-              <div className="absolute bottom-8 left-8"><p className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Engineering</p><h4 className="text-2xl font-bold text-white">Precision <br /> Systems</h4></div>
-            </Link>
-
-            <div className="md:col-span-2 flex flex-col gap-6">
-              <Link href="/management/strategy" className="flex-1 group relative overflow-hidden rounded-[2.5rem] bg-gray-50 border border-gray-100 p-6 transition-all duration-500 hover:shadow-xl">
-                 <div className="w-8 h-8 rounded-lg bg-indigo-50 mb-4 flex items-center justify-center text-indigo-600"><Globe className="w-4 h-4" /></div>
-                 <h5 className="font-bold text-black mb-1">Growth</h5>
-              </Link>
-              <Link href="/management/production" className="flex-1 group relative overflow-hidden rounded-[2.5rem] bg-gray-50 border border-gray-100 p-6 transition-all duration-500 hover:shadow-xl">
-                 <div className="w-8 h-8 rounded-lg bg-rose-50 mb-4 flex items-center justify-center text-rose-600"><Briefcase className="w-4 h-4" /></div>
-                 <h5 className="font-bold text-black mb-1">Execution</h5>
-              </Link>
-            </div>
-          </div>
-        </div>
-
         {/* --- STATISTICS & GROWTH --- */}
         <div className="max-w-7xl mx-auto px-6 py-32 bg-gray-50/50 rounded-[4rem] border border-gray-100 mb-20">
           <div className="text-center mb-20">
@@ -252,8 +198,8 @@ export default function ManagementContent() {
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedLeader(null)} className="fixed inset-0 bg-black/60 backdrop-blur-md" />
             <motion.div initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }} className="relative w-full sm:max-w-lg md:max-w-2xl bg-white rounded-t-[3rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden mx-auto" onClick={(e) => e.stopPropagation()}>
-               <div className="p-8"><button onClick={() => setSelectedLeader(null)} className="float-right p-2 text-gray-400 hover:text-black"><X /></button>
-               <div className="flex flex-col items-center pt-8">
+              <div className="p-8"><button onClick={() => setSelectedLeader(null)} className="float-right p-2 text-gray-400 hover:text-black"><X /></button>
+                <div className="flex flex-col items-center pt-8">
                   <div className="relative w-40 h-40 rounded-4xl overflow-hidden border-4 border-white shadow-xl mb-6">
                     <Image src={selectedLeader.image} alt={selectedLeader.name} fill className="object-cover" />
                   </div>
@@ -264,7 +210,7 @@ export default function ManagementContent() {
                     <button className="py-4 bg-black text-white rounded-2xl font-bold">Contact</button>
                     <button className="py-4 bg-indigo-600 text-white rounded-2xl font-bold">LinkedIn</button>
                   </div>
-               </div></div>
+                </div></div>
             </motion.div>
           </div>
         )}
