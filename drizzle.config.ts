@@ -4,7 +4,8 @@ import "dotenv/config";
 const tables = [
   "categories", "vectors", "users", "collections", "collection_items", 
   "navbar_items", "image_stacks", "video_profiles", "testimonials", 
-  "sponsors", "contact_submissions", "statistics", "our_designs"
+  "sponsors", "contact_submissions", "statistics", "our_designs",
+  "discussions", "discussion_images", "discussion_comments", "discussion_reactions"
 ];
 
 export default defineConfig({

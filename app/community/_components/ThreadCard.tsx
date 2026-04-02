@@ -1,83 +1,191 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, ArrowRight, MessageCircle } from 'lucide-react';
+import { 
+  Heart, 
+  MessageSquare, 
+  Share2, 
+  Bookmark, 
+  MoreHorizontal, 
+  Eye,
+  Plus,
+  Flame,
+  ThumbsUp
+} from 'lucide-react';
+
+interface Author {
+  name: string;
+  avatar: string;
+  role?: string;
+  location?: string;
+}
 
 interface Thread {
-  id: number;
-  user: {
-    name: string;
-    avatar: string;
-    role: string;
-  };
+  id: string;
+  user: Author;
   title: string;
   snippet: string;
   category: string;
-  categoryColor: string;
+  categoryColor?: string;
   replies: number;
+  likes?: number;
   time: string;
-  latestReplyBy: string;
-  participants: string[];
+  images?: { imageUrl: string }[];
+  reactions?: { icon: string; count: number }[];
+  views?: string;
 }
 
 interface ThreadCardProps {
   thread: Thread;
 }
 
-export const ThreadCard = ({ thread }: ThreadCardProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    whileHover={{ y: -4, boxShadow: "0 20px 40px rgba(0,0,0,0.04)" }}
-    className="bg-white rounded-3xl p-6 border border-gray-100 flex items-start gap-6 transition-all group cursor-pointer"
-  >
-    {/* Left: Avatar */}
-    <div className="relative shrink-0">
-      <img src={thread.user.avatar} className="w-14 h-14 rounded-full border-2 border-white shadow-sm" alt={thread.user.name} />
-      <div className="absolute -top-1 -right-1 bg-amber-400 rounded-full p-1 border-2 border-white shadow-xs">
-        <Star className="w-2 h-2 text-white fill-current" />
-      </div>
-    </div>
+export const ThreadCard = ({ thread }: ThreadCardProps) => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(thread.likes || 0);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  
+  const hasImage = thread.images && thread.images.length > 0;
 
-    {/* Center: Info */}
-    <div className="flex-1 space-y-2">
-      <div className="flex items-center gap-2">
-        <h3 className="text-lg font-bold text-gray-900 leading-tight group-hover:text-blue-500 transition-colors">
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount((prev: number) => isLiked ? prev - 1 : prev + 1);
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: thread.title,
+        text: thread.snippet,
+        url: window.location.href,
+      });
+    } else {
+      alert("Sharing is not supported in this browser.");
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md group"
+    >
+      {/* Header: User Info */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <img 
+            src={thread.user.avatar} 
+            className="w-10 h-10 rounded-full object-cover border border-gray-50" 
+            alt={thread.user.name} 
+          />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-[14px] font-bold text-gray-900 leading-none hover:text-[#04cce7] cursor-pointer transition-colors">
+                {thread.user.name}
+              </span>
+              {thread.user.role === 'Expert' && (
+                <div className="bg-cyan-50 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#04cce7] border border-cyan-100">
+                  EXPERT
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[12px] text-gray-400 font-medium">{thread.time}</span>
+              <div className="w-0.5 h-0.5 bg-gray-300 rounded-full" />
+              <span className="text-[12px] font-bold text-gray-400">{thread.category}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <button className="px-4 py-1.5 rounded-xl border border-cyan-100 bg-cyan-50/30 text-[12px] font-bold text-[#04cce7] hover:bg-[#04cce7] hover:text-white transition-all active:scale-95">
+            Follow
+          </button>
+          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+            <MoreHorizontal className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content: Title & Snippet */}
+      <div className="space-y-2.5 mb-4 px-1">
+        <h3 className="text-[18px] md:text-[20px] font-bold text-gray-900 leading-tight group-hover:text-[#04cce7] transition-colors cursor-pointer">
           {thread.title}
         </h3>
-      </div>
-      <div className="flex items-center gap-2 text-[11px] font-medium text-gray-400">
-        <ArrowRight className="w-3 h-3 -rotate-45" />
-        <span>Latest reply from <span className="text-gray-600 font-bold italic">@{thread.latestReplyBy}</span> {thread.time}</span>
-      </div>
-      <p className="text-sm text-gray-400 leading-relaxed font-medium line-clamp-2 max-w-2xl">
-        {thread.snippet}
-      </p>
-    </div>
-
-    {/* Right: Meta */}
-    <div className="flex flex-col items-end gap-3 shrink-0 py-1">
-      <div className="flex items-center gap-1.5 self-end mb-1">
-        <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: thread.categoryColor }} />
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{thread.category}</span>
+        <p className="text-[14px] md:text-[15px] text-gray-600 leading-relaxed font-normal line-clamp-3">
+          {thread.snippet}
+        </p>
       </div>
 
-      <div className="flex items-center -space-x-2">
-        {thread.participants.map((p, i) => (
-          <img key={i} src={p} className="w-7 h-7 rounded-full border-2 border-white shadow-xs" alt="participant" />
-        ))}
-        {thread.participants.length > 3 && (
-          <div className="w-7 h-7 rounded-full bg-gray-50 border-2 border-white flex items-center justify-center text-[10px] font-bold text-gray-400">
-            ...
-          </div>
-        )}
-      </div>
+      {/* Image if available */}
+      {hasImage && (
+        <div className="mb-5 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-inner group/img relative">
+           <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors z-10 pointer-events-none" />
+           <img 
+            src={thread.images![0].imageUrl} 
+            className="w-full object-cover max-h-[450px] transition-transform duration-500 group-hover/img:scale-105" 
+            alt="thread content" 
+          />
+        </div>
+      )}
 
-      <div className="flex items-center gap-2 text-gray-400 mt-1">
-        <MessageCircle className="w-4 h-4" />
-        <span className="text-xs font-bold">{thread.replies} <span className="font-medium text-gray-400/70 ml-1">Comments</span></span>
+      {/* Footer: Reactions & Stats */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-50 mt-2 gap-4">
+        <div className="flex items-center gap-2">
+          {/* Reaction Buttons */}
+          <button 
+            onClick={handleLike}
+            className={`flex items-center rounded-full px-3.5 py-2 gap-2 border transition-all active:scale-95 ${isLiked ? 'bg-cyan-50 border-cyan-200 text-[#04cce7]' : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#04cce7]' : ''}`} />
+            <span className="text-[13px] font-bold">{likesCount}</span>
+          </button>
+
+          <button className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium">
+             <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
+             <span className="text-[13px] font-bold">45</span>
+          </button>
+
+          <button className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium">
+             <ThumbsUp className="w-4 h-4 text-blue-400 fill-blue-400" />
+             <span className="text-[13px] font-bold">12</span>
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between sm:justify-start gap-4 md:gap-6">
+           <button className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn">
+             <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
+               <MessageSquare className="w-4 h-4" />
+             </div>
+             <span className="text-[13px] font-bold">{thread.replies || 0}</span>
+           </button>
+           
+           <button 
+             onClick={() => setIsBookmarked(!isBookmarked)}
+             className={`flex items-center gap-2 transition-colors group/btn ${isBookmarked ? 'text-cyan-500' : 'text-gray-400 hover:text-cyan-500'}`}
+           >
+             <div className={`p-2 border rounded-xl transition-all ${isBookmarked ? 'bg-cyan-50 border-cyan-100' : 'border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100'}`}>
+               <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-cyan-500' : ''}`} />
+             </div>
+             <span className="text-[13px] font-bold">Save</span>
+           </button>
+
+           <button 
+             onClick={handleShare}
+             className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
+           >
+              <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
+                <Share2 className="w-4 h-4" />
+              </div>
+           </button>
+
+           <div className="hidden sm:flex items-center gap-2 text-gray-300 ml-2">
+             <Eye className="w-4 h-4" />
+             <span className="text-[12px] font-bold">2.5k</span>
+           </div>
+        </div>
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
+
