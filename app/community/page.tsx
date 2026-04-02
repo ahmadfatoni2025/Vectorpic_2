@@ -1,48 +1,30 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Heart,
   MessageCircle,
   Search,
   Plus,
   Home,
-  Grid,
-  HelpCircle,
-  Sparkles,
-  Eye,
-  Settings,
-  Book,
+  Compass,
+  Bell,
+  Bookmark,
   TrendingUp,
-  Clock,
-  Users,
-  Zap
+  Image as ImageIcon,
+  MoreHorizontal,
+  X,
+  Filter,
+  ChevronDown
 } from 'lucide-react';
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { NewDiscussionModal } from "./_components/NewDiscussionModal";
 import { ThreadCard } from "./_components/ThreadCard";
+import { ThreadDetailModal } from "./_components/ThreadDetailModal";
 
 // --- Constants ---
-
-const mainNav = [
-  { name: "Home", icon: Home, active: true },
-  { name: "Showcases", icon: Grid, active: false },
-  { name: "Trending", icon: TrendingUp, active: false },
-  { name: "Resources", icon: HelpCircle, active: false },
-];
-
-const topicCategories = [
-  { name: "UI/UX Design", icon: Sparkles, count: 234 },
-  { name: "Graphic Design", icon: Grid, count: 189 },
-  { name: "Branding", icon: Heart, count: 156 },
-  { name: "Web Design", icon: Eye, count: 142 },
-  { name: "Motion Graphics", icon: Zap, count: 98 },
-  { name: "Design Tools", icon: Settings, count: 87 },
-  { name: "Portfolio Review", icon: Users, count: 76 },
-  { name: "Design Theory", icon: Book, count: 65 },
-];
 
 const categoryColors: Record<string, string> = {
   "SHOWCASE": "#10B981",
@@ -53,310 +35,427 @@ const categoryColors: Record<string, string> = {
   "GENERAL": "#F59E0B"
 };
 
+const categoryFilters = ["All", "SHOWCASE", "FEEDBACK", "TUTORIAL", "Q&A", "GENERAL", "ANNOUNCEMENTS"];
+
+// Generate a stable session ID for guest users
+function getSessionId(): string {
+  if (typeof window === 'undefined') return 'server';
+  let id = localStorage.getItem('community_session_id');
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem('community_session_id', id);
+  }
+  return id;
+}
+
 // --- Main Page ---
 
 export default function CommunityPage() {
-  const [activeTab, setActiveTab] = useState("Newest");
+  const [activeTab, setActiveTab] = useState("For You");
+  const [activeCategory, setActiveCategory] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
   const [threads, setThreads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedThread, setSelectedThread] = useState<any>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const sessionId = useMemo(() => getSessionId(), []);
+
+  // Fetch threads
+  const fetchThreads = async () => {
+    try {
+      const response = await fetch("/api/discussions");
+      const data = await response.json();
+
+      const mappedThreads = data.map((t: any) => ({
+        id: t.id,
+        user: {
+          name: t.author?.name || "Anonymous",
+          avatar: t.author?.image || `https://ui-avatars.com/api/?name=${t.author?.name || "A"}&background=04cce7&color=fff`,
+          role: t.author?.role || "Member"
+        },
+        title: t.title,
+        snippet: t.description,
+        category: t.category,
+        categoryColor: categoryColors[t.category] || "#94A3B8",
+        replies: t.commentsCount || 0,
+        likes: t.likesCount || 0,
+        views: t.viewsCount || 0,
+        createdAt: new Date(t.createdAt),
+        time: formatRelativeTime(new Date(t.createdAt)),
+        images: t.images || [],
+      }));
+
+      setThreads(mappedThreads);
+    } catch (error) {
+      console.error("Failed to fetch threads:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchThreads() {
-      try {
-        const response = await fetch("/api/discussions");
-        const data = await response.json();
-
-        const mappedThreads = data.map((t: any) => ({
-          id: t.id,
-          user: {
-            name: t.author?.name || "Anonymous",
-            avatar: t.author?.image || `https://ui-avatars.com/api/?name=${t.author?.name || "A"}&background=04cce7&color=fff`,
-            role: t.author?.role || "Member"
-          },
-          title: t.title,
-          snippet: t.description,
-          category: t.category,
-          categoryColor: categoryColors[t.category] || "#94A3B8",
-          replies: Math.floor(Math.random() * 50),
-          likes: Math.floor(Math.random() * 100),
-          views: Math.floor(Math.random() * 500) + 100,
-          createdAt: new Date(t.createdAt),
-          time: new Date(t.createdAt).toLocaleDateString(),
-          images: t.images || [],
-        }));
-
-        setThreads(mappedThreads);
-      } catch (error) {
-        console.error("Failed to fetch threads:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchThreads();
+  }, []);
+
+  // Re-fetch when modal closes (new post created)
+  useEffect(() => {
+    if (!isModalOpen) fetchThreads();
   }, [isModalOpen]);
 
-  const tabs = [
-    { id: "Newest", label: "Newest", icon: Clock },
-    { id: "Popular", label: "Popular", icon: TrendingUp },
-    { id: "Discussed", label: "Most Discussed", icon: MessageCircle },
-  ];
+  // Check URL for thread param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const threadId = params.get('thread');
+    if (threadId && threads.length > 0) {
+      const found = threads.find(t => t.id === threadId);
+      if (found) {
+        setSelectedThread(found);
+        setIsDetailOpen(true);
+      }
+    }
+  }, [threads]);
 
+  // Get bookmarked thread IDs
+  const bookmarkedIds = useMemo(() => {
+    if (typeof window === 'undefined') return [];
+    return JSON.parse(localStorage.getItem('bookmarked_threads') || '[]');
+  }, [activeTab]); // re-read when switching tabs
+
+  // Filter & sort  
   const filteredThreads = threads
-    .filter(t => 
-      t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      t.snippet.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    .filter(t => {
+      // Search filter
+      const matchesSearch = searchQuery === '' ||
+        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        t.snippet.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Category filter
+      const matchesCategory = activeCategory === 'All' || t.category === activeCategory;
+
+      // Tab filter
+      if (activeTab === 'Bookmarks') {
+        return matchesSearch && matchesCategory && bookmarkedIds.includes(t.id);
+      }
+
+      return matchesSearch && matchesCategory;
+    })
     .sort((a, b) => {
-      if (activeTab === "Newest") return b.createdAt - a.createdAt;
+      if (activeTab === "For You") return b.createdAt - a.createdAt;
       if (activeTab === "Popular") return b.likes - a.likes;
-      if (activeTab === "Discussed") return b.replies - a.replies;
+      if (activeTab === "Bookmarks") return b.createdAt - a.createdAt;
       return 0;
     });
 
+  // Open thread detail
+  const handleOpenThread = (thread: any) => {
+    setSelectedThread(thread);
+    setIsDetailOpen(true);
+    // Update URL without navigation
+    window.history.pushState({}, '', `/community?thread=${thread.id}`);
+  };
+
+  const handleCloseDetail = () => {
+    setIsDetailOpen(false);
+    setSelectedThread(null);
+    window.history.pushState({}, '', '/community');
+  };
+
+
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <main className="min-h-screen bg-[#FAFAFA] font-sans">
       <Navbar />
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-[7xl] mx-auto px-4 sm:px-6 pt-32 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-          {/* Left Sidebar - Desktop */}
-          <aside className="hidden lg:block lg:col-span-3 space-y-6 sticky top-28 h-fit">
-            {/* Navigation Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <nav className="space-y-1.5">
-                {mainNav.map((item) => (
+          {/* ─── Left Sidebar ─── */}
+          <aside className="hidden lg:block col-span-1 space-y-4 top-28 h-fit">
+            {/* Navigation */}
+
+
+            {/* Category Filter */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3 px-1">Categories</h3>
+              <div className="space-y-0.5">
+                {categoryFilters.map(cat => (
                   <button
-                    key={item.name}
-                    onClick={() => {}}
-                    className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 group ${item.active
-                        ? 'bg-cyan-50 text-cyan-600 font-bold'
-                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${activeCategory === cat
+                      ? 'bg-cyan-50 text-cyan-700'
+                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
                       }`}
                   >
-                    <item.icon className={`w-5 h-5 transition-colors ${item.active ? 'text-cyan-600' : 'text-gray-300 group-hover:text-cyan-400'}`} />
-                    <span className="text-[14.5px]">{item.name}</span>
-                  </button>
-                ))}
-              </nav>
-            </div>
-
-            {/* Topics Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <div className="flex items-center justify-between mb-5 px-1">
-                <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                  Popular Topics
-                </h3>
-                <button className="text-[11px] text-cyan-500 font-bold hover:underline">VIEW ALL</button>
-              </div>
-              <div className="space-y-1">
-                {topicCategories.map((topic) => (
-                  <button
-                    key={topic.name}
-                    onClick={() => {}}
-                    className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 transition-all group overflow-hidden"
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-cyan-50 transition-colors">
-                        <topic.icon className="w-4 h-4 text-cyan-400" />
-                      </div>
-                      <span className="text-[14px] font-medium group-hover:text-gray-900">{topic.name}</span>
-                    </div>
-                    <span className="text-[11px] text-gray-400 font-bold bg-gray-50 group-hover:bg-cyan-100 group-hover:text-cyan-600 px-2 py-0.5 rounded-md transition-colors">{topic.count}</span>
+                    <span className="flex items-center justify-between">
+                      {cat === 'All' ? '📋 All Posts' : `#${cat}`}
+                      {cat !== 'All' && (
+                        <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">
+                          {threads.filter(t => t.category === cat).length}
+                        </span>
+                      )}
+                    </span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Community Stats */}
-            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden group">
-               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-24 h-24 text-cyan-400" />
-               </div>
-               <div className="text-center relative z-10">
-                  <div className="text-3xl font-black text-gray-900">2.8k</div>
-                  <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-1">Active Creators</div>
-                  <div className="h-px bg-gray-50 my-5" />
-                  <div className="flex justify-around">
-                    <div>
-                      <div className="text-lg font-bold text-gray-900">156</div>
-                      <div className="text-[10px] font-bold text-gray-400">DAILY POSTS</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-gray-900">2.3k</div>
-                      <div className="text-[10px] font-bold text-gray-400">MONTHLY TIPS</div>
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Stats</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-gray-800">{threads.length}</div>
+                  <div className="text-[10px] text-gray-400 font-medium">Posts</div>
+                </div>
+                <div className="text-center p-3 bg-gray-50 rounded-xl">
+                  <div className="text-xl font-bold text-gray-800">{threads.reduce((sum, t) => sum + (t.replies || 0), 0)}</div>
+                  <div className="text-[10px] text-gray-400 font-medium">Replies</div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">Recent Contributors</h3>
+              <div className="space-y-3">
+                {threads.slice(0, 5).map((thread, idx) => (
+                  <div key={`contrib-${idx}`} className="flex items-center gap-3 group cursor-pointer">
+                    <img src={thread.user.avatar} className="w-8 h-8 rounded-full object-cover border border-gray-100" alt="" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-medium text-gray-800 truncate group-hover:text-cyan-600 transition-colors">{thread.user.name}</p>
+                      <p className="text-[11px] text-gray-400 truncate">{thread.title}</p>
                     </div>
                   </div>
-               </div>
+                ))}
+                {threads.length === 0 && (
+                  <p className="text-[12px] text-gray-400">No activity yet</p>
+                )}
+              </div>
+            </div>
+
+            {/* Trending Tags */}
+            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Trending Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {Object.keys(categoryColors).map(cat => {
+                  const count = threads.filter(t => t.category === cat).length;
+                  if (count === 0) return null;
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all ${activeCategory === cat
+                        ? 'bg-cyan-50 text-cyan-600 border-cyan-200'
+                        : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-200'
+                        }`}
+                    >
+                      #{cat} <span className="text-[10px] opacity-60 ml-0.5">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer Links */}
+            <div className="px-2">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-gray-400 font-medium">
+                <span className="hover:underline cursor-pointer">Terms</span>
+                <span className="hover:underline cursor-pointer">Privacy</span>
+                <span className="hover:underline cursor-pointer">Guidelines</span>
+                <span>© 2026 Vectorpic</span>
+              </div>
             </div>
           </aside>
 
-          {/* Main Content - Feed */}
-          <div className="lg:col-span-6 space-y-6">
-            {/* Search and Navigation Tabs */}
-            <div className="space-y-5">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="bg-white rounded-2xl p-1.5 flex gap-1 border border-gray-100 shadow-sm w-fit">
-                  {tabs.map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-200 ${activeTab === tab.id
-                          ? 'bg-cyan-50 text-cyan-600 shadow-sm'
-                          : 'text-gray-500 hover:bg-gray-50'
-                        }`}
-                    >
-                      <tab.icon className="w-4 h-4" />
-                      <span>{tab.label}</span>
-                    </button>
-                  ))}
-                </div>
+          {/* ─── Main Content ─── */}
+          <div className="col-span-1 lg:col-span-2 space-y-4">
 
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="flex items-center justify-center gap-2 bg-[#04cce7] hover:bg-cyan-500 text-white px-7 py-3 rounded-xl text-[15px] font-bold transition-all shadow-lg shadow-cyan-100 active:scale-95"
-                >
-                  <Plus className="w-5 h-5" />
-                  New Post
-                </button>
+
+            {/* Feed Tabs + Search */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center border-b border-gray-200 flex-1">
+                {["For You", "Popular"].map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-2.5 text-[13px] font-semibold relative transition-colors ${activeTab === tab ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
+                      }`}
+                  >
+                    {tab}
+                    {activeTab === tab && (
+                      <motion.div layoutId="feedTab" className="absolute bottom-0 left-0 right-0 h-[2px] bg-cyan-500 rounded-t-full" />
+                    )}
+                  </button>
+                ))}
               </div>
 
-              <div className="relative group">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-cyan-400 transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Search discussions by title or content..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-13 pr-6 py-4 bg-white border border-gray-100 rounded-2xl text-[15px] outline-none focus:ring-4 focus:ring-cyan-50 focus:border-cyan-100 shadow-sm transition-all placeholder:text-gray-300"
-                />
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setShowSearch(!showSearch)}
+                  className={`p-2 rounded-xl transition-all ${showSearch ? 'bg-cyan-50 text-cyan-500' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}
+                >
+                  {showSearch ? <X size={16} /> : <Search size={16} />}
+                </button>
+
+                {/* Mobile category filter */}
+                <div className="lg:hidden relative">
+                  <button
+                    onClick={() => {
+                      const idx = categoryFilters.indexOf(activeCategory);
+                      setActiveCategory(categoryFilters[(idx + 1) % categoryFilters.length]);
+                    }}
+                    className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-1"
+                  >
+                    <Filter size={16} />
+                    {activeCategory !== 'All' && (
+                      <span className="text-[10px] font-bold text-cyan-500">{activeCategory}</span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
+            {/* Search Bar (expandable) */}
+            <AnimatePresence>
+              {showSearch && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search by title or content..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      autoFocus
+                      className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-[13px] outline-none focus:ring-2 focus:ring-cyan-50 focus:border-cyan-200 transition-all placeholder:text-gray-400"
+                    />
+                    {searchQuery && (
+                      <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
+                        <X size={14} />
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Active Category Badge (when filtered) */}
+            {activeCategory !== 'All' && (
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] text-gray-500">Filtered by:</span>
+                <span className="px-3 py-1 bg-cyan-50 text-cyan-600 text-[12px] font-medium rounded-full border border-cyan-100 flex items-center gap-1.5">
+                  #{activeCategory}
+                  <button onClick={() => setActiveCategory('All')} className="hover:text-cyan-800">
+                    <X size={12} />
+                  </button>
+                </span>
+              </div>
+            )}
+
             {/* Posts Feed */}
-            <div className="space-y-6">
+            <div className="space-y-3">
               {loading ? (
-                <div className="bg-white rounded-3xl p-24 text-center border border-gray-100 shadow-sm">
-                  <div className="inline-block animate-spin rounded-full h-10 w-10 border-3 border-cyan-500 border-t-transparent"></div>
-                  <p className="text-gray-400 mt-6 font-bold text-[15px]">Syncing community data...</p>
+                <div className="bg-white rounded-2xl p-16 text-center border border-gray-100 shadow-sm">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-cyan-500 border-t-transparent" />
+                  <p className="text-[13px] text-gray-400 mt-3">Loading discussions...</p>
                 </div>
               ) : filteredThreads.length > 0 ? (
-                <div className="space-y-6">
-                  {filteredThreads.map((thread, idx) => (
-                    <motion.div
-                      key={thread.id}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05, duration: 0.4 }}
-                    >
-                      <ThreadCard thread={thread} />
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-white rounded-3xl p-20 text-center border border-gray-100 shadow-sm">
-                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <MessageCircle className="w-10 h-10 text-gray-200" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900">No results found</h3>
-                  <p className="text-gray-400 text-[15px] mt-2 max-w-xs mx-auto">Try adjusting your search or filters to find what you're looking for.</p>
-                  <button
-                    onClick={() => {setSearchQuery(""); setActiveTab("Newest");}}
-                    className="mt-8 text-cyan-600 font-bold hover:underline"
+                filteredThreads.map((thread, idx) => (
+                  <motion.div
+                    key={thread.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.04, duration: 0.3 }}
                   >
-                    Clear all filters
-                  </button>
+                    <ThreadCard
+                      thread={thread}
+                      sessionId={sessionId}
+                      onOpenThread={handleOpenThread}
+                    />
+                  </motion.div>
+                ))
+              ) : (
+                <div className="bg-white rounded-2xl p-16 text-center border border-gray-100 shadow-sm">
+                  <MessageCircle className="w-10 h-10 text-gray-200 mx-auto mb-3" />
+                  <h3 className="text-[15px] font-semibold text-gray-700">
+                    {activeTab === 'Bookmarks' ? 'No bookmarks yet' : 'No posts found'}
+                  </h3>
+                  <p className="text-gray-400 text-[13px] mt-1 max-w-xs mx-auto">
+                    {activeTab === 'Bookmarks'
+                      ? 'Bookmark posts to save them for later.'
+                      : 'Try adjusting your filters or be the first to post!'
+                    }
+                  </p>
+                  {searchQuery && (
+                    <button
+                      onClick={() => { setSearchQuery(''); setActiveCategory('All'); }}
+                      className="mt-4 text-cyan-600 text-[13px] font-medium hover:underline"
+                    >
+                      Clear filters
+                    </button>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Load More */}
-            {filteredThreads.length > 0 && (
-              <div className="flex justify-center pt-8">
-                <button 
-                   onClick={() => {}}
-                   className="flex items-center gap-2.5 px-8 py-3.5 bg-white border border-gray-100 rounded-2xl text-[15px] font-bold text-gray-600 hover:bg-gray-50 hover:border-cyan-100 hover:text-cyan-600 transition-all active:scale-95 shadow-sm"
-                >
-                  Load More
-                </button>
+            {/* Results count */}
+            {!loading && filteredThreads.length > 0 && (
+              <div className="text-center py-4">
+                <span className="text-[12px] text-gray-400">
+                  Showing {filteredThreads.length} of {threads.length} discussions
+                </span>
               </div>
             )}
           </div>
 
-          {/* Right Sidebar - Desktop */}
-          <aside className="hidden lg:block lg:col-span-3 space-y-6 sticky top-28 h-fit">
-            {/* Trending Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-6 px-1">
-                Trending Discussions
-              </h3>
-              <div className="space-y-6">
-                {[
-                  { title: "Best UI tools for 2024", replies: 145, likes: 528, authorAvatar: "https://i.pravatar.cc/150?u=a" },
-                  { title: "Design system best practices", replies: 82, likes: 294, authorAvatar: "https://i.pravatar.cc/150?u=b" },
-                  { title: "Freelance pricing guide", replies: 64, likes: 176, authorAvatar: "https://i.pravatar.cc/150?u=c" },
-                ].map((item, idx) => (
-                  <div key={idx} className="group cursor-pointer">
-                    <div className="flex gap-3">
-                      <div className="shrink-0">
-                         <img src={item.authorAvatar} className="w-8 h-8 rounded-full border border-gray-50" alt="avatar" />
-                      </div>
-                      <div className="space-y-1.5">
-                        <p className="text-[14px] font-bold text-gray-900 group-hover:text-cyan-600 transition-colors leading-snug line-clamp-2">
-                          {item.title}
-                        </p>
-                        <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400">
-                          <span className="flex items-center gap-1.5">
-                            <MessageCircle className="w-3.5 h-3.5" /> {item.replies}
-                          </span>
-                          <span className="flex items-center gap-1.5">
-                            <Heart className="w-3.5 h-3.5" /> {item.likes}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+          {/* ─── Right Sidebar ─── */}
 
-            {/* Guidelines Card */}
-            <div className="bg-cyan-600 rounded-3xl p-7 shadow-xl shadow-cyan-100 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
-                 <Zap className="w-32 h-32 text-white" />
-              </div>
-              <h3 className="text-lg font-black text-white mb-3">Community Rules</h3>
-              <p className="text-[13px] text-cyan-50 font-medium leading-relaxed opacity-90">
-                Be respectful, give constructive feedback, and help others grow. Let's build a positive community together.
-              </p>
-              <button 
-                onClick={() => {}}
-                className="mt-6 w-full bg-white text-cyan-600 py-3 rounded-xl text-[14px] font-bold hover:bg-cyan-50 transition-colors"
-              >
-                Read Guidelines
-              </button>
-            </div>
-          </aside>
         </div>
       </div>
 
       <Footer />
-      
-      {/* New Discussion Modal */}
+
+      {/* New Post Modal */}
       <NewDiscussionModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        setIsOpen={setIsModalOpen}
+      />
+
+      {/* Thread Detail Panel */}
+      <ThreadDetailModal
+        thread={selectedThread}
+        isOpen={isDetailOpen}
+        onClose={handleCloseDetail}
+        sessionId={sessionId}
       />
 
       {/* Mobile FAB */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 w-16 h-16 bg-cyan-500 text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:bg-cyan-600 transition-all active:scale-90 shadow-cyan-200"
+        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-gray-900 text-white rounded-full shadow-lg flex items-center justify-center z-40 hover:bg-gray-800 transition-all active:scale-95"
       >
-        <Plus className="w-7 h-7" />
+        <Plus className="w-6 h-6" />
       </button>
     </main>
   );
+}
+
+// Helper
+function formatRelativeTime(date: Date): string {
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }

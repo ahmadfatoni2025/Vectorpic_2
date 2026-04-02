@@ -16,7 +16,11 @@ import {
   ChevronsLeft,
   ChevronsRight,
   LogOut,
-  Video
+  Video,
+  Palette,
+  Bell,
+  ChevronDown,
+  ChevronRight
 } from 'lucide-react';
 
 export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, inquiryCount, onQuickUpload }: any) {
@@ -29,41 +33,47 @@ export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
   };
 
   return (
-    <aside className={`${isSidebarOpen ? 'w-80' : 'w-24'} bg-white border-r border-gray-100 transition-all duration-300 hidden md:flex flex-col sticky top-0 h-screen overflow-hidden`}>
-      {/* Title Navigation */}
-      <div className={`p-8 mb-4 border-b border-gray-50 flex items-center ${isSidebarOpen ? 'justify-between' : 'justify-center'}`}>
+    <aside className={`${isSidebarOpen ? 'w-[272px]' : 'w-20'} bg-white border-r border-gray-100/80 transition-all duration-300 hidden md:flex flex-col sticky top-0 h-screen`}>
+      {/* Brand Header */}
+      <div className={`h-[72px] flex items-center ${isSidebarOpen ? 'px-6 justify-between' : 'justify-center'} border-b border-gray-100/60`}>
         {isSidebarOpen ? (
-          <div className="flex items-center gap-4 text-gray-900 w-full pl-2">
-            <span className="font-medium text-[15px] tracking-tight flex-1">Title Navigation</span>
-            <button className="text-gray-400 hover:text-black transition-colors"><Search size={18} /></button>
-            <button onClick={() => setIsSidebarOpen(false)} className="text-gray-400 hover:text-black transition-colors"><ChevronsLeft size={18} /></button>
+          <div className="flex items-center gap-3 w-full">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <span className="text-[15px] font-semibold text-gray-900 tracking-tight">vectorpic</span>
+            <span className="ml-1 px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">Admin</span>
+            <button onClick={() => setIsSidebarOpen(false)} className="ml-auto text-gray-300 hover:text-gray-600 transition-colors">
+              <ChevronsLeft size={16} />
+            </button>
           </div>
         ) : (
-          <button onClick={() => setIsSidebarOpen(true)} className="text-gray-400 hover:text-black transition-colors"><ChevronsRight size={20} /></button>
+          <button onClick={() => setIsSidebarOpen(true)} className="w-9 h-9 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-white transition-all">
+            <ChevronsRight size={16} />
+          </button>
         )}
       </div>
 
-      <nav className="flex-1 px-6 space-y-1.5 overflow-y-auto no-scrollbar pb-6">
-        <NavItem 
-           active={false} 
-           label="Home" 
-           icon={<Home size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => {}} 
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto no-scrollbar">
+        {isSidebarOpen && (
+          <div className="px-3 mb-3">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Main</span>
+          </div>
+        )}
+
+        <NavItem
+          active={activeTab === 'overview'}
+          label="Discover"
+          icon={<LayoutDashboard size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('overview')}
         />
-        
-        <NavItem 
-           active={activeTab === 'overview'} 
-           label="Dashboard" 
-           icon={<LayoutDashboard size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => setActiveTab('overview')} 
-        />
-        
+
         <NavDropdown
           keyId="library"
           label="Projects"
-          icon={<Layers size={20} strokeWidth={1.5} />}
+          icon={<Layers size={18} strokeWidth={1.8} />}
           isOpen={isSidebarOpen}
           isExpanded={openDropdowns.library}
           onToggle={() => toggleDropdown('library')}
@@ -73,52 +83,83 @@ export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
           <NavChild active={false} label="Quick Upload" onClick={onQuickUpload} />
         </NavDropdown>
 
-        <NavItem 
-           active={activeTab === 'management'} 
-           label="Tasks" 
-           icon={<Database size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => setActiveTab('management')} 
+        <NavItem
+          active={activeTab === 'management'}
+          label="Tasks"
+          icon={<Database size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('management')}
         />
 
-        <NavItem 
-           active={activeTab === 'video-profiles'} 
-           label="Video Profiles" 
-           icon={<Video size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => setActiveTab('video-profiles')} 
+        <NavItem
+          active={activeTab === 'video-profiles'}
+          label="Video Profiles"
+          icon={<Video size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('video-profiles')}
         />
 
-        <NavItem 
-           active={activeTab === 'our-design'} 
-           label="Our Design" 
-           icon={<Layers size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => setActiveTab('our-design')} 
-        />
-        
-        <NavItem 
-           active={activeTab === 'settings'}
-           label="Settings" 
-           icon={<Settings size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => setActiveTab('settings')} 
+        <NavItem
+          active={activeTab === 'our-design'}
+          label="Our Design"
+          icon={<Layers size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('our-design')}
         />
 
-        <NavItem 
-           active={activeTab === 'messages'} 
-           label="Message" 
-           icon={<MessageSquare size={20} strokeWidth={1.5} />} 
-           isOpen={isSidebarOpen} 
-           onClick={() => setActiveTab('messages')} 
-           count={inquiryCount}
+        <NavItem
+          active={activeTab === 'track-tabs'}
+          label="Track Tabs"
+          icon={<Palette size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('track-tabs')}
+        />
+
+        {isSidebarOpen && (
+          <div className="px-3 mt-5 mb-3 pt-4 border-t border-gray-50">
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">System</span>
+          </div>
+        )}
+        {!isSidebarOpen && <div className="h-px bg-gray-50 my-3 mx-2" />}
+
+        <NavItem
+          active={activeTab === 'settings'}
+          label="Settings"
+          icon={<Settings size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('settings')}
+        />
+
+        <NavItem
+          active={activeTab === 'messages'}
+          label="Messages"
+          icon={<MessageSquare size={18} strokeWidth={1.8} />}
+          isOpen={isSidebarOpen}
+          onClick={() => setActiveTab('messages')}
+          count={inquiryCount}
         />
       </nav>
 
-      <div className="p-6 border-t border-gray-50 flex justify-center">
-        <Link href="/auth/user/login" className={`flex w-full items-center ${isSidebarOpen ? 'justify-start' : 'justify-center'} gap-4 p-3 rounded-xl transition-all text-[13px] font-medium text-gray-500 hover:text-red-500 hover:bg-red-50`}>
-          <LogOut size={18} strokeWidth={1.5}/> {isSidebarOpen && "Sign Out"}
-        </Link>
+      {/* Bottom Profile */}
+      <div className={`border-t border-gray-100/60 ${isSidebarOpen ? 'px-4 py-4' : 'p-3 flex justify-center'}`}>
+        {isSidebarOpen ? (
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-gray-500 text-xs font-bold shadow-sm">
+              A
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-gray-900 truncate leading-tight">Admin Panel</p>
+              <p className="text-[11px] text-gray-400 truncate">admin@vectorpic.com</p>
+            </div>
+            <Link href="/auth/user/login" className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Sign Out">
+              <LogOut size={16} strokeWidth={1.8}/>
+            </Link>
+          </div>
+        ) : (
+          <Link href="/auth/user/login" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Sign Out">
+            <LogOut size={16} strokeWidth={1.8}/>
+          </Link>
+        )}
       </div>
     </aside>
   );
@@ -128,22 +169,23 @@ function NavItem({ active, label, icon, isOpen, onClick, count }: any) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center ${isOpen ? 'justify-start' : 'justify-center'} gap-4 p-3 rounded-2xl transition-all text-[14px] font-medium ${
-        active 
-          ? 'bg-gray-100 text-black shadow-sm' 
-          : 'text-gray-600 hover:text-black hover:bg-gray-50'
+      className={`w-full flex items-center ${isOpen ? 'px-3' : 'justify-center'} gap-3 py-2.5 rounded-xl transition-all text-[13px] relative group ${
+        active
+          ? 'bg-gray-900 text-white font-medium shadow-sm'
+          : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50 font-medium'
       }`}
     >
-      <span className={active ? 'text-black' : 'text-gray-400'}>{icon}</span>
+      <span className={`flex-shrink-0 ${active ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'}`}>{icon}</span>
       {isOpen && (
         <div className="flex-1 flex items-center justify-between overflow-hidden">
-          <span className="whitespace-nowrap">{label}</span>
-          {count !== undefined && count > 0 ? (
-            <span className="bg-black/5 text-black px-2 py-0.5 rounded-md text-[10px] font-bold">{count}</span>
-          ) : (
-             <Plus size={16} className="text-gray-400" />
+          <span className="whitespace-nowrap truncate">{label}</span>
+          {count !== undefined && count > 0 && (
+            <span className={`min-w-[20px] text-center px-1.5 py-0.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/20 text-white' : 'bg-red-50 text-red-500 border border-red-100'}`}>{count}</span>
           )}
         </div>
+      )}
+      {!isOpen && count !== undefined && count > 0 && (
+        <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[8px] text-white font-bold">{count}</div>
       )}
     </button>
   );
@@ -154,41 +196,42 @@ function NavDropdown({ keyId, label, icon, isOpen, isExpanded, onToggle, activeC
     return (
       <button
         onClick={onToggle}
-        className={`w-full flex items-center justify-center p-3 rounded-2xl transition-all text-sm font-medium ${
-          isExpanded || activeChildren ? 'bg-purple-50 text-purple-600' : 'text-gray-600 hover:text-black hover:bg-gray-50'
+        className={`w-full flex items-center justify-center py-2.5 rounded-xl transition-all text-[13px] font-medium ${
+          isExpanded || activeChildren ? 'bg-emerald-50 text-emerald-600' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
         }`}
       >
-        <span className={isExpanded || activeChildren ? 'text-purple-600' : 'text-gray-400'}>{icon}</span>
+        <span className={isExpanded || activeChildren ? 'text-emerald-600' : 'text-gray-400'}>{icon}</span>
       </button>
     );
   }
-
-  const activeStyle = isExpanded ? 'bg-purple-50 text-purple-600' : 'text-gray-600 hover:text-black hover:bg-gray-50';
-  const iconStyle = isExpanded ? 'text-purple-600' : 'text-gray-400';
 
   return (
     <div className="flex flex-col">
       <button
         onClick={onToggle}
-        className={`w-full flex items-center justify-between p-3 rounded-2xl transition-all text-[14px] font-medium ${activeStyle}`}
+        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-[13px] font-medium ${
+          isExpanded
+            ? 'bg-emerald-50 text-emerald-700'
+            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+        }`}
       >
-        <div className="flex items-center gap-4">
-           <span className={iconStyle}>{icon}</span>
-           <span>{label}</span>
+        <div className="flex items-center gap-3">
+          <span className={isExpanded ? 'text-emerald-600' : 'text-gray-400'}>{icon}</span>
+          <span>{label}</span>
         </div>
-        {isExpanded ? <Minus size={16} className={iconStyle} /> : <Plus size={16} className="text-gray-400" />}
+        {isExpanded ? <ChevronDown size={14} className="text-emerald-500" /> : <ChevronRight size={14} className="text-gray-400" />}
       </button>
-      
+
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="pl-6 py-3 flex flex-col gap-1.5 relative">
-              <div className="absolute left-[22px] top-6 bottom-4 w-px border-l-2 border-dotted border-gray-200" />
+            <div className="ml-5 pl-4 py-1.5 flex flex-col gap-0.5 border-l-2 border-gray-100">
               {children}
             </div>
           </motion.div>
@@ -202,15 +245,13 @@ function NavChild({ active, label, onClick }: any) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center pl-8 pr-3 py-3 rounded-xl transition-all text-[13px] relative z-10 ${
-        active 
-          ? 'bg-gray-100 text-black font-semibold shadow-sm' 
-          : 'text-gray-500 hover:text-black font-medium hover:bg-gray-50'
+      className={`w-full flex items-center px-3 py-2 rounded-lg transition-all text-[12px] ${
+        active
+          ? 'bg-gray-100 text-gray-900 font-semibold'
+          : 'text-gray-500 hover:text-gray-800 font-medium hover:bg-gray-50'
       }`}
     >
-      {active && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-black rounded-r-full" />
-      )}
+      <span className={`w-1.5 h-1.5 rounded-full mr-3 ${active ? 'bg-emerald-500' : 'bg-gray-300'}`} />
       {label}
     </button>
   );

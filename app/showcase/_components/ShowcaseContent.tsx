@@ -71,11 +71,11 @@ export default function ShowcaseContent() {
     if (selectedProject) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'auto';
     }
   }, [selectedProject]);
 
-  const filteredProjects = projects.filter(p => 
+  const filteredProjects = projects.filter(p =>
     activeCategory === "All Work" || p.category === activeCategory
   );
 
