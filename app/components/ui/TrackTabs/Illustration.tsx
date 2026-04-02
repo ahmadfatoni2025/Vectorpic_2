@@ -1,143 +1,180 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { Navbar } from '../../layout/Navbar';
 import { Footer } from '../../layout/Footer';
-import { Eye, Mic2, Music, Activity, Camera } from 'lucide-react';
+
+const defaultData = {
+  badgeText: 'Craft, Story, Perspective',
+  headline: 'Effortless art,\ntotal creative ease',
+  description: 'Your visual needs evolve — and your storytelling should too. From managing initial sketches to delivering final masterpieces, we adapt to support your vision at every stage.',
+  buttonText: 'Explore Gallery',
+  buttonUrl: '/gallery',
+  statLabel: 'Artworks',
+  statValue: '8K+',
+  card1Image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800&q=80',
+  card1Label: 'Digital illustration\nat your fingertips',
+  card2Badge: 'Artist',
+  card2Subtitle: 'Portfolio Card',
+  card2Value: '8812',
+  card2Name: 'Jessica\nMoore',
+  card2Role: 'PRO',
+  profileName: 'Jessica Moore',
+  profileDesc: 'Character Specialist',
+  profileAvatar: 'https://i.pravatar.cc/150?u=jessica',
+  card3Image: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=800&q=80',
+  card3Label: 'Delivering creative\nimpact 24/7',
+  card4Image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80',
+  card4Label: 'Custom artwork',
+  accentColor: '#00D1FF',
+  badgeBgColor: '#F0FBFF',
+};
 
 export default function Illustration() {
-  const artworks = [
-    { src: "/ilustrasi/citacita.png", label: "content creators", color: "#04cce7", icon: <Eye size={32} strokeWidth={2.5} className="text-blue-600" /> },
-    { src: "/ilustrasi/coretax.png", label: "freestyle", color: "#ffec00", icon: <Mic2 size={32} strokeWidth={2.5} className="text-yellow-700" /> },
-    { src: "/ilustrasi/jalanSehat.png", label: "solo & band", color: "#ff2e00", icon: <Music size={32} strokeWidth={2.5} className="text-red-600" /> },
-    { src: "https://images.unsplash.com/photo-1614853316476-de00d14cb1fc?w=800&q=80", label: "urban dance", color: "#ff85c0", icon: <Activity size={32} strokeWidth={2.5} className="text-pink-600" /> },
-    { src: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80", label: "mtv host", color: "#000000", icon: <Camera size={32} strokeWidth={2.5} className="text-white" />, whiteText: true },
-  ];
+  const [d, setD] = useState(defaultData);
+
+  useEffect(() => {
+    fetch('/api/track-tabs')
+      .then(r => r.json())
+      .then(data => {
+        const tab = (Array.isArray(data) ? data : []).find((t: any) => t.tabId === 'illustration');
+        if (tab?.data) setD(prev => ({ ...prev, ...tab.data }));
+      })
+      .catch(() => {});
+  }, []);
+
+  const headlineParts = (d.headline || '').split('\n');
 
   return (
-    <>
+    <div className="bg-white min-h-screen font-sans text-[#1A1A1A]">
       <Navbar />
-      <div className="bg-white min-h-screen relative overflow-hidden font-sans pt-32 pb-20">
+      <div className="max-w-7xl mx-auto flex flex-col pt-32">
 
-        {/* 1. TYPOGRAPHY SECTION (Top) */}
-        <section className="max-w-7xl mx-auto px-6 mb-32 grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-          <div className="relative">
-            <span className="text-gray-400 font-mono text-xs mb-4 block">_typography</span>
-            <h1 className="text-6xl md:text-9xl font-black text-black leading-none tracking-tighter uppercase mb-6">
-              CODE PRO<br />BLACK
+        {/* Top Header Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16 md:mb-24 items-start">
+          <div className="flex flex-col gap-8">
+            {/* Badge */}
+            <div className="flex items-center gap-2 px-3 py-1.5 w-fit rounded-full text-[10px] font-bold tracking-tight" style={{ backgroundColor: d.badgeBgColor, color: d.accentColor }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M2 12h20" /><circle cx="12" cy="12" r="10" /></svg>
+              {d.badgeText}
+            </div>
+            {/* Main Headline */}
+            <h1 className="text-5xl md:text-6xl lg:text-[5.5rem] font-bold tracking-tight text-gray-900 leading-[0.95] max-w-xl">
+              {headlineParts.map((part, i) => (
+                <React.Fragment key={i}>
+                  {part}
+                  {i < headlineParts.length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </h1>
-            <p className="max-w-xs text-[10px] font-bold text-gray-500 uppercase leading-relaxed">
-              Our specialized fonts for creative impact, ensuring that every stroke of our illustration tells a story.
-            </p>
-            {/* Floating Blobs */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-10 -right-10 w-24 h-24 bg-pink-500 rounded-full blur-xl opacity-50"
-            />
           </div>
-          <div className="md:pt-48 flex flex-col gap-10">
-            <h2 className="text-4xl md:text-7xl font-black text-black leading-none tracking-tighter uppercase">
-              helvetica neue<br />cyrillic pro
-            </h2>
-            <p className="max-w-xs text-xs font-bold text-gray-400 uppercase leading-loose">
-              Modern, sleek, and timeless. The foundation of our digital aesthetics.
+
+          <div className="flex flex-col items-end gap-10 pt-4">
+            <p className="text-gray-500 text-sm md:text-base leading-relaxed text-right max-w-[400px]">
+              {d.description}
             </p>
-            <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-yellow-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-          </div>
-        </section>
-
-        {/* 2. TOP MARQUEE (MTV Style) */}
-        <div className="relative z-20 w-full overflow-hidden border-y-2 border-black py-4 flex mb-2">
-          <motion.div
-            animate={{ x: [0, -1000] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            className="whitespace-nowrap flex items-center gap-12 px-12"
-          >
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="flex items-center gap-12 text-black">
-                <span className="text-2xl md:text-4xl font-black uppercase tracking-tighter shrink-0">ICONOS Y FORMAS</span>
-                <span className="text-2xl md:text-4xl font-black uppercase tracking-tighter shrink-0">MTV</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* 3. THE PILLAR GALLERY (MTV GRID) */}
-        <section className="relative z-10 w-full h-[80vh] min-h-[600px] flex flex-col md:flex-row border-b-2 border-black">
-          {artworks.map((art, idx) => (
-            <div
-              key={idx}
-              className="flex-1 flex flex-col relative group overflow-hidden border-r-2 last:border-r-0 border-black"
-              style={{ backgroundColor: art.color }}
-            >
-              {/* Pillar Header */}
-              <div className="p-10 flex flex-col items-center gap-4 text-center">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform">
-                  {art.icon}
+            <div className="flex items-center gap-6">
+              <button className="px-10 py-4 text-white rounded-full font-bold text-sm shadow-md transition-all" style={{ backgroundColor: d.accentColor }}>
+                {d.buttonText}
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {[4, 5, 6].map(i => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative">
+                      <Image src={`https://i.pravatar.cc/150?u=art-${i}`} alt="user" fill className="object-cover" />
+                    </div>
+                  ))}
                 </div>
-                <span className={`text-[10px] font-black uppercase tracking-widest leading-none ${art.whiteText ? 'text-white' : 'text-black'}`}>
-                  {art.label}
-                </span>
-              </div>
-
-              {/* Pillar Image (Grayscale focused) */}
-              <div className="flex-1 relative mt-auto">
-                <Image
-                  src={art.src}
-                  alt={art.label}
-                  fill
-                  unoptimized={art.src.startsWith('http')}
-                />
+                <span className="text-xs font-bold text-gray-400">{d.statValue} {d.statLabel}</span>
               </div>
             </div>
-          ))}
-        </section>
-
-        {/* 4. FLOATING SHAPES SECTION */}
-        <section className="relative w-full h-[60vh] bg-white flex items-center justify-center overflow-hidden">
-          <div className="text-center z-10">
-            <span className="text-gray-400 font-mono text-xs mb-4 block">_icons & organic shapes</span>
-            <p className="max-w-lg text-black font-bold uppercase text-[10px] leading-relaxed mx-auto px-6">
-              Organic forms and illustrated icons are the stars of this season. Each icon represents a category. The forms intertwine and overlap creating dynamic illustrations.
-            </p>
           </div>
-
-          {/* Large Organic Shapes (Blobs) */}
-          <motion.div
-            animate={{ x: [0, 50, -50, 0], y: [0, -30, 30, 0] }}
-            transition={{ duration: 20, repeat: Infinity }}
-            className="absolute top-1/4 left-1/4 w-64 h-64 bg-red-600 rounded-full blur-[100px] opacity-20"
-          />
-          <motion.div
-            animate={{ x: [0, -80, 80, 0], y: [0, 50, -50, 0] }}
-            transition={{ duration: 25, repeat: Infinity }}
-            className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-blue-600 rounded-full blur-[120px] opacity-20"
-          />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-400 rounded-full blur-[150px] opacity-10"></div>
-        </section>
-
-        {/* 5. BOTTOM MARQUEE (MTV Style) */}
-        <div className="relative z-20 w-full overflow-hidden bg-red-600 py-3 flex">
-          <motion.div
-            animate={{ x: [-1000, 0] }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-            className="whitespace-nowrap flex items-center gap-12 px-12"
-          >
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="flex items-center gap-12 text-white">
-                <span className="text-xl md:text-2xl font-black uppercase tracking-tighter shrink-0">TE BUSCA</span>
-                <span className="text-xl md:text-2xl font-black uppercase tracking-tighter shrink-0">MTV</span>
-                <span className="text-xl md:text-2xl font-black uppercase tracking-tighter shrink-0">VECTOR ARTWORKS</span>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
+        {/* Gallery Section - 4 Columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 mb-20">
+
+          {/* Card 1 */}
+          <div className="lg:col-span-4 aspect-[4/5] md:aspect-auto md:h-[500px] rounded-[2rem] bg-gray-50 border border-gray-100 overflow-hidden relative group">
+            <Image src={d.card1Image} alt="Illustration" fill className="object-cover" unoptimized />
+            <div className="absolute bottom-8 left-8">
+              <p className="text-gray-900 text-[10px] font-bold leading-tight opacity-40">{d.card1Label?.split('\n').map((l: string, i: number) => <React.Fragment key={i}>{l}{i === 0 && <br/>}</React.Fragment>)}</p>
+            </div>
+          </div>
+
+          {/* Card 2: Themed Card & Profile */}
+          <div className="lg:col-span-3 flex flex-col gap-4">
+            {/* Themed Card */}
+            <div className="flex-1 rounded-[2rem] p-8 flex flex-col justify-between shadow-sm relative overflow-hidden group" style={{ backgroundColor: d.accentColor }}>
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 border-2 border-white/20 rounded-md flex items-center justify-center p-1">
+                    <div className="w-full h-full bg-white rounded-xs opacity-50 transform rotate-12"></div>
+                  </div>
+                  <span className="text-[10px] font-bold text-white uppercase tracking-widest opacity-80">{d.card2Badge}</span>
+                </div>
+                <div className="text-white brightness-200 opacity-60">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M2 12h20" /><circle cx="12" cy="12" r="10" /></svg>
+                </div>
+              </div>
+
+              <div className="relative z-10">
+                <div className="text-white/40 text-[10px] font-bold uppercase mb-4">{d.card2Subtitle}</div>
+                <div className="text-white text-lg font-mono tracking-widest flex justify-between items-center opacity-80">
+                  <span>••••</span>
+                  <span>••••</span>
+                  <span>••••</span>
+                  <span>{d.card2Value}</span>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-end relative z-10">
+                <div className="text-white text-[10px] font-bold uppercase leading-tight opacity-60">
+                  {d.card2Name?.split('\n').map((l: string, i: number) => <React.Fragment key={i}>{l}{i === 0 && <br/>}</React.Fragment>)}
+                </div>
+                <div className="text-white text-2xl font-black italic opacity-40">{d.card2Role}</div>
+              </div>
+            </div>
+
+            {/* Profile Bar */}
+            <div className="h-20 bg-white border border-gray-100 rounded-[1.5rem] shadow-sm flex items-center justify-between px-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden relative">
+                  <Image src={d.profileAvatar} alt={d.profileName} fill className="object-cover" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-gray-900 leading-none mb-1">{d.profileName}</span>
+                  <span className="text-[10px] font-bold text-gray-400">{d.profileDesc}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center p-1.5 opacity-40">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M2 12h20" /><circle cx="12" cy="12" r="10" /></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3 */}
+          <div className="lg:col-span-3 aspect-square lg:aspect-auto lg:h-[500px] rounded-[2rem] bg-gray-50 overflow-hidden relative group">
+            <Image src={d.card3Image} alt="Artist Work" fill className="object-cover" unoptimized />
+            <div className="absolute inset-0 bg-linear-to-t from-gray-900/60 via-transparent to-transparent"></div>
+            <div className="absolute bottom-8 left-8">
+              <p className="text-white text-[10px] font-bold leading-tight opacity-60">{d.card3Label?.split('\n').map((l: string, i: number) => <React.Fragment key={i}>{l}{i === 0 && <br/>}</React.Fragment>)}</p>
+            </div>
+          </div>
+
+          {/* Card 4 */}
+          <div className="lg:col-span-2 aspect-[3/4] lg:aspect-auto lg:h-[500px] rounded-[2rem] bg-gray-50 overflow-hidden relative group">
+            <Image src={d.card4Image} alt="Process" fill className="object-cover" unoptimized />
+            <div className="absolute bottom-8 left-8">
+              <p className="text-gray-900 text-[10px] font-bold pb-2 border-b border-gray-900/10 mb-2 opacity-60 uppercase tracking-widest">{d.card4Label}</p>
+            </div>
+          </div>
+        </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 }

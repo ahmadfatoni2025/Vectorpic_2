@@ -196,7 +196,9 @@ export const discussionImages = pgTable("discussion_images", {
 export const discussionComments = pgTable("discussion_comments", {
 	id: serial("id").primaryKey(),
 	discussionId: uuid("discussion_id").references(() => discussions.id).notNull(),
-	authorId: uuid("author_id").references(() => users.id).notNull(),
+	authorId: uuid("author_id").references(() => users.id),
+	guestSessionId: text("guest_session_id"),
+	guestName: text("guest_name"),
 	content: text("content").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -205,8 +207,17 @@ export const discussionComments = pgTable("discussion_comments", {
 export const discussionReactions = pgTable("discussion_reactions", {
 	id: serial("id").primaryKey(),
 	discussionId: uuid("discussion_id").references(() => discussions.id).notNull(),
-	userId: uuid("user_id").references(() => users.id).notNull(),
+	userId: uuid("user_id").references(() => users.id),
+	guestSessionId: text("guest_session_id"),
 	reactionType: text("reaction_type").notNull(), // 'like', 'love', 'laugh', 'sad', etc.
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const commentLikes = pgTable("comment_likes", {
+	id: serial("id").primaryKey(),
+	commentId: integer("comment_id").references(() => discussionComments.id).notNull(),
+	guestSessionId: text("guest_session_id"),
+	userId: uuid("user_id").references(() => users.id),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -228,7 +239,7 @@ export const discussionImagesRelations = relations(discussionImages, ({ one }) =
 	}),
 }));
 
-export const discussionCommentsRelations = relations(discussionComments, ({ one }) => ({
+export const discussionCommentsRelations = relations(discussionComments, ({ one, many }) => ({
 	discussion: one(discussions, {
 		fields: [discussionComments.discussionId],
 		references: [discussions.id],
@@ -237,6 +248,7 @@ export const discussionCommentsRelations = relations(discussionComments, ({ one 
 		fields: [discussionComments.authorId],
 		references: [users.id],
 	}),
+	likes: many(commentLikes),
 }));
 
 export const discussionReactionsRelations = relations(discussionReactions, ({ one }) => ({
@@ -249,3 +261,21 @@ export const discussionReactionsRelations = relations(discussionReactions, ({ on
 		references: [users.id],
 	}),
 }));
+
+export const commentLikesRelations = relations(commentLikes, ({ one }) => ({
+	comment: one(discussionComments, {
+		fields: [commentLikes.commentId],
+		references: [discussionComments.id],
+	}),
+	user: one(users, {
+		fields: [commentLikes.userId],
+		references: [users.id],
+	}),
+}));
+
+export const trackTabs = pgTable("track_tabs", {
+	id: serial("id").primaryKey(),
+	tabId: text("tab_id").notNull().unique(),
+	data: text("data").notNull(),
+	updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
