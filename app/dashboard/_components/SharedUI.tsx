@@ -22,11 +22,7 @@ export function SimpleInput({ label, value, onChange, placeholder, type = 'text'
   return (
     <div className="w-full text-left font-sans">
       {label && (
-<<<<<<< HEAD
         <label className="text-[12px] font-bold text-gray-700 mb-2 block tracking-tight uppercase">
-=======
-        <label className="text-[12px] font-semibold text-gray-600 mb-1.5 block tracking-wide uppercase">
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
           {label} {required && <span className="text-red-400">*</span>}
         </label>
       )}
@@ -34,17 +30,10 @@ export function SimpleInput({ label, value, onChange, placeholder, type = 'text'
         type={type}
         value={value || ''}
         onChange={e => onChange(e.target.value)}
-<<<<<<< HEAD
         className="w-full bg-white px-4 py-3 text-[14px] font-medium text-gray-800 rounded-2xl border border-gray-200 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-50 outline-none transition-all placeholder:text-gray-300 shadow-xs"
         placeholder={placeholder}
       />
       {description && <p className="mt-1.5 text-[11px] text-gray-400 font-medium">{description}</p>}
-=======
-        className="w-full bg-white px-3.5 py-2.5 text-[13px] font-medium text-gray-800 rounded-xl border border-gray-200/80 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 outline-none transition-all placeholder:text-gray-300"
-        placeholder={placeholder}
-      />
-      {description && <p className="mt-1 text-[11px] text-gray-400">{description}</p>}
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
     </div>
   );
 }
@@ -53,22 +42,14 @@ export function SimpleTextarea({ label, value, onChange, placeholder, required, 
   return (
     <div className="w-full text-left font-sans">
       {label && (
-<<<<<<< HEAD
         <label className="text-[12px] font-bold text-gray-700 mb-2 block tracking-tight uppercase">
-=======
-        <label className="text-[12px] font-semibold text-gray-600 mb-1.5 block tracking-wide uppercase">
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
           {label} {required && <span className="text-red-400">*</span>}
         </label>
       )}
       <textarea
         value={value || ''}
         onChange={e => onChange(e.target.value)}
-<<<<<<< HEAD
         className="w-full bg-white px-4 py-3 text-[14px] font-medium text-gray-800 rounded-2xl border border-gray-200 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-50 outline-none transition-all placeholder:text-gray-300 min-h-[120px] resize-none shadow-xs"
-=======
-        className="w-full bg-white px-3.5 py-2.5 text-[13px] font-medium text-gray-800 rounded-xl border border-gray-200/80 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-50 outline-none transition-all placeholder:text-gray-300 min-h-[100px] resize-none"
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
         placeholder={placeholder}
       />
       {description && <p className="mt-1 text-[11px] text-gray-400">{description}</p>}
@@ -117,7 +98,6 @@ export function ImageUploadInput({ label, value, onChange }: any) {
       <div className="relative group">
         {value ? (
           <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-gray-200/80 bg-gray-50">
-<<<<<<< HEAD
             {value.match(/\.(mp4|webm)$/i) ? (
               <video src={value} className="w-full h-full object-cover" muted loop playsInline autoPlay />
             ) : (
@@ -196,49 +176,6 @@ export function ImageUploadInput({ label, value, onChange }: any) {
                 />
                 <p className="text-[10px] text-gray-400">Supports direct image or video links.</p>
               </div>
-=======
-            <img src={value} alt="Preview" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity backdrop-blur-xs">
-               <button
-                 type="button"
-                 onClick={() => fileInputRef.current?.click()}
-                 className="p-2.5 bg-white text-gray-700 rounded-xl hover:scale-105 transition-transform shadow-lg border border-gray-100"
-               >
-                 <Upload size={15} />
-               </button>
-               <button
-                 type="button"
-                 onClick={() => onChange('')}
-                 className="p-2.5 bg-red-500 text-white rounded-xl hover:scale-105 transition-transform shadow-lg"
-               >
-                 <X size={15} />
-               </button>
-            </div>
-            {uploading && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
-                    <Loader2 size={22} className="animate-spin text-emerald-500" />
-                </div>
-            )}
-          </div>
-        ) : (
-          <div
-            onClick={() => !uploading && fileInputRef.current?.click()}
-            className="w-full py-7 px-4 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center gap-1.5 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all cursor-pointer bg-gray-50/30"
-          >
-            {uploading ? (
-                <div className="flex flex-col items-center gap-2">
-                   <Loader2 size={22} className="animate-spin text-emerald-500" />
-                   <span className="text-[11px] font-semibold text-gray-400">Uploading...</span>
-                </div>
-            ) : (
-                <>
-                    <div className="w-10 h-10 rounded-xl bg-white border border-gray-200/60 flex items-center justify-center text-gray-300 mb-1 shadow-sm">
-                       <Upload size={18} />
-                    </div>
-                    <p className="text-[12px] font-semibold text-gray-500">Drop file or <span className="text-emerald-600">browse</span></p>
-                    <p className="text-[10px] text-gray-400">JPG, PNG or SVG, max 10MB</p>
-                </>
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
             )}
           </div>
         )}
@@ -254,6 +191,7 @@ export function ImageUploadInput({ label, value, onChange }: any) {
     </div>
   );
 }
+
 export function SmartMediaPicker({ label, value, onChange, placeholder = "YouTube or direct link", accept = "image/*,video/*" }: any) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);

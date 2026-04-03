@@ -23,21 +23,13 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-<<<<<<< HEAD
         {(data.ourDesigns || []).map((item: any, index: number) => {
-=======
-        {(data.ourDesigns || []).map((item: any) => {
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
           const videoId = item.youtubeUrl?.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
           const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : (item.youtubeUrl?.startsWith('http') || item.youtubeUrl?.startsWith('/') ? item.youtubeUrl : null);
           const isVideo = thumbnailUrl?.match(/\.(mp4|webm)$/i);
 
           return (
-<<<<<<< HEAD
             <div key={item.id || index} className="bg-white border border-gray-100/80 rounded-2xl p-4 group transition-all hover:border-gray-200 hover:shadow-md hover:shadow-gray-100/50 flex flex-col">
-=======
-            <div key={item.id} className="bg-white border border-gray-100/80 rounded-2xl p-4 group transition-all hover:border-gray-200 hover:shadow-md hover:shadow-gray-100/50 flex flex-col">
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
               <div className="flex items-start justify-between mb-3">
                 <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-gray-50 text-gray-500 border border-gray-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
                   {item.tag || 'Design'}
@@ -53,7 +45,6 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
               </div>
 
               <div className="space-y-3 flex-1">
-<<<<<<< HEAD
                 <div 
                   className="aspect-video rounded-xl overflow-hidden relative bg-gray-50 border border-gray-100/80 cursor-pointer"
                   onClick={() => setPreviewVideo(item)}
@@ -64,11 +55,6 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
                     ) : (
                       <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     )
-=======
-                <div className="aspect-video rounded-xl overflow-hidden relative bg-gray-50 border border-gray-100/80">
-                  {thumbnailUrl ? (
-                    <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
->>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-1">
                       <Video size={24} strokeWidth={1.5} />
@@ -94,7 +80,7 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
                     </div>
                     <span className="text-[10px] font-medium text-gray-400">YouTube</span>
                   </div>
-                  <span className="text-[10px] font-mono text-gray-300">#{item.id}</span>
+                  <span className="text-[10px] font-mono text-gray-300">#{item.id || index}</span>
                 </div>
               </div>
             </div>

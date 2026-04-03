@@ -7,8 +7,12 @@ import {
   Share2,
   Bookmark,
   MoreHorizontal,
-  Repeat
+  Repeat,
+  Flame,
+  ThumbsUp,
+  Eye
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Thread {
   id: string;
@@ -28,7 +32,7 @@ interface Thread {
 interface ThreadCardProps {
   thread: Thread;
   sessionId: string;
-  onOpenThread: (thread: Thread) => void;
+  onOpenThread?: (thread: Thread) => void;
 }
 
 export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps) => {
@@ -63,7 +67,8 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md group"
+      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md group cursor-pointer"
+      onClick={() => onOpenThread?.(thread)}
     >
       {/* Header: User Info */}
       <div className="flex items-center justify-between mb-4">
@@ -93,10 +98,16 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="px-4 py-1.5 rounded-xl border border-cyan-100 bg-cyan-50/30 text-[12px] font-bold text-[#04cce7] hover:bg-[#04cce7] hover:text-white transition-all active:scale-95">
+          <button 
+            className="px-4 py-1.5 rounded-xl border border-cyan-100 bg-cyan-50/30 text-[12px] font-bold text-[#04cce7] hover:bg-[#04cce7] hover:text-white transition-all active:scale-95"
+            onClick={(e) => e.stopPropagation()}
+          >
             Follow
           </button>
-          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+          <button 
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all"
+            onClick={(e) => e.stopPropagation()}
+          >
             <MoreHorizontal className="w-5 h-5" />
           </button>
         </div>
@@ -129,26 +140,35 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
         <div className="flex items-center gap-2">
           {/* Reaction Buttons */}
           <button
-            onClick={handleLike}
+            onClick={(e) => { e.stopPropagation(); handleLike(); }}
             className={`flex items-center rounded-full px-3.5 py-2 gap-2 border transition-all active:scale-95 ${isLiked ? 'bg-cyan-50 border-cyan-200 text-[#04cce7]' : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100'}`}
           >
             <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#04cce7]' : ''}`} />
             <span className="text-[13px] font-bold">{likesCount}</span>
           </button>
 
-          <button className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium">
+          <button 
+            className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
             <span className="text-[13px] font-bold">45</span>
           </button>
 
-          <button className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium">
+          <button 
+            className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium"
+            onClick={(e) => e.stopPropagation()}
+          >
             <ThumbsUp className="w-4 h-4 text-blue-400 fill-blue-400" />
             <span className="text-[13px] font-bold">12</span>
           </button>
         </div>
 
         <div className="flex items-center justify-between sm:justify-start gap-4 md:gap-6">
-          <button className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn">
+          <button 
+            className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
               <MessageSquare className="w-4 h-4" />
             </div>
@@ -156,7 +176,7 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
           </button>
 
           <button
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={(e) => { e.stopPropagation(); setIsBookmarked(!isBookmarked); }}
             className={`flex items-center gap-2 transition-colors group/btn ${isBookmarked ? 'text-cyan-500' : 'text-gray-400 hover:text-cyan-500'}`}
           >
             <div className={`p-2 border rounded-xl transition-all ${isBookmarked ? 'bg-cyan-50 border-cyan-100' : 'border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100'}`}>
@@ -166,7 +186,7 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
           </button>
 
           <button
-            onClick={handleShare}
+            onClick={(e) => { e.stopPropagation(); handleShare(); }}
             className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
           >
             <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
@@ -176,10 +196,10 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
 
           <div className="hidden sm:flex items-center gap-2 text-gray-300 ml-2">
             <Eye className="w-4 h-4" />
-            <span className="text-[12px] font-bold">2.5k</span>
+            <span className="text-[12px] font-bold">{thread.views || '2.5k'}</span>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
