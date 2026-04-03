@@ -212,58 +212,13 @@ export default function CommunityPage() {
       />
 
       {/* ─── Top Header ─── */}
-      <header className="fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-gray-100 z-50 flex items-center px-6">
-        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-8">
-          {/* Logo */}
-          <div className="flex items-center gap-8">
-            <h1 className="text-xl font-black text-[#FF4D00] tracking-tight whitespace-nowrap cursor-pointer" onClick={() => window.location.reload()}>The Editorial Feed</h1>
-            <nav className="hidden md:flex items-center gap-6">
-              {["Read", "Answer"].map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`text-[14px] font-bold px-1 py-6 relative transition-colors ${activeTab === tab ? "text-[#FF4D00]" : "text-gray-400 hover:text-gray-600"}`}
-                >
-                  {tab}
-                  {activeTab === tab && (
-                    <motion.div layoutId="headerTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF4D00]" />
-                  )}
-                </button>
-              ))}
-            </nav>
-          </div>
+      <Navbar />
 
-          {/* Search & Actions */}
-          <div className="flex-1 max-w-xl hidden sm:block">
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#FF4D00] transition-colors" />
-              <input
-                type="text"
-                placeholder="Search conversations..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border border-transparent focus:border-gray-200 focus:bg-white rounded-full text-[14px] outline-none transition-all placeholder:text-gray-400 font-medium"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-5 shrink-0">
-            <button className="relative text-gray-400 hover:text-[#FF4D00] transition-colors" onClick={() => alert("No new notifications")}>
-              <Bell size={20} />
-              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#FF4D00] border-2 border-white rounded-full" />
-            </button>
-            <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-100 cursor-pointer hover:ring-2 ring-orange-400 transition-all" onClick={() => alert("User profile coming soon!")}>
-              <img src="https://ui-avatars.com/api/?name=Alex+Curatore&background=111&color=fff" alt="user" className="w-full h-full object-cover" />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-[104px] pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-[130px] pb-20">
         <div className="flex gap-10">
 
           {/* ─── Left Sidebar ─── */}
-          <aside className="hidden lg:flex flex-col w-56 space-y-6 shrink-0 sticky top-[104px] h-fit">
+          <aside className="hidden lg:flex flex-col w-56 space-y-6 shrink-0 top-[130px] h-fit">
             <div className="space-y-1">
               {[
                 { name: "Main Feed", icon: LayoutGrid },
