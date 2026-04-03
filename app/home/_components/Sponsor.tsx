@@ -25,13 +25,12 @@ export function Sponsor() {
                 Trusted by 1000+ agencies growing fast without hiring full-time designers
             </h4>
             <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-700 max-w-6xl mx-auto px-4">
-                {sponsors.map((sponsor) => (
-                    <div key={sponsor.name} className="relative w-16 h-5 sm:w-20 sm:h-6 md:w-28 md:h-8 lg:w-32 lg:h-10 flex items-center justify-center group">
-                        <Image
+                {sponsors.map((sponsor, index) => (
+                    <div key={sponsor.name || index} className="relative w-16 h-5 sm:w-20 sm:h-6 md:w-28 md:h-8 lg:w-32 lg:h-10 flex items-center justify-center group">
+                        <img
                             src={sponsor.logo}
                             alt={sponsor.name}
-                            fill
-                            className="object-contain transition-transform group-hover:scale-110 brightness-200"
+                            className="w-full h-full object-contain transition-transform group-hover:scale-110 brightness-200"
                         />
                     </div>
                 ))}

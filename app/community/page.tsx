@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Heart,
@@ -13,31 +13,42 @@ import {
   Bookmark,
   TrendingUp,
   Image as ImageIcon,
-  MoreHorizontal,
   X,
   Filter,
-  ChevronDown
+  ChevronDown,
+  LayoutGrid,
+  Users,
+  FlaskConical,
+  Film,
+  Music,
+  Palette,
+  Utensils,
+  GraduationCap,
+  Link as LinkIcon,
+  List,
+  CheckCircle2,
+  ChevronRight,
+  MessageSquare
 } from 'lucide-react';
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
-import { NewDiscussionModal } from "./_components/NewDiscussionModal";
 import { ThreadCard } from "./_components/ThreadCard";
 import { ThreadDetailModal } from "./_components/ThreadDetailModal";
+import Image from 'next/image';
 
 // --- Constants ---
 
 const categoryColors: Record<string, string> = {
-  "SHOWCASE": "#10B981",
+  "SHOWCASE": "#4F46E5",
   "FEEDBACK": "#8B5CF6",
   "ANNOUNCEMENTS": "#F43F5E",
   "TUTORIAL": "#10B981",
   "Q&A": "#06B6D4",
-  "GENERAL": "#F59E0B"
+  "GENERAL": "#64748B"
 };
 
-const categoryFilters = ["All", "SHOWCASE", "FEEDBACK", "TUTORIAL", "Q&A", "GENERAL", "ANNOUNCEMENTS"];
+const categoryFilters = ["All", "Main Feed", "Following", "Design", "Tutorial", "Q&A", "General"];
 
-// Generate a stable session ID for guest users
 function getSessionId(): string {
   if (typeof window === 'undefined') return 'server';
   let id = localStorage.getItem('community_session_id');
@@ -48,32 +59,35 @@ function getSessionId(): string {
   return id;
 }
 
-// --- Main Page ---
-
 export default function CommunityPage() {
-  const [activeTab, setActiveTab] = useState("For You");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeTab, setActiveTab] = useState("Read");
+  const [activeCategory, setActiveCategory] = useState("Main Feed");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
   const [threads, setThreads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [createPostTab, setCreatePostTab] = useState("Create Post");
+
+  // Post Creator State
+  const [newDescription, setNewDescription] = useState("");
+  const [tempImages, setTempImages] = useState<string[]>([]);
+  const [isPosting, setIsPosting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const sessionId = useMemo(() => getSessionId(), []);
 
-  // Fetch threads
   const fetchThreads = async () => {
     try {
       const response = await fetch("/api/discussions");
       const data = await response.json();
-
       const mappedThreads = data.map((t: any) => ({
         id: t.id,
         user: {
           name: t.author?.name || "Anonymous",
-          avatar: t.author?.image || `https://ui-avatars.com/api/?name=${t.author?.name || "A"}&background=04cce7&color=fff`,
-          role: t.author?.role || "Member"
+          avatar: t.author?.image || `https://ui-avatars.com/api/?name=${t.author?.name || "A"}&background=4F46E5&color=fff`,
+          role: t.author?.role || "Editorial Member"
         },
         title: t.title,
         snippet: t.description,
@@ -85,8 +99,8 @@ export default function CommunityPage() {
         createdAt: new Date(t.createdAt),
         time: formatRelativeTime(new Date(t.createdAt)),
         images: t.images || [],
+        type: t.category === 'Q&A' ? 'question' : 'post'
       }));
-
       setThreads(mappedThreads);
     } catch (error) {
       console.error("Failed to fetch threads:", error);
@@ -99,363 +113,292 @@ export default function CommunityPage() {
     fetchThreads();
   }, []);
 
-  // Re-fetch when modal closes (new post created)
-  useEffect(() => {
-    if (!isModalOpen) fetchThreads();
-  }, [isModalOpen]);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  // Check URL for thread param
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const threadId = params.get('thread');
-    if (threadId && threads.length > 0) {
-      const found = threads.find(t => t.id === threadId);
-      if (found) {
-        setSelectedThread(found);
-        setIsDetailOpen(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.url) {
+        setTempImages(prev => [...prev, data.url]);
       }
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("Failed to upload image");
     }
-  }, [threads]);
+  };
 
-  // Get bookmarked thread IDs
-  const bookmarkedIds = useMemo(() => {
-    if (typeof window === 'undefined') return [];
-    return JSON.parse(localStorage.getItem('bookmarked_threads') || '[]');
-  }, [activeTab]); // re-read when switching tabs
+  const handleWebLink = () => {
+    const url = prompt("Enter image URL from the web:");
+    if (url && (url.startsWith('http') || url.startsWith('https'))) {
+      setTempImages(prev => [...prev, url]);
+    } else if (url) {
+      alert("Please enter a valid URL starting with http:// or https://");
+    }
+  };
 
-  // Filter & sort  
+  const handleCreatePost = async () => {
+    if (!newDescription.trim() || isPosting) return;
+
+    // Auto-generate title from the first few words of the content
+    const words = newDescription.trim().split(/\s+/);
+    const finalTitle = words.length > 5
+      ? words.slice(0, 5).join(" ") + "..."
+      : newDescription.trim();
+
+    setIsPosting(true);
+    try {
+      const res = await fetch("/api/discussions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: finalTitle,
+          description: newDescription.trim(),
+          category: createPostTab === "Ask Question" ? "Q&A" : (activeCategory === "Main Feed" ? "GENERAL" : activeCategory.toUpperCase()),
+          visibility: "Public",
+          authorId: null, // Anonymous for now
+          images: tempImages
+        })
+      });
+
+      if (res.ok) {
+        setNewDescription("");
+        setTempImages([]);
+        fetchThreads();
+      } else {
+        alert("Failed to share post. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
   const filteredThreads = threads
     .filter(t => {
-      // Search filter
-      const matchesSearch = searchQuery === '' ||
-        t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.snippet.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = searchQuery === '' || t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.snippet.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Category filter
-      const matchesCategory = activeCategory === 'All' || t.category === activeCategory;
+      // Category filtering (Main Feed shows everything, others filter strictly)
+      const matchesCategory = activeCategory === "Main Feed" || t.category?.toUpperCase() === activeCategory.toUpperCase();
 
-      // Tab filter
-      if (activeTab === 'Bookmarks') {
-        return matchesSearch && matchesCategory && bookmarkedIds.includes(t.id);
-      }
-
+      if (activeTab === "Answer") return t.type === 'question' && matchesSearch && matchesCategory;
       return matchesSearch && matchesCategory;
     })
-    .sort((a, b) => {
-      if (activeTab === "For You") return b.createdAt - a.createdAt;
-      if (activeTab === "Popular") return b.likes - a.likes;
-      if (activeTab === "Bookmarks") return b.createdAt - a.createdAt;
-      return 0;
-    });
+    .sort((a, b) => b.createdAt - a.createdAt);
 
-  // Open thread detail
   const handleOpenThread = (thread: any) => {
     setSelectedThread(thread);
     setIsDetailOpen(true);
-    // Update URL without navigation
     window.history.pushState({}, '', `/community?thread=${thread.id}`);
   };
 
-  const handleCloseDetail = () => {
-    setIsDetailOpen(false);
-    setSelectedThread(null);
-    window.history.pushState({}, '', '/community');
-  };
-
-
-
   return (
-    <main className="min-h-screen bg-[#FAFAFA] font-sans">
-      <Navbar />
+    <main className="min-h-screen bg-gray-50/50 font-sans text-gray-900">
+      {/* Hidden File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileChange}
+        accept="image/*"
+      />
 
-      <div className="max-w-[7xl] mx-auto px-4 sm:px-6 pt-32 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-          {/* ─── Left Sidebar ─── */}
-          <aside className="hidden lg:block col-span-1 space-y-4 top-28 h-fit">
-            {/* Navigation */}
-
-
-            {/* Category Filter */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
-              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3 px-1">Categories</h3>
-              <div className="space-y-0.5">
-                {categoryFilters.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all ${activeCategory === cat
-                      ? 'bg-cyan-50 text-cyan-700'
-                      : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
-                      }`}
-                  >
-                    <span className="flex items-center justify-between">
-                      {cat === 'All' ? '📋 All Posts' : `#${cat}`}
-                      {cat !== 'All' && (
-                        <span className="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded">
-                          {threads.filter(t => t.category === cat).length}
-                        </span>
-                      )}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Community Stats */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Stats</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
-                  <div className="text-xl font-bold text-gray-800">{threads.length}</div>
-                  <div className="text-[10px] text-gray-400 font-medium">Posts</div>
-                </div>
-                <div className="text-center p-3 bg-gray-50 rounded-xl">
-                  <div className="text-xl font-bold text-gray-800">{threads.reduce((sum, t) => sum + (t.replies || 0), 0)}</div>
-                  <div className="text-[10px] text-gray-400 font-medium">Replies</div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-4">Recent Contributors</h3>
-              <div className="space-y-3">
-                {threads.slice(0, 5).map((thread, idx) => (
-                  <div key={`contrib-${idx}`} className="flex items-center gap-3 group cursor-pointer">
-                    <img src={thread.user.avatar} className="w-8 h-8 rounded-full object-cover border border-gray-100" alt="" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium text-gray-800 truncate group-hover:text-cyan-600 transition-colors">{thread.user.name}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{thread.title}</p>
-                    </div>
-                  </div>
-                ))}
-                {threads.length === 0 && (
-                  <p className="text-[12px] text-gray-400">No activity yet</p>
-                )}
-              </div>
-            </div>
-
-            {/* Trending Tags */}
-            <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-              <h3 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Trending Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(categoryColors).map(cat => {
-                  const count = threads.filter(t => t.category === cat).length;
-                  if (count === 0) return null;
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => setActiveCategory(cat)}
-                      className={`px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all ${activeCategory === cat
-                        ? 'bg-cyan-50 text-cyan-600 border-cyan-200'
-                        : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-cyan-50 hover:text-cyan-600 hover:border-cyan-200'
-                        }`}
-                    >
-                      #{cat} <span className="text-[10px] opacity-60 ml-0.5">{count}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Footer Links */}
-            <div className="px-2">
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-gray-400 font-medium">
-                <span className="hover:underline cursor-pointer">Terms</span>
-                <span className="hover:underline cursor-pointer">Privacy</span>
-                <span className="hover:underline cursor-pointer">Guidelines</span>
-                <span>© 2026 Vectorpic</span>
-              </div>
-            </div>
-          </aside>
-
-          {/* ─── Main Content ─── */}
-          <div className="col-span-1 lg:col-span-2 space-y-4">
-
-
-            {/* Feed Tabs + Search */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center border-b border-gray-200 flex-1">
-                {["For You", "Popular"].map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2.5 text-[13px] font-semibold relative transition-colors ${activeTab === tab ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
-                      }`}
-                  >
-                    {tab}
-                    {activeTab === tab && (
-                      <motion.div layoutId="feedTab" className="absolute bottom-0 left-0 right-0 h-[2px] bg-cyan-500 rounded-t-full" />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-1">
+      {/* ─── Top Header ─── */}
+      <header className="fixed top-0 left-0 right-0 h-[72px] bg-white border-b border-gray-100 z-50 flex items-center px-6">
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-8">
+          {/* Logo */}
+          <div className="flex items-center gap-8">
+            <h1 className="text-xl font-black text-[#FF4D00] tracking-tight whitespace-nowrap cursor-pointer" onClick={() => window.location.reload()}>The Editorial Feed</h1>
+            <nav className="hidden md:flex items-center gap-6">
+              {["Read", "Answer"].map(tab => (
                 <button
-                  onClick={() => setShowSearch(!showSearch)}
-                  className={`p-2 rounded-xl transition-all ${showSearch ? 'bg-cyan-50 text-cyan-500' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`}
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`text-[14px] font-bold px-1 py-6 relative transition-colors ${activeTab === tab ? "text-[#FF4D00]" : "text-gray-400 hover:text-gray-600"}`}
                 >
-                  {showSearch ? <X size={16} /> : <Search size={16} />}
-                </button>
-
-                {/* Mobile category filter */}
-                <div className="lg:hidden relative">
-                  <button
-                    onClick={() => {
-                      const idx = categoryFilters.indexOf(activeCategory);
-                      setActiveCategory(categoryFilters[(idx + 1) % categoryFilters.length]);
-                    }}
-                    className="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-all flex items-center gap-1"
-                  >
-                    <Filter size={16} />
-                    {activeCategory !== 'All' && (
-                      <span className="text-[10px] font-bold text-cyan-500">{activeCategory}</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Bar (expandable) */}
-            <AnimatePresence>
-              {showSearch && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden"
-                >
-                  <div className="relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search by title or content..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      autoFocus
-                      className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-[13px] outline-none focus:ring-2 focus:ring-cyan-50 focus:border-cyan-200 transition-all placeholder:text-gray-400"
-                    />
-                    {searchQuery && (
-                      <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600">
-                        <X size={14} />
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Active Category Badge (when filtered) */}
-            {activeCategory !== 'All' && (
-              <div className="flex items-center gap-2">
-                <span className="text-[12px] text-gray-500">Filtered by:</span>
-                <span className="px-3 py-1 bg-cyan-50 text-cyan-600 text-[12px] font-medium rounded-full border border-cyan-100 flex items-center gap-1.5">
-                  #{activeCategory}
-                  <button onClick={() => setActiveCategory('All')} className="hover:text-cyan-800">
-                    <X size={12} />
-                  </button>
-                </span>
-              </div>
-            )}
-
-            {/* Posts Feed */}
-            <div className="space-y-3">
-              {loading ? (
-                <div className="bg-white rounded-2xl p-16 text-center border border-gray-100 shadow-sm">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-2 border-cyan-500 border-t-transparent" />
-                  <p className="text-[13px] text-gray-400 mt-3">Loading discussions...</p>
-                </div>
-              ) : filteredThreads.length > 0 ? (
-                filteredThreads.map((thread, idx) => (
-                  <motion.div
-                    key={thread.id}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.04, duration: 0.3 }}
-                  >
-                    <ThreadCard
-                      thread={thread}
-                      sessionId={sessionId}
-                      onOpenThread={handleOpenThread}
-                    />
-                  </motion.div>
-                ))
-              ) : (
-                <div className="bg-white rounded-2xl p-16 text-center border border-gray-100 shadow-sm">
-                  <MessageCircle className="w-10 h-10 text-gray-200 mx-auto mb-3" />
-                  <h3 className="text-[15px] font-semibold text-gray-700">
-                    {activeTab === 'Bookmarks' ? 'No bookmarks yet' : 'No posts found'}
-                  </h3>
-                  <p className="text-gray-400 text-[13px] mt-1 max-w-xs mx-auto">
-                    {activeTab === 'Bookmarks'
-                      ? 'Bookmark posts to save them for later.'
-                      : 'Try adjusting your filters or be the first to post!'
-                    }
-                  </p>
-                  {searchQuery && (
-                    <button
-                      onClick={() => { setSearchQuery(''); setActiveCategory('All'); }}
-                      className="mt-4 text-cyan-600 text-[13px] font-medium hover:underline"
-                    >
-                      Clear filters
-                    </button>
+                  {tab}
+                  {activeTab === tab && (
+                    <motion.div layoutId="headerTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF4D00]" />
                   )}
-                </div>
-              )}
-            </div>
-
-            {/* Results count */}
-            {!loading && filteredThreads.length > 0 && (
-              <div className="text-center py-4">
-                <span className="text-[12px] text-gray-400">
-                  Showing {filteredThreads.length} of {threads.length} discussions
-                </span>
-              </div>
-            )}
+                </button>
+              ))}
+            </nav>
           </div>
 
-          {/* ─── Right Sidebar ─── */}
+          {/* Search & Actions */}
+          <div className="flex-1 max-w-xl hidden sm:block">
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#FF4D00] transition-colors" />
+              <input
+                type="text"
+                placeholder="Search conversations..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-2.5 bg-gray-100/50 border border-transparent focus:border-gray-200 focus:bg-white rounded-full text-[14px] outline-none transition-all placeholder:text-gray-400 font-medium"
+              />
+            </div>
+          </div>
 
+          <div className="flex items-center gap-5 shrink-0">
+            <button className="relative text-gray-400 hover:text-[#FF4D00] transition-colors" onClick={() => alert("No new notifications")}>
+              <Bell size={20} />
+              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#FF4D00] border-2 border-white rounded-full" />
+            </button>
+            <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-100 cursor-pointer hover:ring-2 ring-orange-400 transition-all" onClick={() => alert("User profile coming soon!")}>
+              <img src="https://ui-avatars.com/api/?name=Alex+Curatore&background=111&color=fff" alt="user" className="w-full h-full object-cover" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-[104px] pb-20">
+        <div className="flex gap-10">
+
+          {/* ─── Left Sidebar ─── */}
+          <aside className="hidden lg:flex flex-col w-56 space-y-6 shrink-0 sticky top-[104px] h-fit">
+            <div className="space-y-1">
+              {[
+                { name: "Main Feed", icon: LayoutGrid },
+                { name: "Following", icon: Users },
+                { name: "Science", icon: FlaskConical },
+                { name: "Movies", icon: Film },
+                { name: "Music", icon: Music },
+                { name: "Design", icon: Palette },
+                { name: "Food", icon: Utensils },
+                { name: "Education", icon: GraduationCap },
+              ].map(item => (
+                <button
+                  key={item.name}
+                  onClick={() => {
+                    setActiveCategory(item.name);
+                    setSearchQuery(""); // Reset search on category change
+                  }}
+                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[13px] font-bold transition-all ${activeCategory === item.name ? "bg-[#FFF5F0] text-[#FF4D00]" : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"}`}
+                >
+                  <item.icon size={18} strokeWidth={2.5} />
+                  {item.name.toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            <button className="w-full py-2.5 px-4 rounded-xl border border-orange-100 text-[#FF4D00] text-[13px] font-bold hover:bg-[#FFF5F0] transition-all text-center">
+              Improve your feed
+            </button>
+          </aside>
+
+          {/* ─── Main Feed ─── */}
+          <div className="flex-1 max-w-[800px] mx-auto space-y-6 min-w-0">
+
+            {/* Create Post Inline Box */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-6 mb-8 border-b border-gray-50">
+                  <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
+                    <img src="https://ui-avatars.com/api/?name=Alex+Curatore&background=111&color=fff" alt="" />
+                  </div>
+                  <div className="flex gap-8">
+                    {["Create Post", "Ask Question"].map(t => (
+                      <button
+                        key={t}
+                        onClick={() => {
+                          setCreatePostTab(t);
+                          // Option to change category automatically if needed
+                        }}
+                        className={`py-4 text-[13px] font-bold relative transition-colors ${createPostTab === t ? "text-[#FF4D00]" : "text-gray-400 hover:text-gray-600"}`}
+                      >
+                        {t}
+                        {createPostTab === t && <motion.div layoutId="createTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF4D00]" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <textarea
+                  placeholder={createPostTab === "Create Post" ? "Share your insights with the community..." : "What is your question?"}
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                  className="w-full min-h-[120px] text-[17px] text-gray-700 outline-none resize-none placeholder:text-gray-300 px-1 font-medium leading-relaxed"
+                />
+
+                {/* Media Previews */}
+                {tempImages.length > 0 && (
+                  <div className="flex flex-wrap gap-4 mt-6">
+                    {tempImages.map((img, i) => (
+                      <div key={i} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-100 shadow-sm group">
+                        <img src={img} className="w-full h-full object-cover" alt="" />
+                        <button
+                          onClick={() => setTempImages(prev => prev.filter((_, idx) => idx !== i))}
+                          className="absolute -top-1 -right-1 bg-white p-1 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between pt-6 border-t border-gray-50 mt-4">
+                  <div className="flex items-center gap-4 text-gray-400">
+                    <button className="hover:text-gray-600 transition-colors" onClick={() => fileInputRef.current?.click()}><ImageIcon size={20} /></button>
+                    <button className="hover:text-gray-600 transition-colors" onClick={handleWebLink}><LinkIcon size={20} /></button>
+                    <button className="hover:text-gray-600 transition-colors" onClick={() => alert("Lists coming soon")}><List size={20} /></button>
+                  </div>
+                  <button
+                    onClick={handleCreatePost}
+                    disabled={!newDescription.trim() || isPosting}
+                    className="px-8 py-3 bg-[#FF4D00] text-white rounded-full text-[14px] font-bold shadow-lg shadow-orange-100 hover:bg-[#E64500] transition-all disabled:opacity-50"
+                  >
+                    {isPosting ? "Posting..." : "Post Insight"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Threads List */}
+            <div className="space-y-6">
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="h-64 bg-white rounded-2xl border border-gray-100 animate-pulse" />
+                ))
+              ) : filteredThreads.map((thread, idx) => (
+                <ThreadCard
+                  key={thread.id}
+                  thread={{ ...thread, isQuestion: thread.type === 'question' }}
+                  sessionId={sessionId}
+                  onOpenThread={handleOpenThread}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       <Footer />
 
-      {/* New Post Modal */}
-      <NewDiscussionModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-      />
-
-      {/* Thread Detail Panel */}
       <ThreadDetailModal
         thread={selectedThread}
         isOpen={isDetailOpen}
-        onClose={handleCloseDetail}
+        onClose={() => setIsDetailOpen(false)}
         sessionId={sessionId}
       />
-
-      {/* Mobile FAB */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 w-14 h-14 bg-gray-900 text-white rounded-full shadow-lg flex items-center justify-center z-40 hover:bg-gray-800 transition-all active:scale-95"
-      >
-        <Plus className="w-6 h-6" />
-      </button>
     </main>
   );
 }
 
-// Helper
 function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
+  const diff = new Date().getTime() - date.getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return 'just now';
   if (mins < 60) return `${mins}m`;
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d`;
+  if (hrs < 24) return `${hrs}h ago`;
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }

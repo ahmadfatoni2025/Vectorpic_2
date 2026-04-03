@@ -3,6 +3,8 @@ import { videoProfiles } from "@/db/schema";
 import { NextResponse } from "next/server";
 import { asc } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const data = await db.query.videoProfiles.findMany({
@@ -17,8 +19,21 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const newItem = await db.insert(videoProfiles).values(body).returning();
+    const { tab, highlight, subtext, quote, author, role, image, videoId, bgColor, order } = await req.json();
+    
+    const newItem = await db.insert(videoProfiles).values({
+      tab,
+      highlight,
+      subtext,
+      quote,
+      author,
+      role,
+      image,
+      videoId,
+      bgColor,
+      order: order ? parseInt(order.toString()) : 0
+    }).returning();
+    
     return NextResponse.json(newItem[0]);
   } catch (error) {
     console.error("Error creating video profile:", error);

@@ -1,9 +1,10 @@
 "use client";
 
-import React from 'react';
-import { Plus, Pencil, Trash2, Video } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Pencil, Trash2, Video, X } from 'lucide-react';
 
 export function OurDesignManagement({ data, onEdit, onDelete }: any) {
+  const [previewVideo, setPreviewVideo] = useState<any>(null);
   return (
     <div className="space-y-5 font-sans">
       {/* Header */}
@@ -22,12 +23,13 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(data.ourDesigns || []).map((item: any) => {
+        {(data.ourDesigns || []).map((item: any, index: number) => {
           const videoId = item.youtubeUrl?.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
-          const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
+          const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : (item.youtubeUrl?.startsWith('http') || item.youtubeUrl?.startsWith('/') ? item.youtubeUrl : null);
+          const isVideo = thumbnailUrl?.match(/\.(mp4|webm)$/i);
 
           return (
-            <div key={item.id} className="bg-white border border-gray-100/80 rounded-2xl p-4 group transition-all hover:border-gray-200 hover:shadow-md hover:shadow-gray-100/50 flex flex-col">
+            <div key={item.id || index} className="bg-white border border-gray-100/80 rounded-2xl p-4 group transition-all hover:border-gray-200 hover:shadow-md hover:shadow-gray-100/50 flex flex-col">
               <div className="flex items-start justify-between mb-3">
                 <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-gray-50 text-gray-500 border border-gray-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 group-hover:border-indigo-100 transition-all">
                   {item.tag || 'Design'}
@@ -43,9 +45,16 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
               </div>
 
               <div className="space-y-3 flex-1">
-                <div className="aspect-video rounded-xl overflow-hidden relative bg-gray-50 border border-gray-100/80">
+                <div 
+                  className="aspect-video rounded-xl overflow-hidden relative bg-gray-50 border border-gray-100/80 cursor-pointer"
+                  onClick={() => setPreviewVideo(item)}
+                >
                   {thumbnailUrl ? (
-                    <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    isVideo ? (
+                      <video src={thumbnailUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" muted loop playsInline autoPlay />
+                    ) : (
+                      <img src={thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    )
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-1">
                       <Video size={24} strokeWidth={1.5} />
@@ -71,7 +80,7 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
                     </div>
                     <span className="text-[10px] font-medium text-gray-400">YouTube</span>
                   </div>
-                  <span className="text-[10px] font-mono text-gray-300">#{item.id}</span>
+                  <span className="text-[10px] font-mono text-gray-300">#{item.id || index}</span>
                 </div>
               </div>
             </div>
@@ -88,6 +97,37 @@ export function OurDesignManagement({ data, onEdit, onDelete }: any) {
           </div>
         )}
       </div>
+
+      {previewVideo && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6 lg:p-10 bg-black/80 backdrop-blur-sm" onClick={() => setPreviewVideo(null)}>
+          <div className="relative w-full max-w-5xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-gray-800" onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={() => setPreviewVideo(null)} 
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/40 hover:bg-red-500/90 rounded-full flex items-center justify-center text-white transition-all backdrop-blur-md"
+            >
+              <X size={20} />
+            </button>
+            {(() => {
+              const videoId = previewVideo.youtubeUrl?.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/)?.[1];
+              if (videoId) {
+                return (
+                  <iframe 
+                    src={`https://www.youtube.com/embed/${videoId}?autoplay=1`} 
+                    className="w-full aspect-video" 
+                    allowFullScreen 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  />
+                );
+              } else if (previewVideo.youtubeUrl?.match(/\.(mp4|webm)$/i)) {
+                return <video src={previewVideo.youtubeUrl} className="w-full aspect-video" controls autoPlay />;
+              } else if (previewVideo.youtubeUrl) {
+                return <img src={previewVideo.youtubeUrl} className="w-full object-contain max-h-[80vh] bg-gray-900" />;
+              }
+              return <div className="w-full aspect-video flex items-center justify-center text-gray-500 bg-gray-900 font-medium">No Media Available</div>;
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

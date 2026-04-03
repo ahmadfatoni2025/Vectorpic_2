@@ -111,6 +111,9 @@ export const imageStacks = pgTable("image_stacks", {
 	order: integer("order").default(0),
 });
 
+// Replaced with imageStacks above to avoid redundancy and fix non-existent table error
+
+
 export const videoProfiles = pgTable("video_profiles", {
 	id: serial("id").primaryKey(),
 	tab: text("tab").notNull(),

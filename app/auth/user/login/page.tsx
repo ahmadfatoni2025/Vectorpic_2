@@ -48,16 +48,6 @@ export default function LoginPage() {
             Access the world's most sophisticated vector asset library and collaborative toolkit.
           </motion.p>
         </div>
-        <div className="relative z-10 flex items-center gap-6">
-          <div className="flex -space-x-3">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-gray-800 flex items-center justify-center overflow-hidden">
-                <img src={`https://i.pravatar.cc/100?u=${i + 20}`} alt="user" />
-              </div>
-            ))}
-          </div>
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Joined by 50k+ creators</span>
-        </div>
       </div>
       <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-gray-50/30">
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }} className="w-full max-w-md">

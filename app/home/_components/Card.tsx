@@ -19,12 +19,10 @@ export function Card({ id, color, rotate, zIndex, imageUrl, className, style }: 
       style={{ ...style, zIndex }}
     >
       {imageUrl ? (
-        <Image
+        <img
           src={imageUrl}
           alt={`Artwork ${id}`}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 110px, 160px"
+          className="w-full h-full object-cover"
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center italic text-white/50 text-xs text-center px-4">

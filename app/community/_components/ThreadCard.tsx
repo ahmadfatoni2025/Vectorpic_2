@@ -1,14 +1,18 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Heart, 
-  MessageSquare, 
-  Share2, 
-  Bookmark, 
+import {
+  Heart,
+  MessageSquare,
+  Share2,
+  Bookmark,
   MoreHorizontal,
-  Repeat
+  Repeat,
+  Flame,
+  ThumbsUp,
+  Eye
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Thread {
   id: string;
@@ -21,13 +25,14 @@ interface Thread {
   likes?: number;
   time: string;
   images?: { imageUrl: string }[];
-  views?: number;
+  reactions?: { icon: string; count: number }[];
+  views?: string;
 }
 
 interface ThreadCardProps {
   thread: Thread;
   sessionId: string;
-  onOpenThread: (thread: Thread) => void;
+  onOpenThread?: (thread: Thread) => void;
 }
 
 export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps) => {
@@ -38,148 +43,163 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
     const saved = JSON.parse(localStorage.getItem('bookmarked_threads') || '[]');
     return saved.includes(thread.id);
   });
-  
+
   const hasImage = thread.images && thread.images.length > 0;
 
-  const handleLike = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newLiked = !isLiked;
-    setIsLiked(newLiked);
-    setLikesCount(prev => newLiked ? prev + 1 : prev - 1);
-
-    try {
-      await fetch(`/api/discussions/${thread.id}/reactions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reactionType: 'like', sessionId }),
-      });
-    } catch (e) {
-      setIsLiked(!newLiked);
-      setLikesCount(prev => newLiked ? prev - 1 : prev + 1);
-    }
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount((prev: number) => isLiked ? prev - 1 : prev + 1);
   };
 
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const saved = JSON.parse(localStorage.getItem('bookmarked_threads') || '[]');
-    let updated: string[];
-    if (isBookmarked) {
-      updated = saved.filter((id: string) => id !== thread.id);
-    } else {
-      updated = [...saved, thread.id];
-    }
-    localStorage.setItem('bookmarked_threads', JSON.stringify(updated));
-    setIsBookmarked(!isBookmarked);
-  };
-
-  const handleShare = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const url = `${window.location.origin}/community?thread=${thread.id}`;
+  const handleShare = () => {
     if (navigator.share) {
-      try { await navigator.share({ title: thread.title, text: thread.snippet, url }); } catch {}
+      navigator.share({
+        title: thread.title,
+        text: thread.snippet,
+        url: window.location.href,
+      });
     } else {
-      await navigator.clipboard.writeText(url);
-      alert('Link copied!');
+      alert("Sharing is not supported in this browser.");
     }
-  };
-
-  const handleComment = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onOpenThread(thread);
   };
 
   return (
-    <div 
-      onClick={() => onOpenThread(thread)} 
-      className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-100 shadow-sm transition-all hover:bg-gray-50/50 cursor-pointer"
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md group cursor-pointer"
+      onClick={() => onOpenThread?.(thread)}
     >
-      <div className="flex gap-3 sm:gap-4">
-        {/* Avatar */}
-        <div className="flex-shrink-0">
-          <img 
-            src={thread.user.avatar} 
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border border-gray-100" 
-            alt={thread.user.name} 
+      {/* Header: User Info */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <img
+            src={thread.user.avatar}
+            className="w-10 h-10 rounded-full object-cover border border-gray-50"
+            alt={thread.user.name}
           />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-[14px] font-bold text-gray-900 leading-none hover:text-[#04cce7] cursor-pointer transition-colors">
+                {thread.user.name}
+              </span>
+              {thread.user.role === 'Expert' && (
+                <div className="bg-cyan-50 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#04cce7] border border-cyan-100">
+                  EXPERT
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[12px] text-gray-400 font-medium">{thread.time}</span>
+              <div className="w-0.5 h-0.5 bg-gray-300 rounded-full" />
+              <span className="text-[12px] font-bold text-gray-400">{thread.category}</span>
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-1.5 truncate text-[13px] sm:text-[14px]">
-              <span className="font-bold text-gray-900 hover:underline truncate">{thread.user.name}</span>
-              {thread.user.role === 'Expert' && (
-                <span className="bg-cyan-50 px-1.5 py-0.5 rounded text-[9px] font-bold text-cyan-600 border border-cyan-100 flex-shrink-0">✓</span>
-              )}
-              <span className="text-gray-400 truncate flex-shrink-0">@{thread.user.name.toLowerCase().replace(/\s+/g, '')}</span>
-              <span className="text-gray-400 flex-shrink-0">·</span>
-              <span className="text-gray-400 whitespace-nowrap flex-shrink-0">{thread.time}</span>
+        <div className="flex items-center gap-2">
+          <button 
+            className="px-4 py-1.5 rounded-xl border border-cyan-100 bg-cyan-50/30 text-[12px] font-bold text-[#04cce7] hover:bg-[#04cce7] hover:text-white transition-all active:scale-95"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Follow
+          </button>
+          <button 
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MoreHorizontal className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content: Title & Snippet */}
+      <div className="space-y-2.5 mb-4 px-1">
+        <h3 className="text-[18px] md:text-[20px] font-bold text-gray-900 leading-tight group-hover:text-[#04cce7] transition-colors cursor-pointer">
+          {thread.title}
+        </h3>
+        <p className="text-[14px] md:text-[15px] text-gray-600 leading-relaxed font-normal line-clamp-3">
+          {thread.snippet}
+        </p>
+      </div>
+
+      {/* Image if available */}
+      {hasImage && (
+        <div className="mb-5 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-inner group/img relative">
+          <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors z-10 pointer-events-none" />
+          <img
+            src={thread.images![0].imageUrl}
+            className="w-full object-cover max-h-[450px] transition-transform duration-500 group-hover/img:scale-105"
+            alt="thread content"
+          />
+        </div>
+      )}
+
+      {/* Footer: Reactions & Stats */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-50 mt-2 gap-4">
+        <div className="flex items-center gap-2">
+          {/* Reaction Buttons */}
+          <button
+            onClick={(e) => { e.stopPropagation(); handleLike(); }}
+            className={`flex items-center rounded-full px-3.5 py-2 gap-2 border transition-all active:scale-95 ${isLiked ? 'bg-cyan-50 border-cyan-200 text-[#04cce7]' : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100'}`}
+          >
+            <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#04cce7]' : ''}`} />
+            <span className="text-[13px] font-bold">{likesCount}</span>
+          </button>
+
+          <button 
+            className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
+            <span className="text-[13px] font-bold">45</span>
+          </button>
+
+          <button 
+            className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ThumbsUp className="w-4 h-4 text-blue-400 fill-blue-400" />
+            <span className="text-[13px] font-bold">12</span>
+          </button>
+        </div>
+
+        <div className="flex items-center justify-between sm:justify-start gap-4 md:gap-6">
+          <button 
+            className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
+              <MessageSquare className="w-4 h-4" />
             </div>
-            <button 
-              onClick={(e) => e.stopPropagation()} 
-              className="p-1.5 text-gray-400 hover:text-cyan-500 hover:bg-cyan-50 rounded-full transition-all flex-shrink-0 ml-2"
-            >
-              <MoreHorizontal size={16} />
-            </button>
-          </div>
+            <span className="text-[13px] font-bold">{thread.replies || 0}</span>
+          </button>
 
-          {/* Title & Body */}
-          {thread.title && (
-            <h3 className="text-[15px] sm:text-[16px] font-semibold text-gray-900 leading-snug mb-1">{thread.title}</h3>
-          )}
-          <p className="text-[14px] text-gray-600 leading-relaxed whitespace-pre-wrap line-clamp-3 mb-2">{thread.snippet}</p>
-
-          {/* Category Tag */}
-          {thread.category && (
-            <span className="text-[13px] font-medium text-cyan-500 mb-2 inline-block">#{thread.category.replace(/\s+/g, '')}</span>
-          )}
-
-          {/* Image Preview */}
-          {hasImage && (
-            <div className="rounded-xl overflow-hidden border border-gray-100 bg-gray-50 mb-3 max-w-lg">
-              <img src={thread.images![0].imageUrl} className="w-full object-cover max-h-[280px]" alt="post" loading="lazy" />
+          <button
+            onClick={(e) => { e.stopPropagation(); setIsBookmarked(!isBookmarked); }}
+            className={`flex items-center gap-2 transition-colors group/btn ${isBookmarked ? 'text-cyan-500' : 'text-gray-400 hover:text-cyan-500'}`}
+          >
+            <div className={`p-2 border rounded-xl transition-all ${isBookmarked ? 'bg-cyan-50 border-cyan-100' : 'border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100'}`}>
+              <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-cyan-500' : ''}`} />
             </div>
-          )}
+            <span className="text-[13px] font-bold">Save</span>
+          </button>
 
-          {/* Action Bar */}
-          <div className="flex items-center justify-between max-w-sm -ml-2 pt-1">
-            <button onClick={handleComment} className="flex items-center gap-1 hover:text-cyan-500 text-gray-400 transition-colors group">
-              <div className="p-2 rounded-full group-hover:bg-cyan-50 transition-colors">
-                <MessageSquare size={17} />
-              </div>
-              <span className="text-[12px] font-medium">{thread.replies || 0}</span>
-            </button>
-            
-            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-1 hover:text-emerald-500 text-gray-400 transition-colors group">
-              <div className="p-2 rounded-full group-hover:bg-emerald-50 transition-colors">
-                <Repeat size={17} />
-              </div>
-              <span className="text-[12px] font-medium">{Math.floor((thread.likes || 1) / 3)}</span>
-            </button>
-
-            <button onClick={handleLike} className={`flex items-center gap-1 transition-colors group ${isLiked ? 'text-pink-500' : 'text-gray-400 hover:text-pink-500'}`}>
-              <div className={`p-2 rounded-full transition-colors ${isLiked ? 'bg-pink-50' : 'group-hover:bg-pink-50'}`}>
-                <Heart size={17} className={isLiked ? 'fill-pink-500' : ''} />
-              </div>
-              <span className="text-[12px] font-medium">{likesCount}</span>
-            </button>
-
-            <div className="flex items-center gap-1">
-              <button onClick={handleBookmark} className={`transition-colors group ${isBookmarked ? 'text-blue-500' : 'text-gray-400 hover:text-blue-500'}`}>
-                <div className={`p-2 rounded-full transition-colors ${isBookmarked ? 'bg-blue-50' : 'group-hover:bg-blue-50'}`}>
-                  <Bookmark size={17} className={isBookmarked ? 'fill-blue-500' : ''} />
-                </div>
-              </button>
-              <button onClick={handleShare} className="text-gray-400 hover:text-cyan-500 transition-colors group">
-                <div className="p-2 rounded-full group-hover:bg-cyan-50 transition-colors">
-                  <Share2 size={17} />
-                </div>
-              </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); handleShare(); }}
+            className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
+          >
+            <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
+              <Share2 className="w-4 h-4" />
             </div>
+          </button>
+
+          <div className="hidden sm:flex items-center gap-2 text-gray-300 ml-2">
+            <Eye className="w-4 h-4" />
+            <span className="text-[12px] font-bold">{thread.views || '2.5k'}</span>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

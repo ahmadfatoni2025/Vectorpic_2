@@ -10,10 +10,26 @@ export async function PATCH(
   try {
     const { id: rawId } = await params;
     const id = parseInt(rawId);
+    if (isNaN(id)) return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
+
     const body = await req.json();
+    const updateData: any = {};
+    const allowedFields = ['tab', 'highlight', 'subtext', 'quote', 'author', 'role', 'image', 'videoId', 'bgColor', 'order'];
+    
+    allowedFields.forEach(field => {
+      if (body[field] !== undefined) {
+        if (field === 'order') updateData[field] = parseInt(body[field].toString());
+        else updateData[field] = body[field];
+      }
+    });
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No changes provided" }, { status: 400 });
+    }
+
     const updated = await db
       .update(videoProfiles)
-      .set(body)
+      .set(updateData)
       .where(eq(videoProfiles.id, id))
       .returning();
     

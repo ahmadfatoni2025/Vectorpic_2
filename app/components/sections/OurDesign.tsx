@@ -216,11 +216,10 @@ export function OurDesign() {
                                     <div className="relative w-full aspect-video rounded-xl sm:rounded-2xl mb-4 sm:mb-5 overflow-hidden bg-gray-900 group-hover:shadow-2xl transition-all duration-500">
                                          <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
                                              {item.media ? (
-                                                 <Image
+                                                 <img
                                                      src={item.media}
                                                      alt={item.title}
-                                                     fill
-                                                     className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-0"
+                                                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-0"
                                                  />
                                              ) : (
                                                  <div className="w-full h-full flex items-center justify-center bg-gray-100">

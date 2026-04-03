@@ -63,8 +63,8 @@ function ManagementCard({ title, items, onEdit, onDelete, onAdd, type }: any) {
         </button>
       </div>
       <div className="divide-y divide-gray-50 max-h-[360px] overflow-y-auto no-scrollbar">
-        {items?.map((item: any) => (
-          <div key={item.id} className="px-5 py-3.5 flex items-center justify-between hover:bg-gray-50/50 group transition-colors">
+        {items?.map((item: any, index: number) => (
+          <div key={item.id || index} className="px-5 py-3.5 flex items-center justify-between hover:bg-gray-50/50 group transition-colors">
             <div className="flex flex-col text-left overflow-hidden mr-3 min-w-0">
               <span className="text-[13px] font-medium text-gray-800 truncate">{item.name || item.label || item.author || item.tab}</span>
               <span className="text-[11px] text-gray-400 truncate">{item.slug || item.value || item.role || item.highlight || (type === 'image-stacks' ? 'Image' : type === 'sponsors' ? 'Partner' : '')}</span>
@@ -95,11 +95,11 @@ export function Messages({ data, onDelete }: any) {
       <div className="bg-white border border-gray-100/80 rounded-2xl overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-50 flex items-center gap-2">
           <h3 className="text-[13px] font-semibold text-gray-800">Support & Inquiries</h3>
-          <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded-md">{data.inquiries.length}</span>
+          <span className="text-[10px] font-medium text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded-md">{data.inquiries?.length || 0}</span>
         </div>
         <div className="divide-y divide-gray-50">
-          {data.inquiries.map((q: any) => (
-            <div key={q.id} className="px-5 py-4 hover:bg-gray-50/30 transition-colors group">
+          {data.inquiries?.map((q: any, index: number) => (
+            <div key={q.id || index} className="px-5 py-4 hover:bg-gray-50/30 transition-colors group">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-3">
                 <div className="flex-1 text-left min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
@@ -121,7 +121,7 @@ export function Messages({ data, onDelete }: any) {
               </div>
             </div>
           ))}
-          {data.inquiries.length === 0 && (
+          {(!data.inquiries || data.inquiries.length === 0) && (
             <div className="px-5 py-12 text-center">
               <p className="text-[13px] text-gray-400">No messages yet</p>
             </div>
