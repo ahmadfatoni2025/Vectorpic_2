@@ -127,43 +127,36 @@ export function VideoProfile() {
                             >
                                 {/* Left Column - Video Thumbnail Card */}
                                 <div
-                                    className="relative group cursor-pointer aspect-video md:aspect-4/3 rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden bg-gray-900 flex items-center justify-center border border-gray-100 shadow-xl"
+                                    className={`relative group cursor-pointer aspect-video md:aspect-4/3 rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden ${contentData[activeIdx].bgColor} flex items-center justify-center transition-colors duration-700`}
                                     onClick={() => setShowVideo(true)}
                                 >
-                                    {/* Direct Thumbnail Image */}
-                                    {(() => {
-                                        const item = contentData[activeIdx];
-                                        const imgYtMatch = item.image?.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-                                        const vidYtMatch = item.videoId?.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-                                        
-                                        const imgUrl = imgYtMatch ? `https://img.youtube.com/vi/${imgYtMatch[1]}/maxresdefault.jpg` : 
-                                            (item.image || (vidYtMatch ? `https://img.youtube.com/vi/${vidYtMatch[1]}/maxresdefault.jpg` : ''));
-                                            
-                                        return (
-                                            <img
-                                                src={imgUrl}
-                                                alt="Profile"
-                                                draggable={false}
-                                                className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 pointer-events-none"
-                                            />
-                                        );
-                                    })()}
+                                    <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent z-10" />
-
-                                    <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 md:bottom-10 md:left-10 md:right-10 z-20">
+                                    <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 md:bottom-10 md:left-10 md:right-10 z-10">
                                         <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-white leading-tight tracking-tight">
-                                            Vectorpic is <span className="text-emerald-400">{contentData[activeIdx].highlight}</span> <br />
+                                            Vectorpic is <span className="bg-black/80 px-1.5 sm:px-2 py-0.5 rounded-md">{contentData[activeIdx].highlight}</span> <br />
                                             {contentData[activeIdx].subtext}
                                         </h3>
                                     </div>
-                                    
-                                    <div className="relative z-30 w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-2xl scale-90 group-hover:scale-100 transition-transform duration-500">
-                                        <div className="w-0 h-0 border-t-[5px] sm:border-t-[6px] md:border-t-8 border-t-transparent border-l-10 sm:border-l-12 md:border-l-16 border-l-white border-b-[5px] sm:border-b-[6px] md:border-b-8 border-b-transparent ml-1 sm:ml-1.5 md:ml-2"></div>
+
+                                    <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden">
+                                        <div className="relative w-full h-full">
+                                            <Image
+                                                src={contentData[activeIdx].image}
+                                                alt="Profile"
+                                                fill
+                                                draggable={false}
+                                                className="object-cover grayscale mix-blend-overlay opacity-50 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 bg-emerald-600/90 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full text-[7px] sm:text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                                        Watch Video
+                                    <div className="relative z-20 w-10 h-10 sm:w-12 sm:h-12 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-2xl scale-90 group-hover:scale-100 transition-transform duration-500">
+                                        <div className="w-0 h-0 border-t-[5px] sm:border-t-[6px] md:border-t-8 border-t-transparent border-l-10 sm:border-l-12 md:border-l-16 border-l-[#4F46E5] border-b-[5px] sm:border-b-[6px] md:border-b-8 border-b-transparent ml-1 sm:ml-1.5 md:ml-2"></div>
+                                    </div>
+
+                                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 md:top-6 md:left-6 bg-white/20 backdrop-blur-md px-2 py-1 sm:px-3 sm:py-1 md:px-4 md:py-1.5 rounded-full text-[7px] sm:text-[8px] md:text-[10px] uppercase font-black tracking-widest text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                        Watch Tutorial
                                     </div>
                                 </div>
 
@@ -211,49 +204,25 @@ export function VideoProfile() {
                                 >
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
                                 </button>
-                                {contentData[activeIdx] && (() => {
-                                    const videoUrl = contentData[activeIdx].videoId || '';
-                                    const ytMatch = videoUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-                                    const ytId = ytMatch ? ytMatch[1] : (videoUrl.length === 11 ? videoUrl : null);
-                                    
-                                    if (ytId) {
-                                        return (
-                                            <iframe
-                                                width="100%"
-                                                height="100%"
-                                                src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`}
-                                                title="YouTube video player"
-                                                frameBorder="0"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                allowFullScreen
-                                                className="w-full h-full"
-                                            />
-                                        );
-                                    } else if (videoUrl.match(/\.(mp4|webm|mov|ogg)$/i)) {
-                                        return (
-                                            <video
-                                                src={videoUrl}
-                                                controls
-                                                autoPlay
-                                                className="w-full h-full"
-                                            />
-                                        );
-                                    } else if (videoUrl.match(/\.(jpg|jpeg|png|webp|gif|svg)$/i) || videoUrl.startsWith('http')) {
-                                        return (
-                                            <img
-                                                src={videoUrl}
-                                                alt="Profile Content"
-                                                className="w-full h-full object-contain bg-gray-900"
-                                            />
-                                        );
-                                    } else {
-                                        return (
-                                            <div className="w-full h-full flex items-center justify-center bg-gray-900 text-white font-medium">
-                                                Media format support limited. Check URL.
-                                            </div>
-                                        );
-                                    }
-                                })()}
+                                {contentData[activeIdx].videoId.includes('.mp4') ? (
+                                    <video
+                                        src={contentData[activeIdx].videoId}
+                                        controls
+                                        autoPlay
+                                        className="w-full h-full"
+                                    />
+                                ) : (
+                                    <iframe
+                                        width="100%"
+                                        height="100%"
+                                        src={`https://www.youtube.com/embed/${contentData[activeIdx].videoId}?autoplay=1`}
+                                        title="YouTube video player"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                        className="w-full h-full"
+                                    />
+                                )}
                             </motion.div>
                         </motion.div>
                     )}

@@ -48,7 +48,7 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
 
   // Fetch comments when opened - only once per thread
   const lastFetchedRef = useRef<string | null>(null);
-  
+
   useEffect(() => {
     if (isOpen && thread?.id && lastFetchedRef.current !== thread.id) {
       lastFetchedRef.current = thread.id;
@@ -79,23 +79,23 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
 
   const handleSubmitComment = async () => {
     if (!newComment.trim() || submitting) return;
-    
+
     const commentText = newComment.trim();
     setNewComment('');
     setSubmitting(true);
-    
+
     try {
       const res = await fetch(`/api/discussions/${thread.id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          content: commentText, 
+        body: JSON.stringify({
+          content: commentText,
           authorId: null,
           authorName: 'Guest',
           sessionId: sessionId
         }),
       });
-      
+
       if (res.ok) {
         const savedComment = await res.json();
         // Build a complete comment object matching the rendering template
@@ -193,11 +193,11 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
     return text.split(urlRegex).map((part, i) => {
       if (part.match(urlRegex)) {
         return (
-          <a 
-            key={i} 
-            href={part} 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-[#FF4D00] hover:underline font-bold"
             onClick={(e) => e.stopPropagation()}
           >
@@ -229,7 +229,7 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            transition={{ 
+            transition={{
               duration: 0.5,
               ease: [0.32, 0.72, 0, 1] // Super smooth Apple-style ease
             }}
@@ -295,10 +295,10 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
                 {/* Dynamic Image */}
                 {hasImage && (
                   <div className="rounded-[32px] overflow-hidden border border-gray-100 bg-gray-50 mb-10 shadow-xl shadow-gray-100">
-                    <img 
-                      src={thread.images[0].imageUrl} 
-                      className="w-full object-cover max-h-[500px]" 
-                      alt="post visual" 
+                    <img
+                      src={thread.images[0].imageUrl}
+                      className="w-full object-cover max-h-[500px]"
+                      alt="post visual"
                     />
                   </div>
                 )}
@@ -307,14 +307,14 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
                 <div className="flex items-center justify-between pt-8 border-t border-gray-50">
                   <div className="flex items-center gap-8">
                     <div className="flex items-center gap-3 text-gray-400">
-                       <div className="p-2.5 bg-gray-50 rounded-xl text-gray-900 flex items-center gap-2.5 font-black text-[13px] border border-gray-100">
-                          <Heart size={18} strokeWidth={3} className={isLiked ? "fill-[#FF4D00] text-[#FF4D00]" : ""} onClick={handleLike} />
-                          {likesCount}
-                       </div>
-                       <div className="p-2.5 bg-gray-50 rounded-xl text-gray-900 flex items-center gap-2.5 font-black text-[13px] border border-gray-100">
-                          <MessageSquare size={18} strokeWidth={3} />
-                          {comments.length}
-                       </div>
+                      <div className="p-2.5 bg-gray-50 rounded-xl text-gray-900 flex items-center gap-2.5 font-black text-[13px] border border-gray-100">
+                        <Heart size={18} strokeWidth={3} className={isLiked ? "fill-[#FF4D00] text-[#FF4D00]" : ""} onClick={handleLike} />
+                        {likesCount}
+                      </div>
+                      <div className="p-2.5 bg-gray-50 rounded-xl text-gray-900 flex items-center gap-2.5 font-black text-[13px] border border-gray-100">
+                        <MessageSquare size={18} strokeWidth={3} />
+                        {comments.length}
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -333,7 +333,7 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
                 <div className="flex items-center justify-between mb-8">
                   <h4 className="text-[13px] font-black text-gray-300 uppercase tracking-[0.2em]">Community Responses</h4>
                 </div>
-                
+
                 {loadingComments ? (
                   <div className="py-20 flex justify-center">
                     <div className="w-10 h-10 border-4 border-gray-100 border-t-[#FF4D00] rounded-full animate-spin" />
@@ -349,8 +349,8 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
                 ) : (
                   <div className="space-y-4">
                     {comments.map((comment: any) => (
-                      <motion.div 
-                        key={comment.id} 
+                      <motion.div
+                        key={comment.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="p-6 bg-white rounded-[24px] border border-gray-50 shadow-sm"
@@ -392,7 +392,7 @@ export const ThreadDetailModal = ({ thread, isOpen, onClose, sessionId }: Thread
             <div className="p-6 pb-12 bg-white border-t border-gray-100 shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
               <div className="flex items-center gap-5">
                 <div className="hidden sm:block w-12 h-12 rounded-2xl bg-gray-50 border border-gray-100 shrink-0 overflow-hidden">
-                   <img src="https://ui-avatars.com/api/?name=Guest&background=111&color=fff" alt="" />
+                  <img src="https://ui-avatars.com/api/?name=Guest&background=111&color=fff" alt="" />
                 </div>
                 <div className="flex-1 relative">
                   <textarea

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from 'react';
-import { 
-  Heart, 
-  MessageSquare, 
-  Share2, 
-  Bookmark, 
+import {
+  Heart,
+  MessageSquare,
+  Share2,
+  Bookmark,
   MoreHorizontal,
   Repeat
 } from 'lucide-react';
@@ -21,8 +21,8 @@ interface Thread {
   likes?: number;
   time: string;
   images?: { imageUrl: string }[];
-  views?: number;
-  isQuestion?: boolean;
+  reactions?: { icon: string; count: number }[];
+  views?: string;
 }
 
 interface ThreadCardProps {
@@ -39,169 +39,146 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
     const saved = JSON.parse(localStorage.getItem('bookmarked_threads') || '[]');
     return saved.includes(thread.id);
   });
-  
+
   const hasImage = thread.images && thread.images.length > 0;
 
-  const handleLike = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newLiked = !isLiked;
-    setIsLiked(newLiked);
-    setLikesCount(prev => newLiked ? prev + 1 : Math.max(0, prev - 1));
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikesCount((prev: number) => isLiked ? prev - 1 : prev + 1);
+  };
 
-    try {
-      await fetch(`/api/discussions/${thread.id}/reactions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reactionType: "like", sessionId })
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: thread.title,
+        text: thread.snippet,
+        url: window.location.href,
       });
-    } catch (error) {
-      console.error("Failed to toggle like:", error);
-    }
-  };
-
-  const handleBookmark = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const saved = JSON.parse(localStorage.getItem('bookmarked_threads') || '[]');
-    let updated: string[];
-    if (isBookmarked) {
-      updated = saved.filter((id: string) => id !== thread.id);
     } else {
-      updated = [...saved, thread.id];
+      alert("Sharing is not supported in this browser.");
     }
-    localStorage.setItem('bookmarked_threads', JSON.stringify(updated));
-    setIsBookmarked(!isBookmarked);
   };
-
-  const handleShare = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const url = `${window.location.origin}/community?thread=${thread.id}`;
-    await navigator.clipboard.writeText(url);
-    alert("Discussion link copied to clipboard!");
-  };
-
-  if (thread.isQuestion) {
-    return (
-      <div 
-        onClick={() => onOpenThread(thread)}
-        className="bg-white rounded-3xl p-8 border-l-4 border-l-[#FF4D00] border-y border-r border-gray-100 shadow-sm transition-all hover:shadow-md cursor-pointer group"
-      >
-        <div className="flex items-center gap-4 mb-4">
-          <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#FF4D00]">
-             <span className="text-xl font-bold italic">?</span>
-          </div>
-          <div className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
-            Question from {thread.category} Community
-          </div>
-        </div>
-
-        <h3 className="text-[19px] font-black text-gray-900 leading-tight mb-4 group-hover:text-[#FF4D00] transition-colors font-sans">
-          {thread.title}
-        </h3>
-        
-        <p className="text-[15px] text-gray-500 leading-relaxed font-medium mb-8">
-          {thread.snippet}
-        </p>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={(e) => { e.stopPropagation(); onOpenThread(thread); }}
-              className="px-6 py-2.5 bg-[#FFF5F0] text-[#FF4D00] rounded-xl text-[13px] font-bold hover:bg-[#FF4D00] hover:text-white transition-all"
-            >
-              Answer this
-            </button>
-            <span className="text-[13px] text-gray-400 font-bold">{Math.floor(Math.random() * 20)+5} people are following this</span>
-          </div>
-          <div className="flex items-center gap-2">
-             <button onClick={handleBookmark} className={`p-2 rounded-lg transition-all ${isBookmarked ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-900'}`}>
-                <Bookmark size={18} className={isBookmarked ? "fill-current" : ""} />
-             </button>
-             <button onClick={handleShare} className="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition-all">
-                <Share2 size={18} strokeWidth={2.5} />
-             </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div 
-      onClick={() => onOpenThread(thread)} 
-      className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm transition-all hover:shadow-md cursor-pointer group"
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md group"
     >
-      {/* Post Header Meta */}
+      {/* Header: User Info */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-gray-100">
-            <img src={thread.user.avatar} className="w-full h-full object-cover" alt="" />
-          </div>
-          <div>
-            <span className="text-[14px] font-black text-gray-900 group-hover:text-[#FF4D00] transition-colors">{thread.user.name}</span>
-            <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">
-               <span>Posted in {thread.category}</span>
-               <span>•</span>
-               <span className="text-gray-300">{thread.time}</span>
+          <img
+            src={thread.user.avatar}
+            className="w-10 h-10 rounded-full object-cover border border-gray-50"
+            alt={thread.user.name}
+          />
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-[14px] font-bold text-gray-900 leading-none hover:text-[#04cce7] cursor-pointer transition-colors">
+                {thread.user.name}
+              </span>
+              {thread.user.role === 'Expert' && (
+                <div className="bg-cyan-50 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#04cce7] border border-cyan-100">
+                  EXPERT
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[12px] text-gray-400 font-medium">{thread.time}</span>
+              <div className="w-0.5 h-0.5 bg-gray-300 rounded-full" />
+              <span className="text-[12px] font-bold text-gray-400">{thread.category}</span>
             </div>
           </div>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); alert("Option menu coming soon"); }} className="text-gray-300 hover:text-gray-600 transition-colors">
-          <MoreHorizontal size={20} />
-        </button>
+
+        <div className="flex items-center gap-2">
+          <button className="px-4 py-1.5 rounded-xl border border-cyan-100 bg-cyan-50/30 text-[12px] font-bold text-[#04cce7] hover:bg-[#04cce7] hover:text-white transition-all active:scale-95">
+            Follow
+          </button>
+          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all">
+            <MoreHorizontal className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
-      {/* Post Title */}
-      <h3 className="text-[20px] font-black text-gray-900 leading-[1.2] mb-4 tracking-tight group-hover:text-[#FF4D00] transition-colors">
-        {thread.title}
-      </h3>
+      {/* Content: Title & Snippet */}
+      <div className="space-y-2.5 mb-4 px-1">
+        <h3 className="text-[18px] md:text-[20px] font-bold text-gray-900 leading-tight group-hover:text-[#04cce7] transition-colors cursor-pointer">
+          {thread.title}
+        </h3>
+        <p className="text-[14px] md:text-[15px] text-gray-600 leading-relaxed font-normal line-clamp-3">
+          {thread.snippet}
+        </p>
+      </div>
 
-      {/* Post Snippet */}
-      <p className="text-[15px] text-gray-600 leading-relaxed font-medium mb-6 line-clamp-3">
-        {thread.snippet}
-      </p>
-
-      {/* Post Image */}
+      {/* Image if available */}
       {hasImage && (
-        <div className="relative aspect-video rounded-3xl overflow-hidden mb-6 bg-gray-50 border border-gray-100">
-          <img src={thread.images![0].imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Post content" />
+        <div className="mb-5 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-inner group/img relative">
+          <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors z-10 pointer-events-none" />
+          <img
+            src={thread.images![0].imageUrl}
+            className="w-full object-cover max-h-[450px] transition-transform duration-500 group-hover/img:scale-105"
+            alt="thread content"
+          />
         </div>
       )}
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-8">
-        {[thread.category, "Showcase", "Inspiration"].map(tag => (
-          <span 
-            key={tag} 
-            onClick={(e) => { e.stopPropagation(); alert(`Searching for tag: ${tag}`); }}
-            className="px-3 py-1 bg-gray-50 text-gray-400 text-[11px] font-black uppercase tracking-widest rounded-lg border border-transparent hover:border-gray-200 transition-all"
+      {/* Footer: Reactions & Stats */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-50 mt-2 gap-4">
+        <div className="flex items-center gap-2">
+          {/* Reaction Buttons */}
+          <button
+            onClick={handleLike}
+            className={`flex items-center rounded-full px-3.5 py-2 gap-2 border transition-all active:scale-95 ${isLiked ? 'bg-cyan-50 border-cyan-200 text-[#04cce7]' : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100'}`}
           >
-            {tag}
-          </span>
-        ))}
-      </div>
+            <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#04cce7]' : ''}`} />
+            <span className="text-[13px] font-bold">{likesCount}</span>
+          </button>
 
-      {/* Post Actions */}
-      <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center bg-gray-50 rounded-full p-1 border border-gray-100">
-             <button onClick={handleLike} className="flex items-center gap-2 pl-4 pr-3 py-1.5 hover:text-[#FF4D00] transition-colors border-r border-gray-200 group/like">
-                <Heart size={16} strokeWidth={3} className={isLiked ? "fill-[#FF4D00] text-[#FF4D00]" : "group-hover/like:text-[#FF4D00]"} />
-                <span className={`text-[13px] font-black tracking-tight ${isLiked ? "text-[#FF4D00]" : ""}`}>{likesCount > 1000 ? `${(likesCount/1000).toFixed(1)}k` : likesCount}</span>
-             </button>
-             <button onClick={(e) => { e.stopPropagation(); alert("Downvoted"); }} className="px-3 py-1.5 text-gray-300 hover:text-gray-600 transition-colors">
-                <Heart size={16} strokeWidth={3} className="rotate-180" />
-             </button>
-          </div>
-          
-          <button onClick={(e) => { e.stopPropagation(); onOpenThread(thread); }} className="flex items-center gap-2.5 text-gray-400 hover:text-gray-900 transition-colors group/comment">
-             <MessageSquare size={18} strokeWidth={2.5} className="group-hover/comment:scale-110 transition-transform" />
-             <span className="text-[13px] font-bold">{thread.replies || 0} comments</span>
+          <button className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium">
+            <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
+            <span className="text-[13px] font-bold">45</span>
+          </button>
+
+          <button className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium">
+            <ThumbsUp className="w-4 h-4 text-blue-400 fill-blue-400" />
+            <span className="text-[13px] font-bold">12</span>
           </button>
         </div>
 
-        <button onClick={handleShare} className="text-gray-300 hover:text-gray-900 transition-all hover:scale-110">
-           <Share2 size={18} strokeWidth={2.5} />
-        </button>
+        <div className="flex items-center justify-between sm:justify-start gap-4 md:gap-6">
+          <button className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn">
+            <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
+              <MessageSquare className="w-4 h-4" />
+            </div>
+            <span className="text-[13px] font-bold">{thread.replies || 0}</span>
+          </button>
+
+          <button
+            onClick={() => setIsBookmarked(!isBookmarked)}
+            className={`flex items-center gap-2 transition-colors group/btn ${isBookmarked ? 'text-cyan-500' : 'text-gray-400 hover:text-cyan-500'}`}
+          >
+            <div className={`p-2 border rounded-xl transition-all ${isBookmarked ? 'bg-cyan-50 border-cyan-100' : 'border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100'}`}>
+              <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-cyan-500' : ''}`} />
+            </div>
+            <span className="text-[13px] font-bold">Save</span>
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
+          >
+            <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
+              <Share2 className="w-4 h-4" />
+            </div>
+          </button>
+
+          <div className="hidden sm:flex items-center gap-2 text-gray-300 ml-2">
+            <Eye className="w-4 h-4" />
+            <span className="text-[12px] font-bold">2.5k</span>
+          </div>
+        </div>
       </div>
     </div>
   );

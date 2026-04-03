@@ -12,8 +12,12 @@ import { Management, Messages } from './_components/Management';
 import { VideoProfileSection } from './_components/VideoProfileSection';
 import { OurDesignManagement } from './_components/OurDesignVideo';
 import { BreandingManagement } from './_components/Breanding';
+<<<<<<< HEAD
 import { ImageStackManagement } from './_components/ImageStackManagement';
 import { SimpleInput, ImageUploadInput, SimpleTextarea, SmartMediaPicker } from './_components/SharedUI';
+=======
+import { SimpleInput, ImageUploadInput, SimpleTextarea } from './_components/SharedUI';
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -109,7 +113,10 @@ export default function AdminDashboard() {
     assets: 'Assets Gallery',
     management: 'Tasks',
     'video-profiles': 'Video Profiles',
+<<<<<<< HEAD
     'image-stacks': 'Image Stacks',
+=======
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
     'our-design': 'Our Design',
     'track-tabs': 'Track Tabs',
     settings: 'Settings',
@@ -121,7 +128,10 @@ export default function AdminDashboard() {
     assets: 'Browse and manage all uploaded assets.',
     management: 'Manage categories, statistics, sponsors and more.',
     'video-profiles': 'Configure video features and testimonials.',
+<<<<<<< HEAD
     'image-stacks': 'Manage floating image cards displayed on home.',
+=======
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
     'our-design': 'YouTube Showcase for your portfolio.',
     'track-tabs': 'Manage content for all track tab pages.',
     settings: 'Platform configuration and preferences.',
@@ -178,10 +188,18 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, y: -12, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.98 }}
+<<<<<<< HEAD
                 className={`mb-6 px-5 py-4 rounded-xl flex items-center gap-3 text-[13px] font-medium border ${message.type === 'success'
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
                   : 'bg-red-50 text-red-700 border-red-100'
                   }`}
+=======
+                className={`mb-6 px-5 py-4 rounded-xl flex items-center gap-3 text-[13px] font-medium border ${
+                  message.type === 'success'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                    : 'bg-red-50 text-red-700 border-red-100'
+                }`}
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
               >
                 {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
                 {message.text}
@@ -223,6 +241,7 @@ export default function AdminDashboard() {
         {editingItem && (
           <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingItem(null)} className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+<<<<<<< HEAD
             <motion.div initial={{ opacity: 0, scale: 0.96, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 16 }} className="relative w-full max-w-lg bg-white rounded-[24px] shadow-2xl overflow-hidden font-sans border border-gray-100">
               {/* Modal Header */}
               <div className="px-7 pt-7 pb-5 flex items-start justify-between">
@@ -238,6 +257,23 @@ export default function AdminDashboard() {
                 <button onClick={() => setEditingItem(null)} className="w-9 h-9 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
                   <X size={18} strokeWidth={2.5} />
                 </button>
+=======
+            <motion.div initial={{ opacity: 0, scale: 0.96, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96, y: 16 }} className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden font-sans border border-gray-100">
+              {/* Modal Header */}
+              <div className="px-6 pt-6 pb-4">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <h2 className="text-base font-semibold text-gray-900">{editingItem.id ? 'Update Item' : 'Create New'}</h2>
+                  </div>
+                  <button onClick={() => setEditingItem(null)} className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all">
+                    <X size={16} />
+                  </button>
+                </div>
+                <p className="text-[12px] text-gray-400 ml-[42px]">Fill in the details below to configure this item.</p>
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
               </div>
 
               {(() => {
@@ -292,6 +328,7 @@ export default function AdminDashboard() {
                     }}
                   >
                     <div className="px-6 pb-6 space-y-4 max-h-[520px] overflow-y-auto no-scrollbar">
+<<<<<<< HEAD
                       {['vectors', 'sponsors', 'image-stacks', 'video-profiles', 'stacks'].includes(formType) && formType !== 'video-profiles' && (
                         <div className="mb-4">
                           <ImageUploadInput
@@ -302,6 +339,18 @@ export default function AdminDashboard() {
                               else if (formType === 'video-profiles') setFormData({ ...formData, image: v });
                               else setFormData({ ...formData, imageUrl: v });
                             }}
+=======
+                      {['vectors', 'sponsors', 'testimonials', 'image-stacks', 'video-profiles'].includes(formType) && (
+                        <div className="mb-4">
+                          <ImageUploadInput
+                             value={formData.imageUrl || formData.logo || formData.avatar || formData.image}
+                             onChange={(v: string) => {
+                               if (formType === 'sponsors') setFormData({...formData, logo: v});
+                               else if (formType === 'testimonials') setFormData({...formData, avatar: v});
+                               else if (formType === 'video-profiles') setFormData({...formData, image: v});
+                               else setFormData({...formData, imageUrl: v});
+                             }}
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                           />
                         </div>
                       )}
@@ -319,12 +368,15 @@ export default function AdminDashboard() {
                         </div>
                       ) : formType === 'testimonials' ? (
                         <div className="space-y-4">
+<<<<<<< HEAD
                           <SmartMediaPicker
                             label="Avatar / Media"
                             value={formData.avatar}
                             onChange={(v: string) => setFormData({ ...formData, avatar: v })}
                             accept="image/*"
                           />
+=======
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                           <div className="grid grid-cols-2 gap-4">
                             <SimpleInput label="Author Name" value={formData.author} onChange={(v: string) => setFormData({ ...formData, author: v })} required placeholder="Alex Rivera" />
                             <SimpleInput label="Author Role" value={formData.role} onChange={(v: string) => setFormData({ ...formData, role: v })} placeholder="Product Manager @ TechFlow" />
@@ -333,6 +385,7 @@ export default function AdminDashboard() {
                         </div>
                       ) : formType === 'video-profiles' ? (
                         <div className="space-y-4">
+<<<<<<< HEAD
                           <div className="grid gap-4">
                             <SmartMediaPicker
                               label="Video / URL"
@@ -340,6 +393,11 @@ export default function AdminDashboard() {
                               onChange={(v: string) => setFormData({ ...formData, videoId: v })}
                               accept="video/*"
                             />
+=======
+                          <div className="grid grid-cols-2 gap-4">
+                             <SimpleInput label="Tab Name" value={formData.tab} onChange={(v: string) => setFormData({ ...formData, tab: v })} required placeholder="Creative" />
+                             <SimpleInput label="Highlight" value={formData.highlight} onChange={(v: string) => setFormData({ ...formData, highlight: v })} placeholder="Big Heading" />
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                           </div>
                           <div className="gap-4">
                             <SimpleInput label="Tab Name" value={formData.tab} onChange={(v: string) => setFormData({ ...formData, tab: v })} required placeholder="Creative" />
@@ -353,11 +411,14 @@ export default function AdminDashboard() {
                         </div>
                       ) : formType === 'our-designs' ? (
                         <div className="space-y-4">
+<<<<<<< HEAD
                           <SmartMediaPicker
                             label="Design Media"
                             value={formData.youtubeUrl}
                             onChange={(v: string) => setFormData({ ...formData, youtubeUrl: v })}
                           />
+=======
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                           <div className="grid grid-cols-2 gap-4">
                             <SimpleInput label="Design Title" value={formData.title} onChange={(v: string) => setFormData({ ...formData, title: v })} required placeholder="Enter design name" />
                             <SimpleInput label="Tag" value={formData.tag} onChange={(v: string) => setFormData({ ...formData, tag: v })} placeholder="Pick a tag" />
@@ -378,23 +439,44 @@ export default function AdminDashboard() {
                             <SimpleInput label="Status/Tag" value={formData.tag} onChange={(v: string) => setFormData({ ...formData, tag: v })} placeholder="Select status" />
                           </div>
                           <SimpleTextarea label="Description" value={formData.description || formData.content} onChange={(v: string) => setFormData({ ...formData, description: v })} required placeholder="Describe the project goals and scope" />
+<<<<<<< HEAD
+=======
+                          <div className="flex items-center gap-2 pt-1">
+                             <input type="checkbox" checked={formData.isPremium} onChange={e => setFormData({ ...formData, isPremium: e.target.checked })} className="w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500" />
+                             <label className="text-[13px] text-gray-600 font-medium">Mark as premium asset</label>
+                          </div>
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                         </div>
                       )}
                     </div>
 
+<<<<<<< HEAD
                     <div className="px-7 py-5 border-t border-gray-100 flex items-center justify-end gap-3 bg-white">
                       <button
                         type="button"
                         onClick={() => setEditingItem(null)}
                         className="px-6 py-2.5 bg-white border border-gray-200 text-gray-600 text-[14px] font-bold rounded-xl hover:bg-gray-50 transition-all"
+=======
+                    <div className="px-6 py-4 border-t border-gray-100/80 flex items-center justify-end gap-2 bg-gray-50/50">
+                      <button
+                        type="button"
+                        onClick={() => setEditingItem(null)}
+                        className="px-4 py-2 bg-white border border-gray-200 text-gray-600 text-[13px] font-medium rounded-xl hover:bg-gray-50 transition-all"
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
+<<<<<<< HEAD
                         className="px-6 py-2.5 bg-[#0F172A] text-white text-[14px] font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg flex items-center gap-2"
                       >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
+=======
+                        className="px-4 py-2 bg-gray-900 text-white text-[13px] font-medium rounded-xl hover:bg-gray-800 transition-all shadow-sm flex items-center gap-1.5"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                         {editingItem.id ? 'Update' : 'Save'}
                       </button>
                     </div>

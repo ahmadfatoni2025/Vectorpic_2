@@ -69,7 +69,7 @@ export default function CommunityPage() {
   const [selectedThread, setSelectedThread] = useState<any>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [createPostTab, setCreatePostTab] = useState("Create Post");
-  
+
   // Post Creator State
   const [newDescription, setNewDescription] = useState("");
   const [tempImages, setTempImages] = useState<string[]>([]);
@@ -146,13 +146,13 @@ export default function CommunityPage() {
 
   const handleCreatePost = async () => {
     if (!newDescription.trim() || isPosting) return;
-    
+
     // Auto-generate title from the first few words of the content
     const words = newDescription.trim().split(/\s+/);
-    const finalTitle = words.length > 5 
-      ? words.slice(0, 5).join(" ") + "..." 
+    const finalTitle = words.length > 5
+      ? words.slice(0, 5).join(" ") + "..."
       : newDescription.trim();
-    
+
     setIsPosting(true);
     try {
       const res = await fetch("/api/discussions", {
@@ -185,10 +185,10 @@ export default function CommunityPage() {
   const filteredThreads = threads
     .filter(t => {
       const matchesSearch = searchQuery === '' || t.title.toLowerCase().includes(searchQuery.toLowerCase()) || t.snippet.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       // Category filtering (Main Feed shows everything, others filter strictly)
       const matchesCategory = activeCategory === "Main Feed" || t.category?.toUpperCase() === activeCategory.toUpperCase();
-      
+
       if (activeTab === "Answer") return t.type === 'question' && matchesSearch && matchesCategory;
       return matchesSearch && matchesCategory;
     })
@@ -203,10 +203,10 @@ export default function CommunityPage() {
   return (
     <main className="min-h-screen bg-gray-50/50 font-sans text-gray-900">
       {/* Hidden File Input */}
-      <input 
-        type="file" 
-        ref={fileInputRef} 
-        className="hidden" 
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
         onChange={handleFileChange}
         accept="image/*"
       />
@@ -334,7 +334,7 @@ export default function CommunityPage() {
                     {tempImages.map((img, i) => (
                       <div key={i} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-gray-100 shadow-sm group">
                         <img src={img} className="w-full h-full object-cover" alt="" />
-                        <button 
+                        <button
                           onClick={() => setTempImages(prev => prev.filter((_, idx) => idx !== i))}
                           className="absolute -top-1 -right-1 bg-white p-1 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
                         >
@@ -351,7 +351,7 @@ export default function CommunityPage() {
                     <button className="hover:text-gray-600 transition-colors" onClick={handleWebLink}><LinkIcon size={20} /></button>
                     <button className="hover:text-gray-600 transition-colors" onClick={() => alert("Lists coming soon")}><List size={20} /></button>
                   </div>
-                  <button 
+                  <button
                     onClick={handleCreatePost}
                     disabled={!newDescription.trim() || isPosting}
                     className="px-8 py-3 bg-[#FF4D00] text-white rounded-full text-[14px] font-bold shadow-lg shadow-orange-100 hover:bg-[#E64500] transition-all disabled:opacity-50"

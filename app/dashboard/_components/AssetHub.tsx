@@ -19,6 +19,7 @@ export function AssetHub({ data, onEdit, onDelete, onSwitchTab, onAddNew }: any)
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {data.vectors.map((v: any) => (
                <div key={v.id} className="bg-white border border-gray-100/80 rounded-2xl p-3 group transition-all hover:shadow-md hover:shadow-gray-100/50 hover:border-gray-200">
+<<<<<<< HEAD
                   <div className="aspect-square rounded-xl overflow-hidden bg-gray-50 mb-3 relative flex items-center justify-center">
                      {v.imageUrl ? (
                         <img src={v.imageUrl} className="w-full h-full object-cover transition-all group-hover:scale-105" />
@@ -28,6 +29,10 @@ export function AssetHub({ data, onEdit, onDelete, onSwitchTab, onAddNew }: any)
                            <span className="text-[10px] font-medium">No Image</span>
                         </div>
                      )}
+=======
+                  <div className="aspect-square rounded-xl overflow-hidden bg-gray-50 mb-3 relative">
+                     <img src={v.imageUrl} className="w-full h-full object-cover transition-all group-hover:scale-105" />
+>>>>>>> a314e5fcbb1969ea3e7c2ecd8c36dbd03aadbbea
                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-1.5 backdrop-blur-xs">
                         <button onClick={() => onEdit(v)} className="p-2 bg-white text-gray-700 rounded-lg shadow-lg hover:scale-105 transition-transform">
                            <Pencil size={14} />
