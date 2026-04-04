@@ -21,18 +21,40 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function UserDashboard() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [vectors, setVectors] = useState<any[]>([]);
   const [user, setUser] = useState<any>({
-    name: 'Ahmad Fatoni',
-    email: 'ahmad@example.com',
-    plan: 'Pro Plan',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmad'
+    name: 'User',
+    email: 'user@example.com',
+    plan: 'Free Plan',
+    avatar: 'https://ui-avatars.com/api/?name=User&background=4F46E5&color=fff'
   });
+
+  useEffect(() => {
+    const session = localStorage.getItem('user_session');
+    if (session) {
+      try {
+        const userData = JSON.parse(session);
+        setUser({
+          ...userData,
+          plan: userData.email === 'admin@vectorpic.com' ? 'Admin Plan' : 'Pro Plan'
+        });
+      } catch (e) {
+        console.error("Failed to parse session", e);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user_session');
+    router.push('/');
+  };
 
   useEffect(() => {
     async function fetchVectors() {
@@ -70,7 +92,10 @@ export default function UserDashboard() {
           <NavIcon icon={<Settings />} active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} tooltip="Settings" />
         </nav>
 
-        <button className="text-gray-400 hover:text-red-500 transition-colors p-3 rounded-2xl hover:bg-red-50">
+        <button 
+          onClick={handleLogout}
+          className="text-gray-400 hover:text-red-500 transition-colors p-3 rounded-2xl hover:bg-red-50"
+        >
           <LogOut size={24} />
         </button>
       </aside>

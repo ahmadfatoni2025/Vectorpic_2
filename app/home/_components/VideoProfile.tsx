@@ -141,13 +141,15 @@ export function VideoProfile() {
 
                                     <div className="absolute top-0 right-0 w-2/3 h-full overflow-hidden">
                                         <div className="relative w-full h-full">
-                                            <Image
-                                                src={contentData[activeIdx].image}
-                                                alt="Profile"
-                                                fill
-                                                draggable={false}
-                                                className="object-cover grayscale mix-blend-overlay opacity-50 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"
-                                            />
+                                            {contentData[activeIdx].image && (
+                                                <Image
+                                                    src={contentData[activeIdx].image}
+                                                    alt="Profile"
+                                                    fill
+                                                    draggable={false}
+                                                    className="object-cover grayscale mix-blend-overlay opacity-50 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"
+                                                />
+                                            )}
                                         </div>
                                     </div>
 
@@ -204,7 +206,7 @@ export function VideoProfile() {
                                 >
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
                                 </button>
-                                {contentData[activeIdx].videoId.includes('.mp4') ? (
+                                {contentData[activeIdx].videoId && (contentData[activeIdx].videoId.includes('.mp4') ? (
                                     <video
                                         src={contentData[activeIdx].videoId}
                                         controls
@@ -222,7 +224,7 @@ export function VideoProfile() {
                                         allowFullScreen
                                         className="w-full h-full"
                                     />
-                                )}
+                                ))}
                             </motion.div>
                         </motion.div>
                     )}

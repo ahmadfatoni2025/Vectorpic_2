@@ -22,11 +22,13 @@ const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) => (
 
         <div className="flex items-center gap-4">
             <div className="relative">
-                <img
-                    src={testimonial.avatar}
-                    alt={testimonial.author}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-slate-50"
-                />
+                {testimonial.avatar && (
+                    <img
+                        src={testimonial.avatar}
+                        alt={testimonial.author}
+                        className="w-10 h-10 rounded-full object-cover border-2 border-slate-50"
+                    />
+                )}
                 <div className="absolute -bottom-1 -right-1 bg-indigo-500 rounded-full p-0.5 shadow-sm">
                     <Star className="w-2 h-2 text-white fill-white" />
                 </div>

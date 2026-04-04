@@ -215,13 +215,14 @@ export function OurDesign() {
                                     {/* Media Container */}
                                     <div className="relative w-full aspect-video rounded-xl sm:rounded-2xl mb-4 sm:mb-5 overflow-hidden bg-gray-900 group-hover:shadow-2xl transition-all duration-500">
                                          <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden shadow-lg">
-                                             {item.media ? (
+                                             {item.media && (
                                                  <img
                                                      src={item.media}
                                                      alt={item.title}
                                                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-0"
                                                  />
-                                             ) : (
+                                             )}
+                                             {!item.media && (
                                                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
                                                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
                                                          <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />

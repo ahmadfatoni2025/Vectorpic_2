@@ -10,13 +10,15 @@ import {
   Repeat,
   Flame,
   ThumbsUp,
-  Eye
+  Eye,
+  BarChart3,
+  CheckCircle2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Thread {
   id: string;
-  user: { name: string; avatar: string; role?: string; };
+  user: { name: string; avatar: string; role?: string; handle?: string; };
   title: string;
   snippet: string;
   category: string;
@@ -65,138 +67,112 @@ export const ThreadCard = ({ thread, sessionId, onOpenThread }: ThreadCardProps)
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm transition-all hover:shadow-md group cursor-pointer"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="p-4 hover:bg-gray-50/70 transition-colors cursor-pointer border-b border-gray-100 last:border-b-0 group"
       onClick={() => onOpenThread?.(thread)}
     >
-      {/* Header: User Info */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <img
-            src={thread.user.avatar}
-            className="w-10 h-10 rounded-full object-cover border border-gray-50"
-            alt={thread.user.name}
-          />
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="text-[14px] font-bold text-gray-900 leading-none hover:text-[#04cce7] cursor-pointer transition-colors">
+      <div className="flex gap-3">
+        {/* Left: Avatar */}
+        <div className="shrink-0">
+          {thread.user.avatar && (
+            <img
+              src={thread.user.avatar}
+              className="w-10 h-10 rounded-full object-cover hover:opacity-90 transition-opacity"
+              alt={thread.user.name}
+            />
+          )}
+        </div>
+
+        {/* Right: Content */}
+        <div className="flex-1 min-w-0">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-0.5">
+            <div className="flex items-center gap-1 min-w-0">
+              <span className="text-[15px] font-bold text-gray-900 truncate hover:underline">
                 {thread.user.name}
               </span>
-              {thread.user.role === 'Expert' && (
-                <div className="bg-cyan-50 px-1.5 py-0.5 rounded text-[10px] font-bold text-[#04cce7] border border-cyan-100">
-                  EXPERT
-                </div>
-              )}
+              {thread.user.role === 'Expert' && <CheckCircle2 size={15} className="text-[#FF4D00]" fill="currentColor" />}
+              <span className="text-[14px] text-gray-500 truncate ml-0.5">{thread.user.handle || `@${thread.user.name.toLowerCase().replace(/\s/g, '_')}`}</span>
+              <span className="text-[14px] text-gray-400 mx-1">·</span>
+              <span className="text-[14px] text-gray-500 hover:underline">{thread.time}</span>
             </div>
-            <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[12px] text-gray-400 font-medium">{thread.time}</span>
-              <div className="w-0.5 h-0.5 bg-gray-300 rounded-full" />
-              <span className="text-[12px] font-bold text-gray-400">{thread.category}</span>
-            </div>
+            <button className="p-1.5 text-gray-500 hover:text-[#FF4D00] hover:bg-orange-50 rounded-full transition-all">
+              <MoreHorizontal size={16} />
+            </button>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <button 
-            className="px-4 py-1.5 rounded-xl border border-cyan-100 bg-cyan-50/30 text-[12px] font-bold text-[#04cce7] hover:bg-[#04cce7] hover:text-white transition-all active:scale-95"
-            onClick={(e) => e.stopPropagation()}
-          >
-            Follow
-          </button>
-          <button 
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-xl transition-all"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <MoreHorizontal className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+          {/* Title & Body */}
+          <div className="space-y-1 mb-3">
+            {thread.title && thread.category !== 'GENERAL' && (
+              <h3 className="text-[15px] font-bold text-gray-900 leading-snug">
+                {thread.title}
+              </h3>
+            )}
+            <p className="text-[15px] text-gray-900 leading-[1.4] whitespace-pre-wrap wrap-break-word">
+              {thread.snippet}
+            </p>
+          </div>
 
-      {/* Content: Title & Snippet */}
-      <div className="space-y-2.5 mb-4 px-1">
-        <h3 className="text-[18px] md:text-[20px] font-bold text-gray-900 leading-tight group-hover:text-[#04cce7] transition-colors cursor-pointer">
-          {thread.title}
-        </h3>
-        <p className="text-[14px] md:text-[15px] text-gray-600 leading-relaxed font-normal line-clamp-3">
-          {thread.snippet}
-        </p>
-      </div>
-
-      {/* Image if available */}
-      {hasImage && (
-        <div className="mb-5 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-inner group/img relative">
-          <div className="absolute inset-0 bg-black/0 group-hover/img:bg-black/5 transition-colors z-10 pointer-events-none" />
-          <img
-            src={thread.images![0].imageUrl}
-            className="w-full object-cover max-h-[450px] transition-transform duration-500 group-hover/img:scale-105"
-            alt="thread content"
-          />
-        </div>
-      )}
-
-      {/* Footer: Reactions & Stats */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-gray-50 mt-2 gap-4">
-        <div className="flex items-center gap-2">
-          {/* Reaction Buttons */}
-          <button
-            onClick={(e) => { e.stopPropagation(); handleLike(); }}
-            className={`flex items-center rounded-full px-3.5 py-2 gap-2 border transition-all active:scale-95 ${isLiked ? 'bg-cyan-50 border-cyan-200 text-[#04cce7]' : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100'}`}
-          >
-            <Heart className={`w-4 h-4 ${isLiked ? 'fill-[#04cce7]' : ''}`} />
-            <span className="text-[13px] font-bold">{likesCount}</span>
-          </button>
-
-          <button 
-            className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Flame className="w-4 h-4 text-orange-400 fill-orange-400" />
-            <span className="text-[13px] font-bold">45</span>
-          </button>
-
-          <button 
-            className="flex items-center bg-gray-50 rounded-full px-3.5 py-2 gap-2 border border-gray-100 text-gray-500 hover:bg-gray-100 transition-all active:scale-95 font-medium"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ThumbsUp className="w-4 h-4 text-blue-400 fill-blue-400" />
-            <span className="text-[13px] font-bold">12</span>
-          </button>
-        </div>
-
-        <div className="flex items-center justify-between sm:justify-start gap-4 md:gap-6">
-          <button 
-            className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
-              <MessageSquare className="w-4 h-4" />
+          {/* Image */}
+          {hasImage && thread.images![0].imageUrl && (
+            <div className="mb-3 rounded-2xl overflow-hidden border border-gray-200 bg-gray-50">
+              <img
+                src={thread.images![0].imageUrl}
+                className="w-full h-auto max-h-[512px] object-cover"
+                alt="Post content"
+              />
             </div>
-            <span className="text-[13px] font-bold">{thread.replies || 0}</span>
-          </button>
+          )}
 
-          <button
-            onClick={(e) => { e.stopPropagation(); setIsBookmarked(!isBookmarked); }}
-            className={`flex items-center gap-2 transition-colors group/btn ${isBookmarked ? 'text-cyan-500' : 'text-gray-400 hover:text-cyan-500'}`}
-          >
-            <div className={`p-2 border rounded-xl transition-all ${isBookmarked ? 'bg-cyan-50 border-cyan-100' : 'border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100'}`}>
-              <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-cyan-500' : ''}`} />
+          {/* Interactions */}
+          <div className="flex items-center justify-between max-w-[425px] -ml-2 text-gray-500">
+            <button 
+              className="flex items-center gap-2 px-2 py-1.5 hover:bg-orange-50 hover:text-[#FF4D00] rounded-full transition-all group/btn"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MessageSquare size={18} className="group-hover/btn:scale-110 transition-transform" />
+              <span className="text-[13px]">{thread.replies || 0}</span>
+            </button>
+            
+            <button 
+              className="flex items-center gap-2 px-2 py-1.5 hover:bg-green-50 hover:text-green-600 rounded-full transition-all group/btn"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Repeat size={18} className="group-hover/btn:scale-110 transition-transform" />
+              <span className="text-[13px]">45</span>
+            </button>
+
+            <button 
+              className={`flex items-center gap-2 px-2 py-1.5 rounded-full transition-all group/btn ${isLiked ? 'text-pink-600' : 'hover:bg-pink-50 hover:text-pink-600'}`}
+              onClick={(e) => { e.stopPropagation(); handleLike(); }}
+            >
+              <Heart size={18} className={`group-hover/btn:scale-110 transition-transform ${isLiked ? 'fill-pink-600' : ''}`} />
+              <span className="text-[13px]">{likesCount}</span>
+            </button>
+
+            <button 
+              className="flex items-center gap-2 px-2 py-1.5 hover:bg-blue-50 hover:text-blue-500 rounded-full transition-all group/btn"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <BarChart3 size={18} className="group-hover/btn:scale-110 transition-transform" />
+              <span className="text-[13px]">{thread.views || '1.2k'}</span>
+            </button>
+
+            <div className="flex items-center gap-0">
+               <button 
+                className={`p-2 rounded-full transition-all hover:bg-blue-50 hover:text-blue-500 ${isBookmarked ? 'text-blue-500' : ''}`}
+                onClick={(e) => { e.stopPropagation(); setIsBookmarked(!isBookmarked); }}
+              >
+                <Bookmark size={18} className={isBookmarked ? 'fill-blue-500' : ''} />
+              </button>
+               <button 
+                className="p-2 hover:bg-blue-50 hover:text-blue-500 rounded-full transition-all"
+                onClick={(e) => { e.stopPropagation(); handleShare(); }}
+              >
+                <Share2 size={18} />
+              </button>
             </div>
-            <span className="text-[13px] font-bold">Save</span>
-          </button>
-
-          <button
-            onClick={(e) => { e.stopPropagation(); handleShare(); }}
-            className="flex items-center gap-2 text-gray-400 hover:text-cyan-500 transition-colors group/btn"
-          >
-            <div className="p-2 border border-transparent group-hover/btn:bg-cyan-50 group-hover/btn:border-cyan-100 rounded-xl transition-all">
-              <Share2 className="w-4 h-4" />
-            </div>
-          </button>
-
-          <div className="hidden sm:flex items-center gap-2 text-gray-300 ml-2">
-            <Eye className="w-4 h-4" />
-            <span className="text-[12px] font-bold">{thread.views || '2.5k'}</span>
           </div>
         </div>
       </div>

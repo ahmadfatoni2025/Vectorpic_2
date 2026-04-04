@@ -18,6 +18,15 @@ export default function SignupPage() {
     setIsLoading(true);
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Save session
+    localStorage.setItem('user_session', JSON.stringify({
+      name: name || 'New User',
+      email: email,
+      role: 'user',
+      avatar: `https://ui-avatars.com/api/?name=${name || 'User'}&background=random`
+    }));
+
     router.push('/dashboard_user');
   };
 

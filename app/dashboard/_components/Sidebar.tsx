@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -20,9 +21,15 @@ import { NavDropdown } from './NavDropdown';
 import { NavChild } from './NavChild';
 
 export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOpen, inquiryCount }: any) {
+  const router = useRouter();
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({
     library: true // default open
   });
+
+  const handleLogout = () => {
+    localStorage.removeItem('user_session');
+    router.push('/');
+  };
 
   const toggleDropdown = (key: string) => {
     setOpenDropdowns(prev => ({ ...prev, [key]: !prev[key] }));
@@ -154,14 +161,22 @@ export function Sidebar({ activeTab, setActiveTab, isSidebarOpen, setIsSidebarOp
               <p className="text-[13px] font-semibold text-gray-900 truncate leading-tight">Admin Panel</p>
               <p className="text-[11px] text-gray-400 truncate">admin@vectorpic.com</p>
             </div>
-            <Link href="/auth/user/login" className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Sign Out">
+            <button 
+              onClick={handleLogout}
+              className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" 
+              title="Sign Out"
+            >
               <LogOut size={16} strokeWidth={1.8} />
-            </Link>
+            </button>
           </div>
         ) : (
-          <Link href="/auth/user/login" className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Sign Out">
+          <button 
+            onClick={handleLogout}
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all" 
+            title="Sign Out"
+          >
             <LogOut size={16} strokeWidth={1.8} />
-          </Link>
+          </button>
         )}
       </div>
     </aside>

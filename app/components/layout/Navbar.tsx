@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import {
   ChevronDown,
@@ -19,6 +19,31 @@ export function Navbar() {
   const [visible, setVisible] = useState(true);
   const { scrollY } = useScroll();
   const dropdownTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [user, setUser] = useState<{ name: string; email: string; avatar?: string; role?: 'admin' | 'user' } | null>(null);
+
+  useEffect(() => {
+    const checkSession = () => {
+      const session = localStorage.getItem('user_session');
+      if (session) {
+        try {
+          setUser(JSON.parse(session));
+        } catch (e) {
+          localStorage.removeItem('user_session');
+        }
+      } else {
+        setUser(null);
+      }
+    };
+    
+    checkSession();
+    window.addEventListener('storage', checkSession);
+    const interval = setInterval(checkSession, 1000); // Polling as a fallback for same-tab changes
+    
+    return () => {
+      window.removeEventListener('storage', checkSession);
+      clearInterval(interval);
+    };
+  }, []);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -229,7 +254,25 @@ export function Navbar() {
               <Search className="w-5 h-5" />
             </button>
 
-            <Link href="/auth/user/login" className="px-8 py-3 bg-gray-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center gap-2">Login</Link>
+            {user ? (
+              <Link href={user.role === 'admin' ? '/dashboard' : '/dashboard_user'} className="flex items-center gap-3 p-1 pr-4 bg-gray-50 hover:bg-gray-100 rounded-full transition-all border border-gray-100 group">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-white shadow-sm transition-transform group-hover:scale-105">
+                  <img 
+                    src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=4F46E5&color=fff`} 
+                    alt={user.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="hidden sm:flex flex-col">
+                  <span className="text-[10px] font-black text-gray-900 leading-none mb-0.5">{user.name}</span>
+                  <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest leading-none">
+                    {user.role === 'admin' ? 'Super Admin' : 'Dashboard'}
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <Link href="/auth/user/login" className="px-8 py-3 bg-gray-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200 active:scale-95 flex items-center gap-2">Login</Link>
+            )}
 
             <button className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-1002 bg-white rounded-full ml-2 shadow-sm border border-gray-100" onClick={() => setIsOpen(!isOpen)}>
               <span className={`w-4 h-0.5 bg-gray-900 transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-1' : ''}`} />
@@ -278,9 +321,27 @@ export function Navbar() {
                     <Link href="/about" className="text-xl font-black text-gray-900 tracking-tight" onClick={() => setIsOpen(false)}>
                       Our Story
                     </Link>
-                    <Link href="/auth/user/login" className="px-6 py-4 bg-gray-900 text-white rounded-2xl text-center text-sm font-black uppercase tracking-widest shadow-xl shadow-gray-200 active:scale-95" onClick={() => setIsOpen(false)}>
-                      Login
-                    </Link>
+                    {user ? (
+                      <Link href={user.role === 'admin' ? '/dashboard' : '/dashboard_user'} className="flex items-center gap-4 p-4 bg-gray-50 rounded-4xl border border-gray-100" onClick={() => setIsOpen(false)}>
+                        <div className="w-14 h-14 rounded-full overflow-hidden border-4 border-white shadow-md">
+                          <img 
+                            src={user.avatar || `https://ui-avatars.com/api/?name=${user.name}&background=4F46E5&color=fff`} 
+                            alt={user.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-lg font-black text-gray-900 leading-tight">{user.name}</p>
+                          <p className="text-xs font-bold text-indigo-600 uppercase tracking-widest">
+                            {user.role === 'admin' ? 'Admin Dashboard →' : 'Go to Dashboard →'}
+                          </p>
+                        </div>
+                      </Link>
+                    ) : (
+                      <Link href="/auth/user/login" className="px-6 py-4 bg-gray-900 text-white rounded-2xl text-center text-sm font-black uppercase tracking-widest shadow-xl shadow-gray-200 active:scale-95" onClick={() => setIsOpen(false)}>
+                        Login
+                      </Link>
+                    )}
                   </div>
                 </div>
               </motion.div>

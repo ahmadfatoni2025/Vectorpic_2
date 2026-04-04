@@ -108,12 +108,14 @@ function CardItem({ card, idx, count, smoothProgress, isMobile, isTablet }: any)
     >
       {/* Image Component */}
       <div className="w-full h-full relative bg-gray-50">
-        <img
-          src={card.imageUrl}
-          alt={card.label}
-          className="w-full h-full object-cover grayscale-20 group-hover:grayscale-0 transition-all duration-700"
-          loading="lazy"
-        />
+        {card.imageUrl && (
+          <img
+            src={card.imageUrl}
+            alt={card.label}
+            className="w-full h-full object-cover grayscale-20 group-hover:grayscale-0 transition-all duration-700"
+            loading="lazy"
+          />
+        )}
 
         {/* Premium overlay label */}
         <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 bg-linear-to-t from-black/60 via-black/10 to-transparent">

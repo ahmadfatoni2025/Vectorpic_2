@@ -22,7 +22,22 @@ export default function LoginPage() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     if (email === 'admin' && password === 'admin') {
+      localStorage.setItem('user_session', JSON.stringify({
+        name: 'Admin User',
+        email: 'admin@vectorpic.com',
+        role: 'admin',
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=100&auto=format&fit=crop'
+      }));
       router.push('/dashboard');
+    } else if (email && password) {
+      // Simulate any valid login
+      localStorage.setItem('user_session', JSON.stringify({
+        name: email.split('@')[0],
+        email: email,
+        role: 'user',
+        avatar: `https://ui-avatars.com/api/?name=${email}&background=random`
+      }));
+      router.push('/dashboard_user');
     } else {
       setError(true);
       setIsLoading(false);
